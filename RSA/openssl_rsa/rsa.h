@@ -1,3 +1,6 @@
+#ifndef RSA_H
+#define RSA_H
+
 #include <openssl/err.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
@@ -28,3 +31,5 @@ public:
   bool RsaVeri(const std::string &msg, const std::string &sign_digest,
                int hash_type = 0);
 };
+
+#endif
