@@ -1,0 +1,1 @@
+g++ main.cpp crypto/Sign.cpp `pkg-config --cflags --libs openssl` -o main && ./main
