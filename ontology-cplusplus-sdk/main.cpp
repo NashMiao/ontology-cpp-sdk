@@ -1,6 +1,10 @@
-// g++ main.cpp crypto/Sign.cpp `pkg-config --cflags --libs openssl` -o main &&
+// g++ main.cpp crypto/Sign.cpp crypto/AES.cpp `pkg-config --cflags --libs
+// openssl` -o main &&
 // ./main
+#include "crypto/AES.h"
 #include "crypto/Sign.h"
+#include <openssl/kdf.h>
+#include <vector>
 
 void sign_by_set_pub_pri() {
   Sign ec_sign;
@@ -86,9 +90,87 @@ void sign_by_pri_key() {
   cout << "ret: " << ret << endl;
 }
 
+void aes_enc_dec() {
+  AES aes;
+  aes.params_init();
+  std::string msg = "Hello world!";
+  cout << "msg:\n" << msg << endl;
+  std::string enc_msg, dec_msg;
+  aes.auth_encry(msg, enc_msg);
+  cout << "enc_msg:\n" << enc_msg << endl;
+  aes.auth_decry(enc_msg, dec_msg);
+  cout << "dec_msg:\n" << dec_msg << endl;
+}
+
+std::string hexStr(unsigned char *data, int len) {
+  char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                   '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+  std::string s(len * 2, ' ');
+  for (int i = 0; i < len; ++i) {
+    s[2 * i] = hexmap[(data[i] & 0xF0) >> 4];
+    s[2 * i + 1] = hexmap[data[i] & 0x0F];
+  }
+  return s;
+}
+
+std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
+  int N = n;
+  int r = 8;
+  int p = 8;
+  int dkLen = 64;
+
+  int salt_len = 4;
+  unsigned char salt[] = {0xfa, 0xa4, 0x88, 0x3d};
+
+  EVP_PKEY_CTX *pctx;
+  unsigned char derivedkey[dkLen];
+
+  size_t outlen = sizeof(derivedkey);
+  pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
+
+  if (EVP_PKEY_derive_init(pctx) <= 0) {
+    return NULL;
+  }
+  if (EVP_PKEY_CTX_set1_pbe_pass(pctx, passphrase.c_str(),
+                                 passphrase.length()) <= 0) {
+    return NULL;
+  }
+  if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0) {
+    return NULL;
+  }
+  if (EVP_PKEY_CTX_set_scrypt_N(pctx, n) <= 0) {
+    return NULL;
+  }
+  if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0) {
+    return NULL;
+  }
+  if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0) {
+    return NULL;
+  }
+  if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0) {
+    return NULL;
+  }
+
+  std::string str;
+  str = hexStr(derivedkey, outlen);
+  cout << str.length() << endl;
+  cout << str << endl;
+  cout << "derivedkey:\n"
+       << "9f0632e05eab137baae6e0a83300341531e8638612a08042d3a4074578869af1ccf5"
+          "008e434d2cae9477f9e6e4c0571ab65a60e32e8c8fc356d95f64dd9717c9"
+       << endl;
+
+  EVP_PKEY_CTX_free(pctx);
+  return "test";
+}
+
 int main() {
-  sign_by_pri_key();
-  sign_by_set_pub_pri();
-  sign_by_gen_key();
+  // sign_by_pri_key();
+  // sign_by_set_pub_pri();
+  // sign_by_gen_key();
+  // aes_enc_dec();
+
+  std::string passphrase = "passwordtest";
+  exportCtrEncryptedPrikey(passphrase, 16384);
   return 0;
 }
