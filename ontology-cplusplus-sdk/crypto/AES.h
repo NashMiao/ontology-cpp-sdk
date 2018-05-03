@@ -25,12 +25,20 @@ typedef struct {
 
 class AES {
 private:
+  /* Key to use for encrpytion and decryption */
+  unsigned char key[AES_256_KEY_SIZE];
+  /* Initialization Vector */
+  unsigned char iv[AES_BLOCK_SIZE];
   cipher_params_t *params;
 
 public:
   AES() { params = (cipher_params_t *)malloc(sizeof(cipher_params_t)); }
   ~AES() { free(params); }
   bool params_init(AEAD_mode mode = AES_CTR);
+  unsigned char *get_key() { return params->key; }
+  unsigned char *get_iv() { return params->iv; }
+  void set_key(unsigned char *k) { params->key = k; }
+  void set_iv(unsigned char *v) { params->iv = v; }
   bool auth_encry(std::string msg, std::string &enc_msg);
   bool auth_decry(std::string msg, std::string &dec_msg);
 };

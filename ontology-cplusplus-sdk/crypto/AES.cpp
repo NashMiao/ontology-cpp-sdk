@@ -1,16 +1,25 @@
 #include "AES.h"
 
 bool AES::params_init(AEAD_mode mode) {
-  /* Key to use for encrpytion and decryption */
-  unsigned char key[AES_256_KEY_SIZE];
-  /* Initialization Vector */
-  unsigned char iv[AES_BLOCK_SIZE];
   /* Generate cryptographically strong pseudo-random bytes for key and IV */
-  if (!RAND_bytes(key, sizeof(key)) || !RAND_bytes(iv, sizeof(iv))) {
+  // ENGINE *engine;
+
+  // ENGINE_load_rdrand();
+
+  // engine = ENGINE_by_id("rdrand");
+  // if (engine == NULL) {
+  //   return false;
+  // }
+  
+  if (RAND_bytes(key, AES_256_KEY_SIZE) != 1) {
+    return false;
+  }
+  if (RAND_bytes(iv, AES_BLOCK_SIZE) != 1) {
     return false;
   }
   params->key = key;
   params->iv = iv;
+
   /* Set the cipher type for encryption-decryption */
   switch (mode) {
   case AES_CTR:
@@ -36,8 +45,14 @@ bool AES::auth_encry(std::string msg, std::string &enc_msg) {
   EVP_EncryptInit_ex(ctx, params->cipher_type, NULL, params->key, params->iv);
 
   /* check lengths */
-  OPENSSL_assert(EVP_CIPHER_CTX_key_length(ctx) == AES_256_KEY_SIZE);
-  OPENSSL_assert(EVP_CIPHER_CTX_iv_length(ctx) == AES_BLOCK_SIZE);
+  if (EVP_CIPHER_CTX_key_length(ctx) != AES_256_KEY_SIZE) {
+    cout << EVP_CIPHER_CTX_key_length(ctx) << endl;
+    return false;
+  }
+  if (EVP_CIPHER_CTX_iv_length(ctx) != AES_BLOCK_SIZE) {
+    cout << EVP_CIPHER_CTX_iv_length(ctx) << endl;
+    return false;
+  }
 
   /* set key and IV */
   if (EVP_EncryptInit_ex(ctx, params->cipher_type, NULL, params->key,

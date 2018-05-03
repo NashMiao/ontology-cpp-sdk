@@ -90,18 +90,6 @@ void sign_by_pri_key() {
   cout << "ret: " << ret << endl;
 }
 
-void aes_enc_dec() {
-  AES aes;
-  aes.params_init();
-  std::string msg = "Hello world!";
-  cout << "msg:\n" << msg << endl;
-  std::string enc_msg, dec_msg;
-  aes.auth_encry(msg, enc_msg);
-  cout << "enc_msg:\n" << enc_msg << endl;
-  aes.auth_decry(enc_msg, dec_msg);
-  cout << "dec_msg:\n" << dec_msg << endl;
-}
-
 std::string hexStr(unsigned char *data, int len) {
   char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -111,6 +99,20 @@ std::string hexStr(unsigned char *data, int len) {
     s[2 * i + 1] = hexmap[data[i] & 0x0F];
   }
   return s;
+}
+
+void aes_enc_dec() {
+  AES aes;
+  aes.params_init();
+  cout << "iv:\n" << aes.get_iv() << endl;
+  cout << "key:\n" << aes.get_key() << endl;
+  std::string msg = "Hello world!";
+  cout << "msg:\n" << msg << endl;
+  std::string enc_msg, dec_msg;
+  aes.auth_encry(msg, enc_msg);
+  cout << "enc_msg:\n" << enc_msg << endl;
+  aes.auth_decry(enc_msg, dec_msg);
+  cout << "dec_msg:\n" << dec_msg << endl;
 }
 
 std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
@@ -168,9 +170,9 @@ int main() {
   // sign_by_pri_key();
   // sign_by_set_pub_pri();
   // sign_by_gen_key();
-  // aes_enc_dec();
+  aes_enc_dec();
 
-  std::string passphrase = "passwordtest";
-  exportCtrEncryptedPrikey(passphrase, 16384);
+  // std::string passphrase = "passwordtest";
+  // exportCtrEncryptedPrikey(passphrase, 16384);
   return 0;
 }
