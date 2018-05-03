@@ -10,15 +10,13 @@ bool AES::params_init(AEAD_mode mode) {
   // if (engine == NULL) {
   //   return false;
   // }
-  
-  if (RAND_bytes(key, AES_256_KEY_SIZE) != 1) {
+
+  if (RAND_bytes(params->key, AES_256_KEY_SIZE) != 1) {
     return false;
   }
-  if (RAND_bytes(iv, AES_BLOCK_SIZE) != 1) {
+  if (RAND_bytes(params->iv, AES_BLOCK_SIZE) != 1) {
     return false;
   }
-  params->key = key;
-  params->iv = iv;
 
   /* Set the cipher type for encryption-decryption */
   switch (mode) {
