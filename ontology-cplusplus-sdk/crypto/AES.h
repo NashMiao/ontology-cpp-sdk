@@ -7,6 +7,8 @@
 #define AES_BLOCK_SIZE 16
 
 #include <iostream>
+#include <openssl/bio.h>
+#include <openssl/buffer.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
@@ -28,6 +30,9 @@ typedef struct {
 class AES {
 private:
   cipher_params_t *params;
+  bool set_key(const std::string &k);
+  bool set_iv(const std::string &v);
+  bool set_mode(AEAD_mode mode);
 
 public:
   AES() { params = (cipher_params_t *)malloc(sizeof(cipher_params_t)); }
@@ -35,8 +40,8 @@ public:
   bool params_init(AEAD_mode mode = AES_CTR);
   unsigned char *get_key() { return params->key; }
   unsigned char *get_iv() { return params->iv; }
-  void set_key(unsigned char *k) { params->key; }
-  void set_iv(unsigned char *v) { params->iv; }
+  bool set_params(const std::string &k, const std::string &v,
+                  const AEAD_mode mode = AES_CTR);
   bool auth_encry(std::string msg, std::string &enc_msg);
   bool auth_decry(std::string msg, std::string &dec_msg);
 };

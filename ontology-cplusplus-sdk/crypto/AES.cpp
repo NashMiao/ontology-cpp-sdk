@@ -1,5 +1,49 @@
 #include "AES.h"
 
+bool AES::set_key(const std::string &k) {
+  if (k.length() != AES_256_KEY_SIZE) {
+    return false;
+  }
+  std::copy(k.begin(), k.end(), params->key);
+  return true;
+}
+bool AES::set_iv(const std::string &v) {
+  if (v.length() != AES_BLOCK_SIZE) {
+    return false;
+  }
+  std::copy(v.begin(), v.end(), params->iv);
+  return true;
+}
+
+bool AES::set_mode(AEAD_mode mode) {
+  /* Set the cipher type for encryption-decryption */
+  switch (mode) {
+  case AES_CTR:
+    params->cipher_type = EVP_aes_256_ctr();
+    break;
+  case AES_GCM:
+    params->cipher_type = EVP_aes_256_gcm();
+    break;
+  default:
+    return false;
+  }
+  return true;
+}
+
+bool AES::set_params(const std::string &k, const std::string &v,
+                     const AEAD_mode mode) {
+  if (!set_key(k)) {
+    return false;
+  }
+  if (!set_iv(v)) {
+    return false;
+  }
+  if (!set_mode(mode)) {
+    return false;
+  }
+  return true;
+}
+
 bool AES::params_init(AEAD_mode mode) {
   /* Generate cryptographically strong pseudo-random bytes for key and IV */
   // ENGINE *engine;
@@ -17,16 +61,7 @@ bool AES::params_init(AEAD_mode mode) {
   if (RAND_bytes(params->iv, AES_BLOCK_SIZE) != 1) {
     return false;
   }
-
-  /* Set the cipher type for encryption-decryption */
-  switch (mode) {
-  case AES_CTR:
-    params->cipher_type = EVP_aes_256_ctr();
-    break;
-  case AES_GCM:
-    params->cipher_type = EVP_aes_256_gcm();
-    break;
-  default:
+  if (set_mode(mode) == false) {
     return false;
   }
   return true;
