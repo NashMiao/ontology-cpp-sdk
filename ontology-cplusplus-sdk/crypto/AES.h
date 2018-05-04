@@ -30,8 +30,8 @@ typedef struct {
 class AES {
 private:
   cipher_params_t *params;
-  bool set_key(const std::string &k);
-  bool set_iv(const std::string &v);
+  bool set_key(const unsigned char *k);
+  bool set_iv(const unsigned char *v);
   bool set_mode(AEAD_mode mode);
 
 public:
@@ -40,9 +40,9 @@ public:
   bool params_init(AEAD_mode mode = AES_CTR);
   unsigned char *get_key() { return params->key; }
   unsigned char *get_iv() { return params->iv; }
-  bool set_params(const std::string &k, const std::string &v,
+  bool set_params(const unsigned char *k, const unsigned char *v,
                   const AEAD_mode mode = AES_CTR);
-  bool auth_encry(std::string msg, std::string &enc_msg);
+  bool auth_encry(const unsigned char *msg, unsigned char *enc_msg);
   bool auth_decry(std::string msg, std::string &dec_msg);
 };
 #endif

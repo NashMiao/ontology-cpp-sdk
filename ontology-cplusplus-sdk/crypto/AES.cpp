@@ -1,17 +1,12 @@
 #include "AES.h"
 
-bool AES::set_key(const std::string &k) {
-  if (k.length() != AES_256_KEY_SIZE) {
-    return false;
-  }
-  std::copy(k.begin(), k.end(), params->key);
+bool AES::set_key(const unsigned char *k) {
+  memcpy(params->key, &k[0], AES_256_KEY_SIZE * sizeof(unsigned char));
   return true;
 }
-bool AES::set_iv(const std::string &v) {
-  if (v.length() != AES_BLOCK_SIZE) {
-    return false;
-  }
-  std::copy(v.begin(), v.end(), params->iv);
+
+bool AES::set_iv(const unsigned char *v) {
+  memcpy(params->iv, &v[0], AES_BLOCK_SIZE * sizeof(unsigned char));
   return true;
 }
 
@@ -30,8 +25,9 @@ bool AES::set_mode(AEAD_mode mode) {
   return true;
 }
 
-bool AES::set_params(const std::string &k, const std::string &v,
+bool AES::set_params(const unsigned char *k, const unsigned char *v,
                      const AEAD_mode mode) {
+  cout << "!!" << endl;
   if (!set_key(k)) {
     return false;
   }
@@ -45,16 +41,6 @@ bool AES::set_params(const std::string &k, const std::string &v,
 }
 
 bool AES::params_init(AEAD_mode mode) {
-  /* Generate cryptographically strong pseudo-random bytes for key and IV */
-  // ENGINE *engine;
-
-  // ENGINE_load_rdrand();
-
-  // engine = ENGINE_by_id("rdrand");
-  // if (engine == NULL) {
-  //   return false;
-  // }
-
   if (RAND_bytes(params->key, AES_256_KEY_SIZE) != 1) {
     return false;
   }
@@ -67,12 +53,16 @@ bool AES::params_init(AEAD_mode mode) {
   return true;
 }
 
-bool AES::auth_encry(std::string msg, std::string &enc_msg) {
+bool AES::auth_encry(const unsigned char *msg, unsigned char *enc_msg) {
   EVP_CIPHER_CTX *ctx;
   ctx = EVP_CIPHER_CTX_new();
   EVP_CIPHER_CTX_init(ctx);
   if (ctx == NULL) {
     return false;
+  }
+  if (params->cipher_type == EVP_aes_256_ctr()) {
+    /* No padding */
+    EVP_CIPHER_CTX_set_padding(ctx, 0);
   }
 
   EVP_EncryptInit_ex(ctx, params->cipher_type, NULL, params->key, params->iv);
@@ -95,13 +85,12 @@ bool AES::auth_encry(std::string msg, std::string &enc_msg) {
 
   /* Allow enough space in output buffer for additional block */
   int cipher_block_size = EVP_CIPHER_block_size(params->cipher_type);
-  int buf_size = (int)msg.length();
+  int buf_size = 32;
+  cout << buf_size << endl;
   unsigned char out_buf[buf_size + cipher_block_size];
 
   int out_len;
-  if (EVP_EncryptUpdate(ctx, out_buf, &out_len,
-                        (const unsigned char *)msg.c_str(),
-                        msg.length()) != 1) {
+  if (EVP_EncryptUpdate(ctx, out_buf, &out_len, msg, buf_size) != 1) {
     EVP_CIPHER_CTX_cleanup(ctx);
     return false;
   }
@@ -111,10 +100,12 @@ bool AES::auth_encry(std::string msg, std::string &enc_msg) {
     return false;
   }
 
-  enc_msg = std::string(reinterpret_cast<char *>(out_buf));
+  memcpy(&enc_msg[0], &out_buf[0], buf_size);
+
   EVP_CIPHER_CTX_cleanup(ctx);
   return true;
 }
+
 bool AES::auth_decry(std::string msg, std::string &dec_msg) {
   int is_encrypt = 0;
   /* Allow enough space in output buffer for additional block */
@@ -125,6 +116,10 @@ bool AES::auth_decry(std::string msg, std::string &dec_msg) {
   EVP_CIPHER_CTX_init(ctx);
   if (ctx == NULL) {
     return false;
+  }
+  if (params->cipher_type == EVP_aes_256_ctr()) {
+    /* No padding */
+    EVP_CIPHER_CTX_set_padding(ctx, 0);
   }
 
   /* set key and IV */
