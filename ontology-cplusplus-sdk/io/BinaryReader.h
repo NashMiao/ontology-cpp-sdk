@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -29,6 +30,9 @@ long long bytes8ToLong(unsigned char *bytes) {
 class BinaryReader {
 private:
   std::ifstream infile;
+  std::vector<unsigned char> uc_vec;
+  std::vector<unsigned char>::iterator uc_vec_iter;
+
   // LittleEndian
   long long bytesNToLong(unsigned char *bytes, int buf_size) {
     int pos = 8;
@@ -40,54 +44,67 @@ private:
     return val;
   }
 
-public:
-  BinaryReader() {
-    infile.open("outfile", std::ios::in | std::ios::binary);
-  }
-  void set_ifstream(std::ifstream &ifstrm) { infile.copyfmt(ifstrm); }
-  bool readVarInt(long long max, long long &value) {
-    if (!infile.is_open()) {
-      return false;
-    }
-    unsigned char uc_buffer;
-    infile.read((char *)(&uc_buffer), 1);
-    cout << uc_buffer << endl;
-
-    if (uc_buffer == 0xFD) {
-      int buf_size = 2;
-      unsigned char *buffer = new unsigned char[buf_size];
-      infile.read((char *)&buffer[0], buf_size);
-      value = bytesNToLong(buffer, buf_size);
-      delete[] buffer;
-    } else if (uc_buffer == 0xFE) {
-      int buf_size = 4;
-      unsigned char *buffer = new unsigned char[buf_size];
-      infile.read((char *)&buffer[0], buf_size);
-      value = bytesNToLong(buffer, buf_size);
-      delete[] buffer;
-    } else if (uc_buffer == 0xFF) {
-      int buf_size = 8;
-      unsigned char *buffer = new unsigned char[buf_size];
-      infile.read((char *)&buffer[0], buf_size);
-      value = bytesNToLong(buffer, buf_size);
-      delete[] buffer;
+  long long ReadBytesToLong(int len) {
+    unsigned char *buffer = new unsigned char[len];
+    if (len == 1) {
+      buffer[0] = *uc_vec_iter;
     } else {
-      value = (long long)uc_buffer;
+      for (int i = 0; i < len; i++) {
+        if (uc_vec_iter != uc_vec.end()) {
+          uc_vec_iter++;
+          buffer[i] = *uc_vec_iter;
+        } else {
+          throw "ReadBytesToLong Error!";
+        }
+      }
     }
-    return true;
+    long long value;
+    value = bytesNToLong(buffer, len);
+    delete[] buffer;
+    return value;
+  }
+
+public:
+  BinaryReader() { uc_vec_iter = uc_vec.begin(); }
+  long long readVarInt(long long max) {
+    int buf_size;
+    long long value;
+    if (*uc_vec_iter == 0xFD) {
+      buf_size = 2;
+      value = ReadBytesToLong(buf_size);
+    } else if (*uc_vec_iter == 0xFE) {
+      buf_size = 4;
+      value = ReadBytesToLong(buf_size);
+    } else if (*uc_vec_iter == 0xFF) {
+      buf_size = 8;
+      value = ReadBytesToLong(buf_size);
+    } else {
+      buf_size = 1;
+      value = ReadBytesToLong(buf_size);
+    }
+    if (value > max) {
+      throw "readVarInt Error! value > max!";
+    }
+    return value;
   }
 
   unsigned char *readBytes(int count) {
     unsigned char *buffer = new unsigned char[count];
-    infile.read((char *)buffer, count);
+    for (int i = 0; i < count; i++) {
+      if (uc_vec_iter != uc_vec.end()) {
+        uc_vec_iter++;
+        buffer[i] = *uc_vec_iter;
+      } else {
+        throw "readBytes Error!";
+      }
+    }
     return buffer;
   }
 
-  bool readVarBytes() {
+  long long readVarBytes() {
     long long value;
-    readVarInt(0X7fffffc7, value);
-    readBytes((int)value);
-    return true;
+    value = readVarInt(0X7fffffc7);
+    return value;
   }
 };
 #endif
