@@ -2,6 +2,9 @@
 #define BINARYREADER_H
 
 #include <fstream>
+#include <iostream>
+
+using namespace std;
 
 // LittleEndian
 long long bytes2ToLong(unsigned char *bytes) {
@@ -38,13 +41,17 @@ private:
   }
 
 public:
+  BinaryReader() {
+    infile.open("outfile", std::ios::in | std::ios::binary);
+  }
+  void set_ifstream(std::ifstream &ifstrm) { infile.copyfmt(ifstrm); }
   bool readVarInt(long long max, long long &value) {
     if (!infile.is_open()) {
       return false;
     }
-
     unsigned char uc_buffer;
     infile.read((char *)(&uc_buffer), 1);
+    cout << uc_buffer << endl;
 
     if (uc_buffer == 0xFD) {
       int buf_size = 2;
