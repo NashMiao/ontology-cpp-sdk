@@ -52,30 +52,32 @@ private:
 
   long long ReadBytesToLong(int len)
   {
-    unsigned char *buffer = new unsigned char[len];
-    if (len == 1)
+    char buf[len];
+    if (sizeof(long long) != 8)
     {
-      buffer[0] = *uc_vec_iter;
+      throw "IOException";
     }
-    else
+    uc_vec_iter++;
+    for (int i = 0; i < len; i += 2)
     {
-      for (int i = 0; i < len; i++)
+      if (uc_vec_iter == uc_vec.end())
       {
-        if (uc_vec_iter != uc_vec.end())
-        {
-          uc_vec_iter++;
-          buffer[i] = *uc_vec_iter;
-        }
-        else
-        {
-          throw "ReadBytesToLong Error!";
-        }
+        throw "IOException";
       }
+      buf[len - 2 - i] = *uc_vec_iter;
+      uc_vec_iter++;
+      if (uc_vec_iter == uc_vec.end())
+      {
+        throw "IOException";
+      }
+      buf[len - 1 - i] = *uc_vec_iter;
+      uc_vec_iter++;
     }
-    long long value;
-    value = bytesNToLong(buffer, len);
-    delete[] buffer;
-    return value;
+    long long ret;
+    std::stringstream ss;
+    ss.str(buf);
+    ss >> std::hex >> ret;
+    return ret;
   }
 
 public:
@@ -93,19 +95,34 @@ public:
 
   long long readVarInt(long long max)
   {
+    int tag;
+    int tag_size = 2;
+    char tag_buf[tag_size];
+    tag_buf[0] = *uc_vec_iter;
+    uc_vec_iter++;
+    if (uc_vec_iter == uc_vec.end())
+    {
+      throw "IOException";
+    }
+    tag_buf[1] = *uc_vec_iter;
+    uc_vec_iter++;
+    std::stringstream ss;
+    ss.str(tag_buf);
+    ss >> std::hex >> tag;
+
     int buf_size;
     long long value;
-    if (*uc_vec_iter == 0xFD)
+    if (tag == 0xFD)
     {
       buf_size = 2;
       value = ReadBytesToLong(buf_size);
     }
-    else if (*uc_vec_iter == 0xFE)
+    else if (tag == 0xFE)
     {
       buf_size = 4;
       value = ReadBytesToLong(buf_size);
     }
-    else if (*uc_vec_iter == 0xFF)
+    else if (tag == 0xFF)
     {
       buf_size = 8;
       value = ReadBytesToLong(buf_size);
@@ -113,7 +130,7 @@ public:
     else
     {
       buf_size = 1;
-      value = ReadBytesToLong(buf_size);
+      value = tag;
     }
     if (value > max)
     {
@@ -122,29 +139,70 @@ public:
     return value;
   }
 
-  unsigned char *readBytes(int count)
+  long long readVarInt()
   {
-    unsigned char *buffer = new unsigned char[count];
-    for (int i = 0; i < count; i++)
+    int buf_size;
+    long long value;
+
+    int tag;
+    int tag_size = 2;
+    char tag_buf[tag_size];
+    tag_buf[0] = *uc_vec_iter;
+    uc_vec_iter++;
+    if (uc_vec_iter == uc_vec.end())
     {
-      if (uc_vec_iter != uc_vec.end())
-      {
-        uc_vec_iter++;
-        buffer[i] = *uc_vec_iter;
-      }
-      else
-      {
-        throw "readBytes Error!";
-      }
+      throw "IOException";
     }
-    return buffer;
+    tag_buf[1] = *uc_vec_iter;
+    uc_vec_iter++;
+    std::stringstream ss;
+    ss.str(tag_buf);
+    ss >> dec >> tag;
+
+    if (tag == 0xFD)
+    {
+      buf_size = 2;
+      value = ReadBytesToLong(buf_size);
+    }
+    else if (tag == 0xFE)
+    {
+      buf_size = 4;
+      value = ReadBytesToLong(buf_size);
+    }
+    else if (tag == 0xFF)
+    {
+      buf_size = 8;
+      value = ReadBytesToLong(buf_size);
+    }
+    else
+    {
+      buf_size = 1;
+      value = tag;
+    }
+    return value;
   }
 
-  long long readVarBytes()
+  std::string readBytes(int count)
   {
-    long long value;
-    value = readVarInt(0X7fffffc7);
-    return value;
+    std::string str;
+    for (int i = 0; i < 2 * count; i++)
+    {
+      if (uc_vec_iter == uc_vec.end())
+      {
+        throw "IOException";
+      }
+      str.push_back(*uc_vec_iter);
+      uc_vec_iter++;
+    }
+    return str;
+  }
+
+  std::string readVarBytes() { return readVarBytes(0X7fffffc7); }
+
+  std::string readVarBytes(int max)
+  {
+    int len = (int)readVarInt(max);
+    return readBytes(len);
   }
 
   float readFloat()
@@ -191,7 +249,7 @@ public:
       uc_vec_iter++;
     }
     int ret;
-        std::stringstream ss;
+    std::stringstream ss;
     ss.str(buf);
     ss >> hex >> ret;
     return ret;
@@ -230,6 +288,21 @@ public:
   {
     std::string str;
     for (int i = 0; i < 64; i++)
+    {
+      if (uc_vec_iter == uc_vec.end())
+      {
+        throw "IOException";
+      }
+      str.push_back(*uc_vec_iter);
+      uc_vec_iter++;
+    }
+    return str;
+  }
+
+  std::string Read5Bytes()
+  {
+    std::string str;
+    for (int i = 0; i < 40; i++)
     {
       if (uc_vec_iter == uc_vec.end())
       {
