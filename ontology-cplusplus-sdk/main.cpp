@@ -1,7 +1,7 @@
 // g++ main.cpp crypto/Sign.cpp crypto/AES.cpp `pkg-config --cflags --libs
 // openssl` -o main &&
 // ./main
-// #include "core/block/Block.h"
+#include "core/block/Block.h"
 #include "crypto/AES.h"
 #include "crypto/Sign.h"
 #include "io/BinaryReader.h"
@@ -363,7 +363,7 @@ void bn_write_read()
   cout << value << endl;
 }
 
-void serialize()
+void deserialize()
 {
   std::string result =
       "00000000c23b936425c51041ac2f69a4950040559baee7aa07ca0404863e3bd4b22c07ca"
@@ -381,28 +381,43 @@ void serialize()
       "38b139973454e562777bcced5fa3b88d097d5c12c2bf26ccbdd386f06746839e692c72c0"
       "1a218e50966c2b79f3742b3801000000000000000000d715abfe62912815000000000000"
       "0000000000";
-  cout << "result:\n"
-       << result << endl;
-  std::vector<unsigned char> tmp_uc_vec;
-  std::string hex_str = boost::algorithm::hex(result);
-  for (int i = 0; i < hex_str.length(); i++)
+  BinaryReader BinRead;
+  BinRead.set_uc_vec(result);
+
+  nlohmann::json block;
+  int version = BinRead.readInt();
+  block["version"] = version;
+  std::string prevBlockHash = BinRead.Read8Bytes();
+  block["PrevBlockHash"] = prevBlockHash;
+  std::string TransactionsRoot = BinRead.Read8Bytes();
+  block["TransactionsRoot"] = TransactionsRoot;
+  std::string BlockRoot = BinRead.Read8Bytes();
+  block["BlockRoot"] = BlockRoot;
+  int Timestamp = BinRead.readInt();
+  block["Timestamp"] = Timestamp;
+  int Height = BinRead.readInt();
+  block["Height"] = Height;
+  long long consensusData = BinRead.readLong();
+  block["consensusData"] = consensusData;
+  std::string nextBookkeeper = BinRead.Read5Bytes();
+  block["nextBookkeeper"] = nextBookkeeper;
+  int len = BinRead.readVarInt();
+  std::vector<std::string> bookkeepers;
+  for (int i = 0; i < len; i++)
   {
-    tmp_uc_vec.push_back(hex_str[i]);
+    bookkeepers.push_back(BinRead.readVarBytes());
   }
-  std::vector<unsigned char>::iterator uc_iter;
-  // print byte by byte
-  for (uc_iter = tmp_uc_vec.begin(); uc_iter != tmp_uc_vec.end(); uc_iter++)
+  block["bookkeepers"] = bookkeepers;
+
+  int sigDataLen = BinRead.readVarInt();
+  std::vector<std::string> sigData;
+  for (int i = 0; i < sigDataLen; i++)
   {
-    cout << *uc_iter << " | ";
+    sigData.push_back(BinRead.readVarBytes());
   }
-  cout << endl;
-  cout << boost::algorithm::hex(result) << endl;
-  BIGNUM *input = BN_new();
-  int input_length = BN_hex2bn(&input, result.c_str());
-  input_length =
-      (input_length + 1) / 2; // BN_hex2bn() returns number of hex digits
-  unsigned char *input_buffer = (unsigned char *)malloc(input_length);
-  int retval = BN_bn2bin(input, input_buffer);
+  block["sigData"] = sigData;
+
+  cout << block << endl;
 }
 
 int main()
@@ -417,6 +432,6 @@ int main()
 
   // bn_write_read();
   nlohmann::json array = {"hello", 1, 2.5, false, true, {1, 2}};
-  serialize();
+  deserialize();
   return 0;
 }
