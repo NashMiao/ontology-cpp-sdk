@@ -1,6 +1,6 @@
 #include "../../io/BinaryReader.h"
 #include "../../io/BinaryWriter.h"
-#include "../../transaction/Transaction.h"
+#include "../transaction/Transaction.h"
 #include <boost/multiprecision/cpp_int.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -71,7 +71,7 @@ public:
     BinRead.set_uc_vec(result);
 
     nlohmann::json block;
-    int version = BinRead.readInt();
+    unsigned int version = BinRead.readInt();
     block["version"] = version;
     std::string prevBlockHash = BinRead.Read8Bytes();
     block["PrevBlockHash"] = prevBlockHash;
@@ -79,15 +79,15 @@ public:
     block["TransactionsRoot"] = TransactionsRoot;
     std::string BlockRoot = BinRead.Read8Bytes();
     block["BlockRoot"] = BlockRoot;
-    int Timestamp = BinRead.readInt();
+    unsigned int Timestamp = BinRead.readInt();
     block["Timestamp"] = Timestamp;
-    int Height = BinRead.readInt();
+    unsigned int Height = BinRead.readInt();
     block["Height"] = Height;
     long long consensusData = BinRead.readLong();
     block["consensusData"] = consensusData;
     std::string nextBookkeeper = BinRead.Read5Bytes();
     block["nextBookkeeper"] = nextBookkeeper;
-    int len = BinRead.readVarInt();
+    unsigned int len = BinRead.readVarInt();
     std::vector<std::string> bookkeepers;
     for (int i = 0; i < len; i++) {
       bookkeepers.push_back(BinRead.readVarBytes());
