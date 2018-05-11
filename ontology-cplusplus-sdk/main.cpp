@@ -1,7 +1,9 @@
 // g++ main.cpp crypto/Sign.cpp crypto/AES.cpp `pkg-config --cflags --libs
 // openssl` -o main &&
 // ./main
+
 #include "core/block/Block.h"
+#include "core/transaction/Transaction.h"
 #include "crypto/AES.h"
 #include "crypto/Sign.h"
 #include "io/BinaryReader.h"
@@ -363,7 +365,6 @@ void bn_write_read()
   cout << value << endl;
 }
 
-
 int main()
 {
   // sign_by_pri_key();
@@ -377,5 +378,11 @@ int main()
   // bn_write_read();
   // nlohmann::json array = {"hello", 1, 2.5, false, true, {1, 2}};
   // deserialize();
+
+  // Block block;
+  // block.deserialize();
+
+  Transaction transaction(InvokeCode);
+  transaction.deserialize();
   return 0;
 }
