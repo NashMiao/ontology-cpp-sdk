@@ -4,16 +4,27 @@
 #include <string>
 #include <list>
 
+#include "Identity.h"
+#include "Account.h"
+
 class Wallet {
     private:
-    std::string name = "com.github.ontio";
-    std::string version = "1.0";
-    std::string createTime = "";
-    std::string defaultOntid = "";
-    std::string defaultAccountAddress = "";
-    Scrypt scrypt = new Scrypt();
-    Object extra = null;
-    std::list<Identity> identities = new ArrayList<Identity>();
-    std::list<Account> accounts = new ArrayList<>();
+    std::string name;
+    std::string version;
+    std::string createTime;
+    std::string defaultOntid;
+    std::string defaultAccountAddress;
+    // Scrypt scrypt;
+    // Object extra;
+    std::list<Identity> identities;
+    std::list<Account> accounts;
+    public:
+    Wallet(){
+        name = "com.github.ontio";
+        version = "1.0";
+        createTime = "";
+        defaultOntid = "";
+        defaultAccountAddress = "";
+    }
 };
 #endif // !WALLET_H
