@@ -5,21 +5,19 @@
 #include "../../io/BinaryReader.h"
 #include "../../io/BinaryWriter.h"
 
-class Fee
-{
+class Fee {
 private:
   long long amount;
   Address payer;
 
 public:
-  Fee(long long &amount, Address &payer)
-  {
+  Fee() { amount = 0; }
+  Fee(long long &amount, Address &payer) {
     amount = amount;
     payer = payer;
   }
 
-  void deserialize(BinaryReader &reader)
-  {
+  void deserialize(BinaryReader &reader) {
     amount = reader.readLong();
     payer.deserialize(reader);
   }
