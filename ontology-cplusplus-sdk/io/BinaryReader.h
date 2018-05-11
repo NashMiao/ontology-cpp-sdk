@@ -110,26 +110,24 @@ public:
     ss.str(tag_buf);
     ss >> std::hex >> tag;
 
-    int buf_size;
     long long value;
     if (tag == 0xFD)
     {
-      buf_size = 2;
+      int buf_size = 2;
       value = ReadBytesToLong(buf_size);
     }
     else if (tag == 0xFE)
     {
-      buf_size = 4;
+      int buf_size = 4;
       value = ReadBytesToLong(buf_size);
     }
     else if (tag == 0xFF)
     {
-      buf_size = 8;
+      int buf_size = 8;
       value = ReadBytesToLong(buf_size);
     }
     else
     {
-      buf_size = 1;
       value = tag;
     }
     if (value > max)
@@ -141,9 +139,6 @@ public:
 
   long long readVarInt()
   {
-    int buf_size;
-    long long value;
-
     int tag;
     int tag_size = 2;
     char tag_buf[tag_size];
@@ -157,29 +152,37 @@ public:
     uc_vec_iter++;
     std::stringstream ss;
     ss.str(tag_buf);
-    ss >> dec >> tag;
-
+    ss >> std::hex >> tag;
+    long long value;
     if (tag == 0xFD)
     {
-      buf_size = 2;
+      int buf_size = 2;
       value = ReadBytesToLong(buf_size);
     }
     else if (tag == 0xFE)
     {
-      buf_size = 4;
+      int buf_size = 4;
       value = ReadBytesToLong(buf_size);
     }
     else if (tag == 0xFF)
     {
-      buf_size = 8;
+      int buf_size = 8;
       value = ReadBytesToLong(buf_size);
     }
     else
     {
-      buf_size = 1;
       value = tag;
     }
     return value;
+  }
+
+  int readByte()
+  {
+    int ret;
+    std::stringstream ss;
+    ss.str(readBytes(1));
+    ss >> std::hex >> ret;
+    return ret;
   }
 
   std::string readBytes(int count)
@@ -225,7 +228,7 @@ public:
     return *ret;
   }
 
-  int readInt()
+  unsigned int readInt()
   {
     char buf[8];
     if (sizeof(int) != 4)
@@ -248,7 +251,7 @@ public:
       buf[7 - i] = *uc_vec_iter;
       uc_vec_iter++;
     }
-    int ret;
+    unsigned int ret;
     std::stringstream ss;
     ss.str(buf);
     ss >> hex >> ret;
