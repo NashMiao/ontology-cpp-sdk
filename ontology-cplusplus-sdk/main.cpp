@@ -363,62 +363,6 @@ void bn_write_read()
   cout << value << endl;
 }
 
-void deserialize()
-{
-  std::string result =
-      "00000000c23b936425c51041ac2f69a4950040559baee7aa07ca0404863e3bd4b22c07ca"
-      "db08cf2f8ea6ff968dec5ce1c7d61ac0a858e775d30508a4432a1745049a99f0f3b013a8"
-      "e7816026d2e1609eca558a30e204337b27bf329bd77001479b5dc90d68fbdf5a01000000"
-      "b841e81a33821b2e021448236ac019300c8beb6b44fabba39942c57b0423120202a76a43"
-      "4b18379e3bda651b7c04e972dadc4760d1156b5c86b3c4d27da48c91a12312020384d843"
-      "c02ecef233d3dd3bc266ee0d1a67cf2a1666dc1b2fb455223efdee745223120203c43f13"
-      "6596ee666416fedb90cde1e0aee59a79ec18ab70e82b73dd297767eddf23120203fab194"
-      "38e18d8a5bebb6cd3ede7650539e024d7cc45c88b95ab13f8266ce95700341014d789755"
-      "d890a9bc36ec4646841ba3bed2dced684e473267e99fc451ed57b5540bd9cdd9770efa27"
-      "43418ee3a0f8c9905e472f35112a99d2058e7a5c201d31ce4101bedd29e05c79b71800b2"
-      "ec67870f5c8497ab150bc811333eaa1d3cf87ae2f3c07e2a979585cd2b17600aaa98b24f"
-      "8dd1eb02dc067b46f6c6bd509e05f4911d6841015088a1dc841dac040134fee1f61247b1"
-      "38b139973454e562777bcced5fa3b88d097d5c12c2bf26ccbdd386f06746839e692c72c0"
-      "1a218e50966c2b79f3742b3801000000000000000000d715abfe62912815000000000000"
-      "0000000000";
-  BinaryReader BinRead;
-  BinRead.set_uc_vec(result);
-
-  nlohmann::json block;
-  int version = BinRead.readInt();
-  block["version"] = version;
-  std::string prevBlockHash = BinRead.Read8Bytes();
-  block["PrevBlockHash"] = prevBlockHash;
-  std::string TransactionsRoot = BinRead.Read8Bytes();
-  block["TransactionsRoot"] = TransactionsRoot;
-  std::string BlockRoot = BinRead.Read8Bytes();
-  block["BlockRoot"] = BlockRoot;
-  int Timestamp = BinRead.readInt();
-  block["Timestamp"] = Timestamp;
-  int Height = BinRead.readInt();
-  block["Height"] = Height;
-  long long consensusData = BinRead.readLong();
-  block["consensusData"] = consensusData;
-  std::string nextBookkeeper = BinRead.Read5Bytes();
-  block["nextBookkeeper"] = nextBookkeeper;
-  int len = BinRead.readVarInt();
-  std::vector<std::string> bookkeepers;
-  for (int i = 0; i < len; i++)
-  {
-    bookkeepers.push_back(BinRead.readVarBytes());
-  }
-  block["bookkeepers"] = bookkeepers;
-
-  int sigDataLen = BinRead.readVarInt();
-  std::vector<std::string> sigData;
-  for (int i = 0; i < sigDataLen; i++)
-  {
-    sigData.push_back(BinRead.readVarBytes());
-  }
-  block["sigData"] = sigData;
-
-  cout << block << endl;
-}
 
 int main()
 {
@@ -431,7 +375,7 @@ int main()
   // exportCtrEncryptedPrikey(passphrase, 16384);
 
   // bn_write_read();
-  nlohmann::json array = {"hello", 1, 2.5, false, true, {1, 2}};
-  deserialize();
+  // nlohmann::json array = {"hello", 1, 2.5, false, true, {1, 2}};
+  // deserialize();
   return 0;
 }
