@@ -6,12 +6,8 @@
 #include "core/transaction/Transaction.h"
 #include "crypto/AES.h"
 #include "crypto/Sign.h"
-#include "io/BinaryReader.h"
-#include "io/BinaryWriter.h"
 #include <boost/algorithm/hex.hpp>
-#include <nlohmann/json.hpp>
 #include <openssl/kdf.h>
-#include <vector>
 
 void sign_by_set_pub_pri()
 {
