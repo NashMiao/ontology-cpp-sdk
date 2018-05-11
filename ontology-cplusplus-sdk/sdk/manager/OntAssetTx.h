@@ -2,11 +2,12 @@
 #define ONTASSETTX_H
 
 #include <string>
+#include "../../OntSdk.h"
 
 class OntAssetTx
 {
   private:
-    // OntSdk sdk;
+    OntSdk sdk;
     std::string ontContract;
     std::string ongContract;
     int precision;
