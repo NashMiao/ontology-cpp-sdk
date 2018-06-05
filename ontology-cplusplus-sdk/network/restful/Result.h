@@ -1,7 +1,6 @@
 #ifndef RESULT_H
 #define RESULT_H
 
-#include <boost/any.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 
