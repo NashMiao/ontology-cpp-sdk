@@ -6,11 +6,11 @@
 #include "core/transaction/Transaction.h"
 #include "crypto/AES.h"
 #include "crypto/Sign.h"
+#include "network/restful/Result.h"
 #include <boost/algorithm/hex.hpp>
 #include <openssl/kdf.h>
 
-void sign_by_set_pub_pri()
-{
+void sign_by_set_pub_pri() {
   Sign ec_sign;
   ec_sign.EC_init();
   CurveName curve_name = p256;
@@ -36,16 +36,12 @@ void sign_by_set_pub_pri()
   std::string msg = "Hello world!";
   std::string str_sign_dgst;
   ec_sign.EC_sign(msg, str_sign_dgst);
-  cout << "msg:\n"
-       << msg << endl
-       << "str_sig_dgst:\n"
-       << str_sign_dgst << endl;
+  cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst << endl;
   ret = ec_sign.EC_veri(msg, str_sign_dgst);
   cout << "ret: " << ret << endl;
 }
 
-void sign_by_gen_key()
-{
+void sign_by_gen_key() {
   Sign ec_sign;
   ec_sign.EC_init();
   ec_sign.ECDSA_key_generate();
@@ -61,17 +57,13 @@ void sign_by_gen_key()
   std::string msg = "Hello world!";
   std::string str_sign_dgst;
   ec_sign.EC_sign(msg, str_sign_dgst);
-  cout << "msg:\n"
-       << msg << endl
-       << "str_sig_dgst:\n"
-       << str_sign_dgst << endl;
+  cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst << endl;
   bool ret;
   ret = ec_sign.EC_veri(msg, str_sign_dgst);
   cout << "ret: " << ret << endl;
 }
 
-void sign_by_pri_key()
-{
+void sign_by_pri_key() {
   Sign ec_sign;
   CurveName curve_name = p256;
   ec_sign.EC_init();
@@ -97,21 +89,16 @@ void sign_by_pri_key()
   std::string msg = "Hello world!";
   std::string str_sign_dgst;
   ec_sign.EC_sign(msg, str_sign_dgst);
-  cout << "msg:\n"
-       << msg << endl
-       << "str_sig_dgst:\n"
-       << str_sign_dgst << endl;
+  cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst << endl;
   ret = ec_sign.EC_veri(msg, str_sign_dgst);
   cout << "ret: " << ret << endl;
 }
 
-std::string hexStr(unsigned char *data, int len)
-{
+std::string hexStr(unsigned char *data, int len) {
   char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
   std::string s(len * 2, ' ');
-  for (int i = 0; i < len; ++i)
-  {
+  for (int i = 0; i < len; ++i) {
     s[2 * i] = hexmap[(data[i] & 0xF0) >> 4];
     s[2 * i + 1] = hexmap[data[i] & 0x0F];
   }
@@ -132,15 +119,13 @@ std::string hexStr(unsigned char *data, int len)
 //   cout << "dec_msg:\n" << dec_msg << endl;
 // }
 
-char *Base64Encode(const char *input, int length, bool with_new_line)
-{
+char *Base64Encode(const char *input, int length, bool with_new_line) {
   BIO *bmem = NULL;
   BIO *b64 = NULL;
   BUF_MEM *bptr = NULL;
 
   b64 = BIO_new(BIO_f_base64());
-  if (!with_new_line)
-  {
+  if (!with_new_line) {
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
   }
   bmem = BIO_new(BIO_s_mem());
@@ -158,16 +143,14 @@ char *Base64Encode(const char *input, int length, bool with_new_line)
   return buff;
 }
 
-char *Base64Decode(char *input, int length, bool with_new_line)
-{
+char *Base64Decode(char *input, int length, bool with_new_line) {
   BIO *b64 = NULL;
   BIO *bmem = NULL;
   char *buffer = (char *)malloc(length);
   memset(buffer, 0, length);
 
   b64 = BIO_new(BIO_f_base64());
-  if (!with_new_line)
-  {
+  if (!with_new_line) {
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
   }
   bmem = BIO_new_mem_buf(input, length);
@@ -179,12 +162,11 @@ char *Base64Decode(char *input, int length, bool with_new_line)
   return buffer;
 }
 
-char *base64(const unsigned char *inputBuffer, int inputLen)
-{
+char *base64(const unsigned char *inputBuffer, int inputLen) {
   EVP_ENCODE_CTX *ctx;
   ctx = EVP_ENCODE_CTX_new();
   int base64Len = (((inputLen + 2) / 3) * 4) + 1; // Base64 text length
-  int pemLen = base64Len + base64Len / 64;        // PEM adds a newline every 64 bytes
+  int pemLen = base64Len + base64Len / 64; // PEM adds a newline every 64 bytes
   char *base64 = new char[pemLen];
   int result;
   EVP_EncodeInit(ctx);
@@ -194,8 +176,7 @@ char *base64(const unsigned char *inputBuffer, int inputLen)
   return base64;
 }
 
-unsigned char *unbase64(char *input, int length, int *outLen)
-{
+unsigned char *unbase64(char *input, int length, int *outLen) {
   EVP_ENCODE_CTX *ctx;
   ctx = EVP_ENCODE_CTX_new();
   int orgLen = (((length + 2) / 4) * 3) + 1;
@@ -210,8 +191,7 @@ unsigned char *unbase64(char *input, int length, int *outLen)
   return orgBuf;
 }
 
-std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
-{
+std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
   int N = n;
   int r = 8;
   int p = 8;
@@ -226,42 +206,33 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   size_t outlen = sizeof(derivedkey);
   pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
 
-  if (EVP_PKEY_derive_init(pctx) <= 0)
-  {
+  if (EVP_PKEY_derive_init(pctx) <= 0) {
     return NULL;
   }
   if (EVP_PKEY_CTX_set1_pbe_pass(pctx, passphrase.c_str(),
-                                 passphrase.length()) <= 0)
-  {
+                                 passphrase.length()) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0)
-  {
+  if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_N(pctx, n) <= 0)
-  {
+  if (EVP_PKEY_CTX_set_scrypt_N(pctx, n) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0)
-  {
+  if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0)
-  {
+  if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0)
-  {
+  if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0) {
     return NULL;
   }
 
   std::string hex_derivedkey;
   hex_derivedkey = hexStr(derivedkey, outlen);
-  cout << hex_derivedkey << endl
-       << hex_derivedkey.length() << endl;
-  if (hex_derivedkey.empty())
-  {
+  cout << hex_derivedkey << endl << hex_derivedkey.length() << endl;
+  if (hex_derivedkey.empty()) {
     return NULL;
   }
 
@@ -277,12 +248,8 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   memcpy(uc_iv, &derivedkey[0], AES_BLOCK_SIZE * sizeof(unsigned char));
   memcpy(uc_key, &derivedkey[32], AES_256_KEY_SIZE * sizeof(unsigned char));
 
-  cout << "uc_iv:\n"
-       << hexStr(uc_iv, 16) << endl
-       << sizeof(uc_iv) << endl;
-  cout << "uc_key:\n"
-       << hexStr(uc_key, 32) << endl
-       << sizeof(uc_key) << endl;
+  cout << "uc_iv:\n" << hexStr(uc_iv, 16) << endl << sizeof(uc_iv) << endl;
+  cout << "uc_key:\n" << hexStr(uc_key, 32) << endl << sizeof(uc_key) << endl;
 
   AES aes;
 
@@ -293,8 +260,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
       0x1d, 0xbb, 0x5d, 0x39, 0x8d, 0xfa, 0x6c, 0x85, 0xaa, 0xad, 0x54,
       0xfc, 0x9d, 0x71, 0x20, 0x3c, 0xe8, 0x3e, 0x50, 0x5c, 0x07};
 
-  cout << "uc_private_key:\n"
-       << hexStr(uc_private_key, 32) << endl;
+  cout << "uc_private_key:\n" << hexStr(uc_private_key, 32) << endl;
   // cout << "uc_private_key:\n"
   //      << uc_private_key << endl
   //      << sizeof(uc_private_key) << endl;
@@ -303,16 +269,13 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   // std::string(reinterpret_cast<char *>(uc_private_key));
   // std::string enc_private_key;
 
-  cout << "aes.get_iv():\n"
-       << hexStr(aes.get_iv(), 16) << endl;
-  cout << "aes.get_key():\n"
-       << hexStr(aes.get_key(), 32) << endl;
+  cout << "aes.get_iv():\n" << hexStr(aes.get_iv(), 16) << endl;
+  cout << "aes.get_key():\n" << hexStr(aes.get_key(), 32) << endl;
 
   int enc_private_key_sz = 32;
   unsigned char *enc_private_key = new unsigned char(enc_private_key_sz);
   aes.auth_encry(uc_private_key, enc_private_key);
-  cout << "enc_private_key:\n"
-       << enc_private_key << endl;
+  cout << "enc_private_key:\n" << enc_private_key << endl;
   string str_enc_private_key;
   // str_enc_private_key = hexStr(enc_private_key, 48);
   // cout << "str_enc_private_key:\n" << str_enc_private_key << endl;
@@ -326,8 +289,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   int o_l;
   unsigned char *uc_tset_key = unbase64(test_key, 45, &o_l);
 
-  cout << "test_key:\n"
-       << unbase64(test_key, 45, &o_l) << endl;
+  cout << "test_key:\n" << unbase64(test_key, 45, &o_l) << endl;
 
   cout << hexStr(enc_private_key, 48) << endl;
   cout << hexStr(uc_tset_key, 48) << endl;
@@ -337,8 +299,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   return "test";
 }
 
-void bn_write_read()
-{
+void bn_write_read() {
   // std::ofstream outfile;
   // outfile.open("outfile.txt");
   // if (!outfile.is_open()) {
@@ -361,8 +322,30 @@ void bn_write_read()
   cout << value << endl;
 }
 
-int main()
-{
+void test_Result_ssrst() {
+  Result test_result;
+  test_result.result.Action = std::string("action");
+  test_result.result.Error = 123456789;
+  test_result.result.Desc = std::string("desc");
+  test_result.result.Version = std::string("version");
+  test_result.result.Result = std::string("result");
+  cout << "test_result.toString():\n" << test_result.toString() << endl;
+}
+
+void test_Result_jsrst() {
+  Result test_result;
+  test_result.result.Action = std::string("action");
+  test_result.result.Error = 123456789;
+  test_result.result.Desc = std::string("desc");
+  test_result.result.Version = std::string("version");
+  nlohmann::json rst;
+  rst["GasPrice"] = 1;
+  rst["GasLimit"] = 2;
+  test_result.result.Result = std::string(rst.dump());
+  cout << "test_result.toString():\n" << test_result.toString() << endl;
+}
+
+int main() {
   // sign_by_pri_key();
   // sign_by_set_pub_pri();
   // sign_by_gen_key();
@@ -378,7 +361,9 @@ int main()
   // Block block;
   // block.deserialize();
 
-  Transaction transaction(InvokeCode);
-  transaction.deserialize();
+  // Transaction transaction(InvokeCode);
+  // transaction.deserialize();
+  test_Result_ssrst();
+  test_Result_jsrst();
   return 0;
 }
