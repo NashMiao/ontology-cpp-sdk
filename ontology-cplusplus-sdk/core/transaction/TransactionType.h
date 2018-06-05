@@ -7,8 +7,7 @@
 /**
  * list transaction types
  */
-enum TransactionType
-{
+enum TransactionType {
   Bookkeeping = 0x00,
   Bookkeeper = 0x02,
   Claim = 0x03,
@@ -18,12 +17,10 @@ enum TransactionType
   InvokeCode = 0xd1,
 };
 
-TransactionType TxTypeDeserialize(BinaryReader &reader)
-{
+TransactionType TxTypeDeserialize(BinaryReader &reader) {
   TransactionType TxType;
   int val = reader.readByte();
-  switch (val)
-  {
+  switch (val) {
   case 0x00:
     TxType = Bookkeeping;
     break;

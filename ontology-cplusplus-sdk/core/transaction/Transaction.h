@@ -9,11 +9,12 @@
 
 #include <vector>
 
-class Transaction
-{
+class Transaction {
 private:
   unsigned int version;
   TransactionType txType;
+  long long gasPrice = 0;
+  long long gasLimit = 0;
   int nonce;
   std::vector<Attribute> attributes;
   std::vector<Fee> fee;
@@ -21,8 +22,7 @@ private:
   std::vector<Sig> sigs;
 
 public:
-  Transaction(TransactionType type)
-  {
+  Transaction(TransactionType type) {
     // int nonce = new Random().nextInt();
     // Fee[] fee = new Fee[0];
     // Sig[] sigs = new Sig[0];
@@ -44,8 +44,7 @@ public:
   //        << Result << endl;
   // }
 
-  void deserialize()
-  {
+  void deserialize() {
     std::string result =
         "00d1ee68fdec0000000000000000807d67000080b0cc71bda8653599c5666cae084bff"
         "587e2de10064231202032fac97c3c721c437fe310b5d8e075c6e925d2de59d0713078a"
@@ -57,43 +56,38 @@ public:
         "8a835081a67601a7bc0b9bd3";
     BinaryReader reader;
     reader.set_uc_vec(result);
-
     deserializeUnsigned(reader);
-    int sign_len = (int)reader.readVarInt(0x10000000);
-    for (int i = 0; i < sign_len; i++)
-    {
-      Sig t_sig;
-      t_sig.deserialize(reader);
-      sigs.push_back(t_sig);
+    try {
+      reader.readSerializableArray(sigs);
+    } catch (const char *e) {
+      cerr << e << endl;
     }
   }
 
-  void deserializeUnsigned(BinaryReader &reader)
-  {
+  void deserializeUnsigned(BinaryReader &reader) {
     version = reader.readByte();
-    TransactionType t_txtype;
-    t_txtype = TxTypeDeserialize(reader);
-    if (txType != t_txtype)
-    {
+    cout << "version: " << version << endl;
+    if (txType != reader.readByte()) {
       throw "IOException";
     }
+    cout << "t_txtype: " << txType << endl;
+    gasPrice = reader.readLong();
+    gasLimit = reader.readLong();
+    cout << "gasPrice: " << gasPrice << endl;
+    cout << "gasLimit: " << gasLimit << endl;
+    // try{
+      
+    // }
     deserializeUnsignedWithoutType(reader);
   }
 
-  void deserializeUnsignedWithoutType(BinaryReader &reader)
-  {
+  void deserializeUnsignedWithoutType(BinaryReader &reader) {
     deserializeExclusiveData(reader);
-    int vec_len = (int)reader.readVarInt(0x10000000);
-    for (int i = 0; i < vec_len; i++)
-    {
-      Attribute t_attr;
-      t_attr.deserialize(reader);
-      attributes.push_back(t_attr);
-    }
+    reader.readSerializableArray(attributes);
 
     int fee_len = (int)reader.readVarInt();
-    for (int i = 0; i < fee_len; i++)
-    {
+    cout << "fee_len: " << fee_len << endl;
+    for (int i = 0; i < fee_len; i++) {
       Fee t_fee;
       t_fee.deserialize(reader);
       fee.push_back(t_fee);
@@ -103,4 +97,4 @@ public:
 
   void deserializeExclusiveData(BinaryReader &reader) {}
 };
-#endif //  TRANSACTION_H
+#endif // TRANSACTION_H
