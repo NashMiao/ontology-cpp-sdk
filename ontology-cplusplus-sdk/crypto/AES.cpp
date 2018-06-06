@@ -107,7 +107,6 @@ bool AES::auth_encry(const unsigned char *msg, unsigned char *enc_msg) {
 }
 
 bool AES::auth_decry(std::string msg, std::string &dec_msg) {
-  int is_encrypt = 0;
   /* Allow enough space in output buffer for additional block */
   int cipher_block_size = EVP_CIPHER_block_size(params->cipher_type);
 
