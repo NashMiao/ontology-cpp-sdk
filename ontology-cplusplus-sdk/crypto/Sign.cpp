@@ -303,9 +303,10 @@ bool Sign::EC_set_private_key(const string &str_private_key,
 bool Sign::EC_set_key(const string &str_public_key,
                       const string &str_private_key, CurveName curve_nid) {
   bool ret;
-  EC_set_public_key(str_public_key, curve_nid);
-  EC_set_private_key(str_private_key, curve_nid);
-  EVP_PKEY_assign_EC_KEY(key, ec_key);
+  ret = EC_set_public_key(str_public_key, curve_nid);
+  ret = ret && EC_set_private_key(str_private_key, curve_nid);
+  ret = ret && EVP_PKEY_assign_EC_KEY(key, ec_key);
+  return ret;
 }
 
 bool Sign::EC_get_pubkey_by_prikey(const string &str_private_key,
