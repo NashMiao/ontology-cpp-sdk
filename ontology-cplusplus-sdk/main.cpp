@@ -7,6 +7,7 @@
 #include "crypto/AES.h"
 #include "crypto/Sign.h"
 #include "network/restful/Result.h"
+#include "network/restful/http.h"
 #include <boost/algorithm/hex.hpp>
 #include <openssl/kdf.h>
 
@@ -216,7 +217,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
   if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_N(pctx, n) <= 0) {
+  if (EVP_PKEY_CTX_set_scrypt_N(pctx, N) <= 0) {
     return NULL;
   }
   if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0) {
@@ -345,6 +346,16 @@ void test_Result_jsrst() {
   cout << "test_result.toString():\n" << test_result.toString() << endl;
 }
 
+void test_http() {
+  Http http;
+  std::string url = "http://jsonplaceholder.typicode.com/posts";
+  std::string response;
+  CURLcode res;
+  res=http.curl_get_req(url, response, false);
+  cout << res << endl;
+  cout << response << endl;
+}
+
 int main() {
   // sign_by_pri_key();
   // sign_by_set_pub_pri();
@@ -363,7 +374,8 @@ int main() {
 
   // Transaction transaction(InvokeCode);
   // transaction.deserialize();
-  test_Result_ssrst();
-  test_Result_jsrst();
-  return 0;
+
+  // test_Result_ssrst();
+  // test_Result_jsrst();
+  test_http();
 }
