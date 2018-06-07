@@ -1,10 +1,12 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+#include <string>
 #include <curl/curl.h>
 #include <iostream>
-#include <string>
+#include <nlohmann/json.hpp>
 #include <unordered_map>
+
 using namespace std;
 
 class Http {
@@ -145,7 +147,17 @@ public:
     return response_body;
   }
 
-  std::string bodyToJSONString(std::unordered_map<std::string, std::string>) {}
+  std::string
+  ToJSONString(std::unordered_map<std::string, std::string> uord_map) {
+    std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
+    nlohmann::json json_uord_map;
+    for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();
+         uord_map_it++) {
+      json_uord_map[uord_map_it->first] = uord_map_it->second;
+    }
+    std::string str_uord_map = json_uord_map.dump();
+    return str_uord_map;
+  }
 
   std::string post(std::string url,
                    std::unordered_map<std::string, std::string> params,
@@ -154,10 +166,10 @@ public:
     try {
       if (url.substr(0, 5) == "https") {
         response_body = curl_post_set_body(url, cvtParams(params),
-                                           bodyToJSONString(body), true);
+                                           ToJSONString(body), true);
       } else {
         response_body = curl_post_set_body(url, cvtParams(params),
-                                           bodyToJSONString(body), false);
+                                           ToJSONString(body), false);
       }
     } catch (const char *e) {
       std::cerr << e << std::endl;
