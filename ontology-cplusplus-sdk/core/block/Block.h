@@ -87,7 +87,7 @@ public:
     block["consensusData"] = consensusData;
     std::string nextBookkeeper = BinRead.Read5Bytes();
     block["nextBookkeeper"] = nextBookkeeper;
-    unsigned int len = BinRead.readVarInt();
+    int len = BinRead.readVarInt();
     std::vector<std::string> bookkeepers;
     for (int i = 0; i < len; i++) {
       bookkeepers.push_back(BinRead.readVarBytes());
