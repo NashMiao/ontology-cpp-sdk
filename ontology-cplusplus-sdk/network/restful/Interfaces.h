@@ -1,6 +1,8 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
+#include "UrlConsts.h"
+#include "http.h"
 #include <string>
 #include <unordered_map>
 
@@ -25,6 +27,12 @@ public:
     body.insert({"Action", action});
     body.insert({"Version", version});
     body.insert({"Data", data});
+    try {
+      Http http;
+      UrlConsts urlconsts;
+      http.post(url + urlconsts.Url_send_transaction, params, body);
+      
+    }
   }
 };
 
