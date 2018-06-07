@@ -2,7 +2,9 @@
 #define HTTP_H
 
 #include <curl/curl.h>
+#include <iostream>
 #include <string>
+#include <unordered_map>
 using namespace std;
 
 class Http {
@@ -11,6 +13,29 @@ private:
                               void *userp) {
     ((std::string *)userp)->append((char *)contents, size * nmemb);
     return size * nmemb;
+  }
+
+  std::string cvtParams(std::unordered_map<std::string, std::string> params) {
+    if (params.empty()) {
+      return "";
+    }
+    std::string str = "?";
+    CURL *curl = curl_easy_init();
+    if (curl) {
+      std::unordered_map<std::string, std::string>::const_iterator params_it;
+      for (params_it = params.cbegin(); params_it != params.cend();
+           params_it++) {
+        std::string key = params_it->first;
+        std::string value = params_it->second;
+        if (!value.empty()) {
+          value = std::string(
+              curl_easy_escape(curl, value.c_str(), value.length()));
+        }
+        str.append("&").append(key).append("=").append(value);
+      }
+      curl_easy_cleanup(curl);
+    }
+    return str;
   }
 
 public:
@@ -66,13 +91,13 @@ public:
   }
 
   // http POST
-  CURLcode curl_post_body(const string &url, const string &postParams,
-                          string &response_body, bool is_https) {
+  std::string curl_post_set_body(const std::string &url,
+                                 const std::string &postParams,
+                                 const std::string &post_body, bool is_https) {
     // init curl
     CURL *curl = curl_easy_init();
     std::string response_write;
     std::string response_head;
-    response_body.clear();
     // res code
     CURLcode res;
     if (curl) {
@@ -102,6 +127,7 @@ public:
       curl_easy_setopt(curl, CURLOPT_HEADER, 1);
       curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10000);
       curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10000);
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_body.c_str());
       res = curl_easy_perform(curl);
       if (res != CURLE_OK) {
         std::string err_str = "curl_easy_perform() failed: ";
@@ -111,11 +137,32 @@ public:
     } else {
       throw "curl_easy_init() failed.";
     }
+    std::string response_body;
     response_body =
         response_write.substr(response_head.size(), response_write.size());
     // release curl
     curl_easy_cleanup(curl);
-    return res;
+    return response_body;
+  }
+
+  std::string bodyToJSONString(std::unordered_map<std::string, std::string>) {}
+
+  std::string post(std::string url,
+                   std::unordered_map<std::string, std::string> params,
+                   std::unordered_map<std::string, std::string> body) {
+    std::string response_body;
+    try {
+      if (url.substr(0, 5) == "https") {
+        response_body = curl_post_set_body(url, cvtParams(params),
+                                           bodyToJSONString(body), true);
+      } else {
+        response_body = curl_post_set_body(url, cvtParams(params),
+                                           bodyToJSONString(body), false);
+      }
+    } catch (const char *e) {
+      std::cerr << e << std::endl;
+    }
+    return response_body;
   }
 };
 #endif
