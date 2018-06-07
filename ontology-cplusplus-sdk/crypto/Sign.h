@@ -12,8 +12,11 @@
 
 #include <cstring>
 #include <iostream>
+#include <vector>
 #include <stdio.h>
 #include <string>
+
+#include "../io/BinaryReader.h"
 
 using namespace std;
 
@@ -73,7 +76,6 @@ public:
                SignatureScheme sign_scheme = SHA256withECDSA);
   bool EC_veri(const std::string &msg, std::string &str_sign_dgst,
                SignatureScheme sign_scheme = SHA256withECDSA);
-
   // bool SM_sign(const std::string &msg, std::string str_sign_dgst,
   //              SignatureScheme sign_scheme = SM3withSM2);
 };
