@@ -11,9 +11,10 @@ VmType valueOf(unsigned char v) {
     break;
   case 0x80:
     ret = NEOVM;
-  case 0x90:
-    ret = WASMVM;
     break;
+  case 0x90:
+      ret = WASMVM;
+      break;
   default:
     throw "IllegalArgumentException";
   }
