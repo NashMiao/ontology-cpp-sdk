@@ -30,6 +30,8 @@ public:
     txType = type;
   }
 
+  Transaction(TransactionType type)
+
   // void json_out()
   // {
   //   nlohmann::json Result;
@@ -96,5 +98,6 @@ public:
   }
 
   void deserializeExclusiveData(BinaryReader &reader) {}
+
 };
 #endif // TRANSACTION_H

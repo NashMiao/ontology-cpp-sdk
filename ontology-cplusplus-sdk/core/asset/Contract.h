@@ -18,7 +18,7 @@ private:
 
 public:
   Contract() {}
-  Contract(unsigned char _version, std::vector<unsigned char> &_code,
+  Contract(unsigned char _version,const std::vector<unsigned char> &_code,
            const Address &_constracHash, const std::string &_method,
            const std::vector<unsigned char> &_args) {
     version = version;
