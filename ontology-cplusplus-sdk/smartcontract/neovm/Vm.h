@@ -2,6 +2,7 @@
 #define VM_H
 
 #include "../../OntSdk.h"
+#include "../../core/VmType.h"
 #include <string>
 #include <vector>
 
@@ -19,38 +20,40 @@ public:
     contractAddress = codeHash;
   }
   std::string getCodeAddress() { return contractAddress; }
-  // TODO:
-  // InvokeCode makeInvokeCodeTransaction(std::string codeAddr, std::string method,
-  //                                      std::vector<unsigned char> params, byte vmtype, String payer,
-  //                                      long gaslimit,
-  //                                      long gasprice){
-  //   if (vmtype == VmType.NEOVM.value()) {
-  //     Contract contract =
-  //         new Contract((byte)0, null, Address.parse(codeAddr), "", params);
-  //     params = Helper.addBytes(new byte[]{0x67}, contract.toArray());
-  //   } else if (vmtype == VmType.WASMVM.value()) {
-  //     Contract contract =
-  //         new Contract((byte)1, null, Address.parse(codeAddr), method, params);
-  //     params = contract.toArray();
-  //   } else if (vmtype == VmType.Native.value()) {
-  //     Contract contract =
-  //         new Contract((byte)0, null, Address.parse(codeAddr), method, params);
-  //     params = contract.toArray();
-  //   }
-  //   InvokeCode tx = new InvokeCode();
-  //   tx.attributes = new Attribute[1];
-  //   tx.attributes[0] = new Attribute();
-  //   tx.attributes[0].usage = AttributeUsage.Nonce;
-  //   tx.attributes[0].data = UUID.randomUUID().toString().getBytes();
-  //   tx.code = params;
-  //   tx.gasLimit = gaslimit;
-  //   tx.gasPrice = gasprice;
-  //   if (payer != null) {
-  //     tx.payer = Address.decodeBase58(payer.replace(Common.didont, ""));
-  //   }
+  InvokeCode makeInvokeCodeTransaction(std::string codeAddr, std::string method,
+                                       std::vector<unsigned char> params,
+                                       unsigned char vmtype, String payer,
+                                       long gaslimit, long gasprice) {
+    std::vector<unsigned char> _code;
+    if (vmtype == NEOVM) {
+      Contract contract = new Contract((unsigned char)0, _code,
+                                       Address.parse(codeAddr), "", params);
+      params = Helper.addBytes(new unsigned char[]{0x67}, contract.toArray());
+    } else if (vmtype == WASMVM) {
+      Contract contract = new Contract((unsigned char)1, _code,
+                                       Address.parse(codeAddr), method, params);
+      params = contract.toArray();
+    } else if (vmtype == Native) {
+      Contract contract = new Contract((unsigned char)0, _code,
+                                       Address.parse(codeAddr), method, params);
+      params = contract.toArray();
+    } else {
+      throw "IllegalArgumentException";
+    }
+    InvokeCode tx = new InvokeCode();
+    tx.attributes = new Attribute[1];
+    tx.attributes[0] = new Attribute();
+    tx.attributes[0].usage = AttributeUsage.Nonce;
+    tx.attributes[0].data = UUID.randomUUID().toString().getBytes();
+    tx.code = params;
+    tx.gasLimit = gaslimit;
+    tx.gasPrice = gasprice;
+    if (payer != NULL) {
+      tx.payer = Address.decodeBase58(payer.replace(Common.didont, ""));
+    }
 
-  // //   tx.vmType = vmtype;
-  //   return tx;
-  // }
+    //   tx.vmType = vmtype;
+    return tx;
+  }
 };
 #endif

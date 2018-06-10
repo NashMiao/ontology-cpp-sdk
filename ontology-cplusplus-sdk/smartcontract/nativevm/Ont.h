@@ -2,8 +2,8 @@
 #define ONT_H
 
 #include "../../OntSdk.h"
-#include "../../core/transaction/Transaction.h"
 #include "../../core/asset/State.h"
+#include "../../core/transaction/Transaction.h"
 #include <string>
 
 class Ont {
@@ -36,12 +36,10 @@ public:
     helper.DecodeBase58(sender, sender_vchRet);
     helper.DecodeBase58(sender, recvAddr_vchRet);
     State state(Address(sender_vchRet), Address(recvAddr_vchRet), amount);
-    Transfers transfers = new Transfers(state);
-    Transaction tx = new Transaction();
-    // TODO:
-    // Transaction tx = sdk.vm().makeInvokeCodeTransaction(
-    //     ontContract, "transfer", transfers.toArray(), VmType.Native.value(),
-    //     payer, gaslimit, gasprice);
+    Transfers transfers = Transfers(state);
+    Transaction tx = makeInvokeCodeTransaction(
+        ontContract, "transfer", transfers.toArray(), VmType.Native.value(),
+        payer, gaslimit, gasprice);
     return tx;
   }
 };
