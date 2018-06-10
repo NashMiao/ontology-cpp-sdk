@@ -2,6 +2,9 @@
 #define MAKETXWITHOUTWALLETDEMO_H
 
 #include "../account/Account.h"
+#include "../common/Address.h"
+#include "../core/transaction/Transaction.h"
+#include "../smartcontract/nativevm/Ont.h"
 #include <string>
 
 class MakeTxWithoutWalletDemo {
@@ -25,6 +28,15 @@ public:
   std::string privatekey9 =
       "1383ed1fe570b6673351f1a30a66b21204918ef8f673e864769fa2a653401114";
   std::string ontContractAddr = "ff00000000000000000000000000000000000001";
-};
 
+  void transer() {
+    Address sender;
+    sender.set_zero(std::string("TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq"));
+    Address recvAddr;
+    recvAddr.set_zero(std::string("TA5SgQXTeKWyN4GNfWGoXqioEQ4eCDFMqE"));
+    long long amount = 1000;
+    Ont ont;
+    Transaction tx = ont.makeTransfer(sender, recvAddr, amount, sender, 30000, 0);
+  }
+};
 #endif
