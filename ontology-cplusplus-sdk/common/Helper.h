@@ -2,9 +2,9 @@
 #define HELPER_H
 
 #include <assert.h>
-#include <string.h>
 #include <iomanip>
 #include <sstream>
+#include <string.h>
 #include <string>
 #include <vector>
 
@@ -40,6 +40,23 @@ public:
              << std::hex << (unsigned int)*value_cit;
     }
     return stream.str();
+  }
+
+  std::vector<unsigned char> hexToBytes(std::string value) {
+    std::vector<unsigned char> ret_vec;
+    if (value.empty()) {
+      return ret_vec;
+    }
+    int len = value.length();
+    if (len % 2 == 1) {
+      throw "IllegalArgumentException";
+    }
+    len /= 2;
+    for (int i = 0; i < len; i += 2) {
+      ret_vec.push_back(
+          (((unsigned char)value[i] << 4) && (unsigned char)value[i + 1]));
+    }
+    return ret_vec;
   }
 
   bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {

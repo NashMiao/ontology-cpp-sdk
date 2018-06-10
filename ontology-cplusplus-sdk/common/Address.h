@@ -7,8 +7,7 @@
 #include <string>
 #include <vector>
 
-class Address
-{
+class Address {
 private:
   constexpr std::size_t zero_size;
   std::vector<unsigned char> ZERO;
@@ -16,39 +15,46 @@ private:
   unsigned char COIN_VERSIO_NEO;
 
 public:
-  Address()
-  {
+  Address() {
     zero_size = 20;
     ZERO.reserve(zero_size);
     COIN_VERSION_ONT = 0x41;
     COIN_VERSIO_NEO = 0x17;
   }
 
-  Address(const std::vector<unsigned char> &_zero)
-  {
+  Address(const std::vector<unsigned char> &_zero) {
     zero_size = 20;
     ZERO.reserve(zero_size);
-    if (_zero.size() != zero_size)
-    {
+    if (_zero.size() != zero_size) {
       throw "Address Error: zero size error!"
     }
     ZERO = _zero;
   }
 
-  void set_zero(std::string str_zero)
-  {
+  void set_zero(std::string str_zero) {
     memcpy(ZERO, (unsigned char *)str_zero.c_str(), 20);
   }
 
-  void deserialize(BinaryReader &reader)
-  {
+  Address parse(std::string value) {
+    if (value.empty()) {
+      throw "NullPointerException";
+    }
+    if (value.substr(0, 2) == "0x") {
+      value = value.substr(2);
+    }
+    if(value.length()!=40){
+      throw "IllegalArgumentException";
+    }
+    
+  }
+
+  void deserialize(BinaryReader &reader) {
     std::string str;
     str = reader.readVarBytes();
     memcpy(ZERO, (unsigned char *)str.c_str(), 20);
   }
 
-  std::string toHexString()
-  {
+  std::string toHexString() {
     std::vector<unsigned char> value;
     Helper helper;
     return helper.toHexString(value);
