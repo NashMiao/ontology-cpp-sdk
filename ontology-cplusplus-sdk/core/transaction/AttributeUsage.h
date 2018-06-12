@@ -1,7 +1,7 @@
 #ifndef ATTRIBUTEUSAGE_H
 #define ATTRIBUTEUSAGE_H
 
-enum AttributeUsage {
+enum class AttributeUsage {
   Nonce = 0x00,
   Script = 0x20,
   DescriptionUrl = 0x81,
@@ -12,16 +12,16 @@ AttributeUsage valueOf(int v) {
   AttributeUsage ret;
   switch (v) {
   case 0x00:
-    ret = Nonce;
+    ret = AttributeUsage::Nonce;
     break;
   case 0x20:
-    ret = Script;
+    ret = AttributeUsage::Script;
     break;
   case 0x81:
-    ret = DescriptionUrl;
+    ret = AttributeUsage::DescriptionUrl;
     break;
   case 0x90:
-    ret = Description;
+    ret = AttributeUsage::Description;
     break;
   default:
     throw "IllegalArgumentException";
