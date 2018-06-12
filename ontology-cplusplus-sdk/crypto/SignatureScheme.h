@@ -1,7 +1,7 @@
 #ifndef SIGNATURESCHEME_H
 #define SIGNATURESCHEME_H
 
-enum SignatureScheme {
+enum class SignatureScheme {
   SHA224withECDSA,
   SHA256withECDSA,
   SHA384withECDSA,
