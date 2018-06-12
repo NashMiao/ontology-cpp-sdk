@@ -12,28 +12,16 @@
 
 #include <cstring>
 #include <iostream>
-#include <vector>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #include "../io/BinaryReader.h"
+#include "SignatureScheme.h"
 
 using namespace std;
 
-enum SignatureScheme {
-  SHA224withECDSA,
-  SHA256withECDSA,
-  SHA384withECDSA,
-  SHA512withECDSA,
-  SHA3_224withECDSA,
-  SHA3_256withECDSA,
-  SHA3_384withECDSA,
-  SHA3_512withECDSA,
-  RIPEMD160withECDSA,
-  SM3withSM2
-};
-
-enum CurveName {
+enum class CurveName {
   p224 = NID_secp224k1,
   /* ANSI X9.62 Prime 256v1 curve */
   p256 = NID_X9_62_prime256v1,
@@ -42,7 +30,7 @@ enum CurveName {
   SM2P256V1 = NID_sm2
 };
 
-class Sign {
+class Signature {
 private:
   EVP_PKEY *key;
   EC_KEY *ec_key;
@@ -64,8 +52,8 @@ public:
     EVP_cleanup();
   }
 
-  bool EC_init(CurveName curve_nid = p256);
-  bool ECDSA_key_generate(CurveName curve_nid = p256);
+  bool EC_init(CurveName curve_nid = CurveName::p256);
+  bool ECDSA_key_generate(CurveName curve_nid = CurveName::p256);
   bool EC_get_public_key(string &str_public_key);
   bool EC_get_private_key(string &str_private_key);
   bool EC_set_key(const string &str_public_key, const string &str_private_key,

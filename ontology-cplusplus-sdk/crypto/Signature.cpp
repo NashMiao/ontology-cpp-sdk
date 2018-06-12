@@ -1,56 +1,56 @@
-#include "Sign.h"
+#include "Signature.h"
 
-bool Sign::EC_init(CurveName curve_nid) {
+bool Signature::EC_init(CurveName curve_nid) {
   ec_key = EC_KEY_new_by_curve_name(curve_nid);
 
   return true;
 }
 
-bool Sign::md_ctx_sign_init(const SignatureScheme sign_scheme,
+bool Signature::md_ctx_sign_init(const SignatureScheme sign_scheme,
                             EVP_MD_CTX *md_ctx) {
   EVP_MD_CTX_init(md_ctx);
   switch (sign_scheme) {
-  case SHA224withECDSA:
+  case SignatureScheme::SHA224withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha224(), NULL))) {
       return false;
     }
     break;
-  case SHA256withECDSA:
+  case SignatureScheme::SHA256withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha256(), NULL))) {
       return false;
     }
     break;
-  case SHA384withECDSA:
+  case SignatureScheme::SHA384withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha384(), NULL))) {
       return false;
     }
     break;
-  case SHA512withECDSA:
+  case SignatureScheme::SHA512withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha512(), NULL))) {
       return false;
     }
     break;
-  case SHA3_224withECDSA:
+  case SignatureScheme::SHA3_224withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_224(), NULL))) {
       return false;
     }
     break;
-  case SHA3_256withECDSA:
+  case SignatureScheme::SHA3_256withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_256(), NULL))) {
       return false;
     }
     break;
-  case SHA3_384withECDSA:
+  case SignatureScheme::SignatureScheme::SHA3_384withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_384(), NULL))) {
       return false;
     }
     break;
-  case SHA3_512withECDSA:
+  case SignatureScheme::SHA3_512withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_512(), NULL))) {
       return false;
     }
     break;
-  case RIPEMD160withECDSA:
+  case SignatureScheme::RIPEMD160withECDSA:
     if (!(EVP_DigestInit_ex(md_ctx, EVP_ripemd160(), NULL))) {
       return false;
     }
@@ -61,51 +61,51 @@ bool Sign::md_ctx_sign_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Sign::md_ctx_digest_init(const SignatureScheme sign_scheme,
+bool Signature::md_ctx_digest_init(const SignatureScheme sign_scheme,
                               EVP_MD_CTX *md_ctx) {
   EVP_MD_CTX_init(md_ctx);
   switch (sign_scheme) {
-  case SHA224withECDSA:
+  case SignatureScheme::SHA224withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha224(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA256withECDSA:
+  case SignatureScheme::SHA256withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha256(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA384withECDSA:
+  case SignatureScheme::SHA384withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha384(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA512withECDSA:
+  case SignatureScheme::SHA512withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha512(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA3_224withECDSA:
+  case SignatureScheme::SHA3_224withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha3_224(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA3_256withECDSA:
+  case SignatureScheme::SHA3_256withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha3_256(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA3_384withECDSA:
+  case SignatureScheme::SHA3_384withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha3_384(), NULL) != 1) {
       return false;
     }
     break;
-  case SHA3_512withECDSA:
+  case SignatureScheme::SHA3_512withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_sha3_512(), NULL) != 1) {
       return false;
     }
     break;
-  case RIPEMD160withECDSA:
+  case SignatureScheme::RIPEMD160withECDSA:
     if (EVP_DigestInit_ex(md_ctx, EVP_ripemd160(), NULL) != 1) {
       return false;
     }
@@ -116,51 +116,51 @@ bool Sign::md_ctx_digest_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Sign::md_ctx_veri_init(const SignatureScheme sign_scheme,
+bool Signature::md_ctx_veri_init(const SignatureScheme sign_scheme,
                             EVP_MD_CTX *md_ctx) {
   EVP_MD_CTX_init(md_ctx);
   switch (sign_scheme) {
-  case SHA224withECDSA:
+  case SignatureScheme::SHA224withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha224(), NULL))) {
       return false;
     }
     break;
-  case SHA256withECDSA:
+  case SignatureScheme::SHA256withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha256(), NULL))) {
       return false;
     }
     break;
-  case SHA384withECDSA:
+  case SignatureScheme::SHA384withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha384(), NULL))) {
       return false;
     }
     break;
-  case SHA512withECDSA:
+  case SignatureScheme::SHA512withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha512(), NULL))) {
       return false;
     }
     break;
-  case SHA3_224withECDSA:
+  case SignatureScheme::SHA3_224withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_224(), NULL))) {
       return false;
     }
     break;
-  case SHA3_256withECDSA:
+  case SignatureScheme::SHA3_256withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_256(), NULL))) {
       return false;
     }
     break;
-  case SHA3_384withECDSA:
+  case SignatureScheme::SHA3_384withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_384(), NULL))) {
       return false;
     }
     break;
-  case SHA3_512withECDSA:
+  case SignatureScheme::SHA3_512withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_512(), NULL))) {
       return false;
     }
     break;
-  case RIPEMD160withECDSA:
+  case SignatureScheme::RIPEMD160withECDSA:
     if (!(EVP_VerifyInit_ex(md_ctx, EVP_ripemd160(), NULL))) {
       return false;
     }
@@ -171,7 +171,7 @@ bool Sign::md_ctx_veri_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Sign::ECDSA_key_generate(CurveName curve_nid) {
+bool Signature::ECDSA_key_generate(CurveName curve_nid) {
 
   EVP_PKEY_CTX *pctx, *kctx;
   EVP_PKEY *pkey = NULL, *params = NULL;
@@ -212,7 +212,7 @@ bool Sign::ECDSA_key_generate(CurveName curve_nid) {
   return true;
 }
 
-bool Sign::EC_get_public_key(string &public_key) {
+bool Signature::EC_get_public_key(string &public_key) {
   EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(key);
   if (ec_key == NULL) {
     return false;
@@ -236,7 +236,7 @@ bool Sign::EC_get_public_key(string &public_key) {
   return true;
 }
 
-bool Sign::EC_get_private_key(string &str_private_key) {
+bool Signature::EC_get_private_key(string &str_private_key) {
   EC_KEY *tmp_ec_key = EVP_PKEY_get0_EC_KEY(key);
   if (tmp_ec_key == NULL) {
     return false;
@@ -254,7 +254,7 @@ bool Sign::EC_get_private_key(string &str_private_key) {
   return true;
 }
 
-bool Sign::EC_set_public_key(const string &str_public_key,
+bool Signature::EC_set_public_key(const string &str_public_key,
                              CurveName curve_nid) {
   EC_GROUP *group;
   group = EC_GROUP_new_by_curve_name(curve_nid);
@@ -278,7 +278,7 @@ bool Sign::EC_set_public_key(const string &str_public_key,
   return true;
 }
 
-bool Sign::EC_set_private_key(const string &str_private_key,
+bool Signature::EC_set_private_key(const string &str_private_key,
                               CurveName curve_nid) {
   EC_GROUP *group;
   group = EC_GROUP_new_by_curve_name(curve_nid);
@@ -300,7 +300,7 @@ bool Sign::EC_set_private_key(const string &str_private_key,
   return true;
 }
 
-bool Sign::EC_set_key(const string &str_public_key,
+bool Signature::EC_set_key(const string &str_public_key,
                       const string &str_private_key, CurveName curve_nid) {
   bool ret;
   ret = EC_set_public_key(str_public_key, curve_nid);
@@ -309,7 +309,7 @@ bool Sign::EC_set_key(const string &str_public_key,
   return ret;
 }
 
-bool Sign::EC_get_pubkey_by_prikey(const string &str_private_key,
+bool Signature::EC_get_pubkey_by_prikey(const string &str_private_key,
                                    string &str_public_key,
                                    CurveName curve_nid) {
   BIGNUM *prv = BN_new();
@@ -344,7 +344,7 @@ bool Sign::EC_get_pubkey_by_prikey(const string &str_private_key,
   return true;
 }
 
-bool Sign::EC_sign(const std::string &msg, std::string &str_sign_dgst,
+bool Signature::EC_sign(const std::string &msg, std::string &str_sign_dgst,
                    SignatureScheme sign_scheme) {
 
   EVP_MD_CTX *md_ctx;
@@ -372,7 +372,7 @@ bool Sign::EC_sign(const std::string &msg, std::string &str_sign_dgst,
   return true;
 }
 
-bool Sign::EC_veri(const std::string &msg, std::string &str_sign_dgst,
+bool Signature::EC_veri(const std::string &msg, std::string &str_sign_dgst,
                    SignatureScheme sign_scheme) {
   EVP_MD_CTX *md_ctx;
   md_ctx = EVP_MD_CTX_new();
