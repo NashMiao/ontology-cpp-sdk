@@ -1,5 +1,5 @@
-#ifndef SIGN_H
-#define SIGN_H
+#ifndef SIGNATURE_H
+#define SIGNATURE_H
 
 #include <openssl/bio.h>
 #include <openssl/conf.h>
@@ -32,6 +32,9 @@ enum class CurveName {
 
 class Signature {
 private:
+  SignatureScheme scheme;
+  CurveName curve;
+  std::vector<unsigned char> value;
   EVP_PKEY *key;
   EC_KEY *ec_key;
   bool md_ctx_sign_init(const SignatureScheme sign_scheme, EVP_MD_CTX *md_ctx);
@@ -44,10 +47,15 @@ protected:
   bool EC_set_private_key(const string &str_private_key, CurveName curve_nid);
 
 public:
-  Sign() { key = EVP_PKEY_new(); }
-  ~Sign() {
+  Signature() { key = EVP_PKEY_new(); }
+  Signature(SignatureScheme _scheme, CurveName _curve, std::string private_key,
+            std::string msg) {}
+  ~Signature() {
     if (ec_key != NULL) {
       EC_KEY_free(ec_key);
+    }
+    if (!value.empty()) {
+      value.erase();
     }
     EVP_cleanup();
   }
@@ -66,6 +74,14 @@ public:
                SignatureScheme sign_scheme = SHA256withECDSA);
   // bool SM_sign(const std::string &msg, std::string str_sign_dgst,
   //              SignatureScheme sign_scheme = SM3withSM2);
+
+  std::vector<unsigned char> toBytes() {
+    std::vector<unsigned char> ret_vec;
+    ret_vec.push_back(unsigned char(scheme));
+    ret_vec.push_back(unsigned char(surve));
+    ret_vec += value;
+    return ret_vec;
+  }
 };
 
 #endif

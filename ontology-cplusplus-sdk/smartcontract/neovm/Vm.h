@@ -1,7 +1,8 @@
 #ifndef VM_H
 #define VM_H
 
-#include "../../OntSdk.h"
+#include "../..//OntSdk.h"
+#include "../../common/Helper.h"
 #include "../../core/VmType.h"
 #include <string>
 #include <vector>
@@ -22,18 +23,19 @@ public:
   std::string getCodeAddress() { return contractAddress; }
   InvokeCode makeInvokeCodeTransaction(std::string codeAddr, std::string method,
                                        std::vector<unsigned char> params,
-                                       unsigned char vmtype, String payer,
+                                       unsigned char vmtype, std::string payer,
                                        long gaslimit, long gasprice) {
     std::vector<unsigned char> _code;
-    if (vmtype == NEOVM) {
+    Helper helper;
+    if (vmtype == VmType::NEOVM) {
       Contract contract = new Contract((unsigned char)0, _code,
                                        Address.parse(codeAddr), "", params);
-      params = Helper.addBytes(new unsigned char[]{0x67}, contract.toArray());
-    } else if (vmtype == WASMVM) {
+      params = helper.addBytes(unsigned char(0x67), contract.toArray());
+    } else if (vmtype == VmType::WASMVM) {
       Contract contract = new Contract((unsigned char)1, _code,
                                        Address.parse(codeAddr), method, params);
       params = contract.toArray();
-    } else if (vmtype == Native) {
+    } else if (vmtype == VmType::Native) {
       Contract contract = new Contract((unsigned char)0, _code,
                                        Address.parse(codeAddr), method, params);
       params = contract.toArray();

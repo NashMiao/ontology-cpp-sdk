@@ -2,14 +2,17 @@
 #define TRANSACTION_H
 
 #include "../../core/asset/Fee.h"
+#include "../Inventory.h"
 #include "../asset/Sig.h"
 #include "Attribute.h"
 #include "TransactionType.h"
 #include <nlohmann/json.hpp>
 
+#include <stdlib.h>
+#include <time.h>
 #include <vector>
 
-class Transaction {
+class Transaction : public Inventory {
 private:
   unsigned int version;
   TransactionType txType;
@@ -23,28 +26,39 @@ private:
 
 public:
   Transaction(TransactionType type) {
-    // int nonce = new Random().nextInt();
-    // Fee[] fee = new Fee[0];
-    // Sig[] sigs = new Sig[0];
-    version = 0;
+    srand((unsigned)time(NULL));
+    nonce = rand();
     txType = type;
+    version = 0;
   }
 
-  Transaction(TransactionType type)
+  nlohmann::json json_out() {
+    nlohmann::json Result;
+    Result["version"] = version;
+    Result["TxType"] = txType;
+    Result["Nonce"] = nonce;
+    Result["Attributes"] = attributes;
+    Result["Fee"] = fee;
+    Result["NetworkFee"] = networkFee;
+    Result["Sigs"] = sigs;
+    return json_out;
+  }
 
-  // void json_out()
-  // {
-  //   nlohmann::json Result;
-  //   Result["version"] = version;
-  //   Result["TxType"] = txType;
-  //   Result["Nonce"] = nonce;
-  //   Result["Attributes"] = attributes;
-  //   Result["Fee"] = fee;
-  //   Result["NetworkFee"] = networkFee;
-  //   Result["Sigs"] = sigs;
-  //   cout << "Result:\n"
-  //        << Result << endl;
-  // }
+  void serializeUnsigned(BinaryWriter &writer) {
+    writer.writeByte(version);
+    writer.writeByte(txType;
+    writer.writeInt(nonce);
+    writer.writeLong(gasPrice);
+    writer.writeLong(gasLimit);
+    writer.writeSerializable(payer);
+    serializeExclusiveData(writer);
+    writer.writeSerializableArray(attributes);
+  }
+
+  void serialize(BinaryWriter &writer) {
+    serializeUnsigned(writer);
+    writer.writeSerializableArray(sigs);
+  }
 
   void deserialize() {
     std::string result =
@@ -78,7 +92,7 @@ public:
     cout << "gasPrice: " << gasPrice << endl;
     cout << "gasLimit: " << gasLimit << endl;
     // try{
-      
+
     // }
     deserializeUnsignedWithoutType(reader);
   }
@@ -98,6 +112,5 @@ public:
   }
 
   void deserializeExclusiveData(BinaryReader &reader) {}
-
 };
 #endif // TRANSACTION_H

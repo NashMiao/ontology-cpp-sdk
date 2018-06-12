@@ -2,9 +2,10 @@
 #define STATE_H
 
 #include "../../common/Address.h"
+#include "../../io/Serializable.h"
 #include <nlohmann/json.hpp>
 
-class State {
+class State::public Serializable {
 private:
   Address from;
   Address to;
@@ -18,12 +19,28 @@ public:
     value = amount;
   }
 
-  nlohmann::json json(){
-      nlohmann::json state_json;
-      state_json["from"] = from.toHexString();
-      state_json["to"] = to.toHexString();
-      state_json["value"] = value;
-      return state_json;
+  void deserialize(BinaryReader & reader){
+    try {
+      reader.readSerializable(from);
+      reader.readSerializable(to);
+      value = reader.readVarInt();
+    } catch (const char *e) {
+      cerr << e << endl;
+    }
+  }
+
+  void serialize(BinaryWriter & writer){
+    writer.writeSerializable(from);
+    writer.writeSerializable(to);
+    writer.writeVarInt(value);
+  }
+
+  nlohmann::json json() {
+    nlohmann::json state_json;
+    state_json["from"] = from.toHexString();
+    state_json["to"] = to.toHexString();
+    state_json["value"] = value;
+    return state_json;
   }
 };
 

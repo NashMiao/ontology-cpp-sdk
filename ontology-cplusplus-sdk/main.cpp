@@ -6,7 +6,7 @@
 #include "core/block/Block.h"
 #include "core/transaction/Transaction.h"
 #include "crypto/AES.h"
-#include "crypto/Sign.h"
+#include "crypto/Signature.h"
 #include "network/restful/Result.h"
 #include "network/restful/http.h"
 #include <boost/algorithm/hex.hpp>
@@ -16,7 +16,7 @@
 void sign_by_set_pub_pri() {
   Sign ec_sign;
   ec_sign.EC_init();
-  CurveName curve_name = p256;
+  CurveName curve_name = CurveName::p256;
   std::string private_key =
       "70789d4ac31576c61c5d12e38a66de605b18faf2c8d60a2c1952a6286b67318f";
   std::string public_key =
@@ -68,7 +68,7 @@ void sign_by_gen_key() {
 
 void sign_by_pri_key() {
   Sign ec_sign;
-  CurveName curve_name = p256;
+  CurveName CurveName::curve_name = CurveName::p256;
   ec_sign.EC_init();
   std::string private_key =
       "70789d4ac31576c61c5d12e38a66de605b18faf2c8d60a2c1952a6286b67318f";

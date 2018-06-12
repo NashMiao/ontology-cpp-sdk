@@ -30,6 +30,19 @@ static const int8_t mapBase58[256] = {
 
 class Helper {
 public:
+  std::vector<unsigned char> addBytes(const std::vector<unsigned char> &data1,
+                                      const std::vector<unsigned char> &data2) {
+    std::vector<unsigned char> data3 = data1 + data2;
+    return data3;
+  }
+  std::vector<unsigned char> addBytes(const unsigned char data1,
+                                      const std::vector<unsigned char> &data2) {
+    std::vector<unsigned char> data3;
+    data3.push_back(data1);
+    data3 += data2;
+    return data3;
+  }
+
   std::string toHexString(const std::vector<unsigned char> &value) {
     std::string hex_str;
     std::vector<unsigned char>::const_iterator value_cit;

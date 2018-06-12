@@ -37,9 +37,9 @@ public:
     helper.DecodeBase58(sender, recvAddr_vchRet);
     State state(Address(sender_vchRet), Address(recvAddr_vchRet), amount);
     Transfers transfers = Transfers(state);
-    Transaction tx = makeInvokeCodeTransaction(
-        ontContract, "transfer", transfers.toArray(), VmType.Native.value(),
-        payer, gaslimit, gasprice);
+    Transaction tx =
+        makeInvokeCodeTransaction(ontContract, "transfer", transfers.toArray(),
+                                  VmType::Native, payer, gaslimit, gasprice);
     return tx;
   }
 };

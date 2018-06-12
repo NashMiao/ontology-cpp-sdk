@@ -71,6 +71,9 @@ private:
   }
 
 public:
+  std::vector<unsigned char> toByteArray() {
+    return uc_vec;
+  }
   void set_uc_vec(std::string &str) {
     // std::string hex_str = boost::algorithm::hex(str);
     uc_vec.clear();
@@ -164,9 +167,28 @@ public:
     return str;
   }
 
+  std::vector<unsigned char> readBytes(int count) {
+    std::vector<unsigned char> ret_vec;
+    for (int i = 0; i < 2 * count; i++) {
+      if (uc_vec_iter == uc_vec.end()) {
+        throw "IOException";
+      }
+      ret_vec.push_back(*uc_vec_iter);
+      uc_vec_iter++;
+    }
+    return ret_vec;
+  }
+
   std::string readVarBytes() { return readVarBytes(0X7fffffc7); }
 
+  std::vector<unsigned char> readVarBytes() { return readVarBytes(0X7fffffc7); }
+
   std::string readVarBytes(int max) {
+    int len = (int)readVarInt(max);
+    return readBytes(len);
+  }
+
+  std::vector<unsigned char> readVarBytes(int max) {
     int len = (int)readVarInt(max);
     return readBytes(len);
   }
@@ -260,18 +282,18 @@ public:
     return str;
   }
 
-  template <class T> void readSerializable(T &t_item){
+  template <class T> void readSerializable(T &t_item) {
     t_item.deserialize(this);
   }
 
   template <class T> void readSerializableArray(std::vector<T> &t_vec) {
-      int vec_len = (int)readVarInt(0x10000000);
-      cout<<"vec_len: "<<vec_len<<endl;
-      for (int i = 0; i < vec_len; i++) {
-        T t_item;
-        t_item.deserialize(this);
-        t_vec.push_back(t_item);
-      }
+    int vec_len = (int)readVarInt(0x10000000);
+    cout << "vec_len: " << vec_len << endl;
+    for (int i = 0; i < vec_len; i++) {
+      T t_item;
+      t_item.deserialize(this);
+      t_vec.push_back(t_item);
+    }
   }
 };
 #endif

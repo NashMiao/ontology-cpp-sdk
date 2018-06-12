@@ -1,5 +1,31 @@
 #include "Signature.h"
 
+Signature::Signature(SignatureScheme _scheme, CurveName _curve,
+                     std::string private_key, std::string msg) {
+  scheme = _scheme;
+  curve = _curve;
+  if (scheme == SignatureScheme::SHA224withECDSA ||
+      scheme == SignatureScheme::SHA256withECDSA ||
+      scheme == SignatureScheme::SHA384withECDSA ||
+      scheme == SignatureScheme::SHA512withECDSA ||
+      scheme == SignatureScheme::SHA3_224withECDSA ||
+      scheme == SignatureScheme::SHA3_256withECDSA ||
+      scheme == SignatureScheme::SHA3_384withECDSA ||
+      scheme == SignatureScheme::SHA3_512withECDSA ||
+      scheme == SignatureScheme::RIPEMD160withECDSA) {
+    EC_set_private_key(private_key, curve);
+    std::string str_sign_dgst;
+    EC_sign(msg, str_sign_dgst, scheme);
+    std::string utf8_str(str_sign_dgst);
+    value.erase();
+    value.assign((unsigned char *)str.c_str());
+  } else if (scheme == SignatureScheme::SM3withSM2) {
+    throw "scheme == SignatureScheme::SM3withSM2";
+  } else {
+    throw "unknown SignatureScheme";
+  }
+}
+
 bool Signature::EC_init(CurveName curve_nid) {
   ec_key = EC_KEY_new_by_curve_name(curve_nid);
 
@@ -7,7 +33,7 @@ bool Signature::EC_init(CurveName curve_nid) {
 }
 
 bool Signature::md_ctx_sign_init(const SignatureScheme sign_scheme,
-                            EVP_MD_CTX *md_ctx) {
+                                 EVP_MD_CTX *md_ctx) {
   EVP_MD_CTX_init(md_ctx);
   switch (sign_scheme) {
   case SignatureScheme::SHA224withECDSA:
@@ -62,7 +88,7 @@ bool Signature::md_ctx_sign_init(const SignatureScheme sign_scheme,
 }
 
 bool Signature::md_ctx_digest_init(const SignatureScheme sign_scheme,
-                              EVP_MD_CTX *md_ctx) {
+                                   EVP_MD_CTX *md_ctx) {
   EVP_MD_CTX_init(md_ctx);
   switch (sign_scheme) {
   case SignatureScheme::SHA224withECDSA:
@@ -117,7 +143,7 @@ bool Signature::md_ctx_digest_init(const SignatureScheme sign_scheme,
 }
 
 bool Signature::md_ctx_veri_init(const SignatureScheme sign_scheme,
-                            EVP_MD_CTX *md_ctx) {
+                                 EVP_MD_CTX *md_ctx) {
   EVP_MD_CTX_init(md_ctx);
   switch (sign_scheme) {
   case SignatureScheme::SHA224withECDSA:
@@ -255,7 +281,7 @@ bool Signature::EC_get_private_key(string &str_private_key) {
 }
 
 bool Signature::EC_set_public_key(const string &str_public_key,
-                             CurveName curve_nid) {
+                                  CurveName curve_nid) {
   EC_GROUP *group;
   group = EC_GROUP_new_by_curve_name(curve_nid);
   if (group == NULL) {
@@ -279,7 +305,7 @@ bool Signature::EC_set_public_key(const string &str_public_key,
 }
 
 bool Signature::EC_set_private_key(const string &str_private_key,
-                              CurveName curve_nid) {
+                                   CurveName curve_nid) {
   EC_GROUP *group;
   group = EC_GROUP_new_by_curve_name(curve_nid);
   if (group == NULL) {
@@ -301,7 +327,7 @@ bool Signature::EC_set_private_key(const string &str_private_key,
 }
 
 bool Signature::EC_set_key(const string &str_public_key,
-                      const string &str_private_key, CurveName curve_nid) {
+                           const string &str_private_key, CurveName curve_nid) {
   bool ret;
   ret = EC_set_public_key(str_public_key, curve_nid);
   ret = ret && EC_set_private_key(str_private_key, curve_nid);
@@ -310,8 +336,8 @@ bool Signature::EC_set_key(const string &str_public_key,
 }
 
 bool Signature::EC_get_pubkey_by_prikey(const string &str_private_key,
-                                   string &str_public_key,
-                                   CurveName curve_nid) {
+                                        string &str_public_key,
+                                        CurveName curve_nid) {
   BIGNUM *prv = BN_new();
   BN_hex2bn(&prv, str_private_key.c_str());
 
@@ -345,7 +371,7 @@ bool Signature::EC_get_pubkey_by_prikey(const string &str_private_key,
 }
 
 bool Signature::EC_sign(const std::string &msg, std::string &str_sign_dgst,
-                   SignatureScheme sign_scheme) {
+                        SignatureScheme sign_scheme) {
 
   EVP_MD_CTX *md_ctx;
   md_ctx = EVP_MD_CTX_new();
@@ -373,7 +399,7 @@ bool Signature::EC_sign(const std::string &msg, std::string &str_sign_dgst,
 }
 
 bool Signature::EC_veri(const std::string &msg, std::string &str_sign_dgst,
-                   SignatureScheme sign_scheme) {
+                        SignatureScheme sign_scheme) {
   EVP_MD_CTX *md_ctx;
   md_ctx = EVP_MD_CTX_new();
   if (md_ctx == NULL) {

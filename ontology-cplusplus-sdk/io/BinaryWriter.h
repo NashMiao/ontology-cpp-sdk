@@ -42,6 +42,8 @@ private:
 public:
   BinaryWriter() { outfile.open("outfile", ios::out | ios::binary); }
   void set_ofstream(std::ofstream &ofstrm) { outfile.copyfmt(ofstrm); }
+  std::vector<unsigned char> toByteArray() { return uc_vec; }
+
   bool writeVarInt(long long v) {
     if (v < 0xFD) {
       unsigned char buffer = v & 0xFF;
@@ -97,6 +99,18 @@ public:
     return true;
   }
 
+  bool writeVarBytes(const std::string &str) {
+    int str_len = str.length();
+    std::string utf8_str(str);
+    if (!writeVarInt(str_len)) {
+      return false;
+    }
+    if (!writeVarBytes((unsigned char *)str.c_str())) {
+      return false;
+    }
+    return true;
+  }
+
   bool writeVarString(const std::string &str) {
     int str_len = str.length();
     std::string utf8_str(str);
@@ -104,6 +118,17 @@ public:
       return false;
     }
     if (!writeVarBytes((unsigned char *)str.c_str())) {
+      return false;
+    }
+    return true;
+  }
+
+  template <class T> bool writeSerializableArray(std::vector<T> t_vec) {
+    if (!writeVarInt(t_vec.size())) {
+      std::vector<T>::const_iterator cst_it;
+      for (cst_it = t_vec.begin(); cst_it != t_vec.end(); cst_it++) {
+        *cst_it.serialize(this);
+      }
       return false;
     }
     return true;
