@@ -26,7 +26,11 @@ class OntSdk
     SignatureScheme signatureScheme;
     OntSdk()
     {
-        signatureScheme = SHA256withECDSA;
+        signatureScheme = SignatureScheme::SHA256withECDSA;
+    }
+
+    Transaction signTx(Transaction tx, std::vector<Account> accounts){
+      
     }
 };
 #endif // !ONTSDK_H
