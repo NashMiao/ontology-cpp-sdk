@@ -17,8 +17,12 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
     std::string str_sign_dgst;
     EC_sign(msg, str_sign_dgst, scheme);
     std::string utf8_str(str_sign_dgst);
-    value.erase();
-    value.assign((unsigned char *)str.c_str());
+    value.erase(value.begin(), value.end());
+    unsigned char *uc = (unsigned char *)str_sign_dgst.c_str();
+    for (size_t i = 0; i < str_sign_dgst.size(); i++) {
+      value.push_back(*uc);
+      uc++;
+    }
   } else if (scheme == SignatureScheme::SM3withSM2) {
     throw "scheme == SignatureScheme::SM3withSM2";
   } else {
@@ -26,8 +30,8 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
   }
 }
 
-bool Signature::EC_init(CurveName curve_nid) {
-  ec_key = EC_KEY_new_by_curve_name(curve_nid);
+bool Signature::EC_init(CurveName curve_name) {
+  ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve_name));
 
   return true;
 }
@@ -66,7 +70,7 @@ bool Signature::md_ctx_sign_init(const SignatureScheme sign_scheme,
       return false;
     }
     break;
-  case SignatureScheme::SignatureScheme::SHA3_384withECDSA:
+  case SignatureScheme::SHA3_384withECDSA:
     if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_384(), NULL))) {
       return false;
     }
@@ -197,7 +201,7 @@ bool Signature::md_ctx_veri_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Signature::ECDSA_key_generate(CurveName curve_nid) {
+bool Signature::ECDSA_key_generate(CurveName curve_name) {
 
   EVP_PKEY_CTX *pctx, *kctx;
   EVP_PKEY *pkey = NULL, *params = NULL;
@@ -212,7 +216,8 @@ bool Signature::ECDSA_key_generate(CurveName curve_nid) {
     return false;
   }
 
-  if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, curve_nid)) {
+  if (1 !=
+      EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, get_curve_nid(curve_name))) {
     return false;
   }
 
@@ -262,6 +267,34 @@ bool Signature::EC_get_public_key(string &public_key) {
   return true;
 }
 
+std::vector<unsigned char> Signature::get_EC_Q(EVP_PKEY *evp_key) {
+  EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(evp_key);
+  if (ec_key == NULL) {
+    throw "EVP_PKEY_get0_EC_KE: NULL";
+  }
+  EC_POINT *pub = NULL;
+  pub = (EC_POINT *)EC_KEY_get0_public_key(ec_key);
+  if (pub == NULL) {
+    throw "EC_KEY_get0_public_key: NULL";
+  }
+
+  const EC_GROUP *group;
+  group = EC_KEY_get0_group(ec_key);
+  if (group == NULL) {
+    throw "EC_KEY_get0_group: NULL";
+  }
+  std::string hex_pub;
+  hex_pub = EC_POINT_point2hex(group, pub, POINT_CONVERSION_COMPRESSED, NULL);
+  if (hex_pub.length() == 0) {
+    throw "EC_POINT_point2hex: NULL";
+  }
+  std::vector<unsigned char> vec_pub;
+  for (size_t i = 0; i < hex_pub.size(); i++) {
+    vec_pub.push_back(hex_pub[i]);
+  }
+  return vec_pub;
+}
+
 bool Signature::EC_get_private_key(string &str_private_key) {
   EC_KEY *tmp_ec_key = EVP_PKEY_get0_EC_KEY(key);
   if (tmp_ec_key == NULL) {
@@ -281,9 +314,9 @@ bool Signature::EC_get_private_key(string &str_private_key) {
 }
 
 bool Signature::EC_set_public_key(const string &str_public_key,
-                                  CurveName curve_nid) {
+                                  CurveName curve_name) {
   EC_GROUP *group;
-  group = EC_GROUP_new_by_curve_name(curve_nid);
+  group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
   if (group == NULL) {
     return false;
   }
@@ -305,9 +338,9 @@ bool Signature::EC_set_public_key(const string &str_public_key,
 }
 
 bool Signature::EC_set_private_key(const string &str_private_key,
-                                   CurveName curve_nid) {
+                                   CurveName curve_name) {
   EC_GROUP *group;
-  group = EC_GROUP_new_by_curve_name(curve_nid);
+  group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
   if (group == NULL) {
     return false;
   }
@@ -327,28 +360,29 @@ bool Signature::EC_set_private_key(const string &str_private_key,
 }
 
 bool Signature::EC_set_key(const string &str_public_key,
-                           const string &str_private_key, CurveName curve_nid) {
+                           const string &str_private_key,
+                           CurveName curve_name) {
   bool ret;
-  ret = EC_set_public_key(str_public_key, curve_nid);
-  ret = ret && EC_set_private_key(str_private_key, curve_nid);
+  ret = EC_set_public_key(str_public_key, curve_name);
+  ret = ret && EC_set_private_key(str_private_key, curve_name);
   ret = ret && EVP_PKEY_assign_EC_KEY(key, ec_key);
   return ret;
 }
 
 bool Signature::EC_get_pubkey_by_prikey(const string &str_private_key,
                                         string &str_public_key,
-                                        CurveName curve_nid) {
+                                        CurveName curve_name) {
   BIGNUM *prv = BN_new();
   BN_hex2bn(&prv, str_private_key.c_str());
 
   EC_KEY *ec_key;
-  ec_key = EC_KEY_new_by_curve_name(curve_nid);
+  ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve_name));
   if (ec_key == NULL) {
     return false;
   }
 
   const EC_GROUP *group;
-  group = EC_GROUP_new_by_curve_name(curve_nid);
+  group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
   EC_KEY_set_private_key(ec_key, prv);
 
   EC_POINT *pub;

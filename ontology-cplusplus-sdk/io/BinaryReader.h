@@ -167,7 +167,7 @@ public:
     return str;
   }
 
-  std::vector<unsigned char> readBytes(int count) {
+  std::vector<unsigned char> readBytes_vec(int count) {
     std::vector<unsigned char> ret_vec;
     for (int i = 0; i < 2 * count; i++) {
       if (uc_vec_iter == uc_vec.end()) {
@@ -181,16 +181,16 @@ public:
 
   std::string readVarBytes() { return readVarBytes(0X7fffffc7); }
 
-  std::vector<unsigned char> readVarBytes() { return readVarBytes(0X7fffffc7); }
+  std::vector<unsigned char> readVarBytes_vec() { return readVarBytes_vec(0X7fffffc7); }
 
   std::string readVarBytes(int max) {
     int len = (int)readVarInt(max);
     return readBytes(len);
   }
 
-  std::vector<unsigned char> readVarBytes(int max) {
+  std::vector<unsigned char> readVarBytes_vec(int max) {
     int len = (int)readVarInt(max);
-    return readBytes(len);
+    return readBytes_vec(len);
   }
 
   float readFloat() {

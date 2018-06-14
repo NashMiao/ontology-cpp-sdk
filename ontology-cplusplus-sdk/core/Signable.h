@@ -10,8 +10,8 @@
 
 class Signable : public Serializable {
 public:
-  void deserializeUnsigned(BinaryReader &reader) = 0;
-  void serializeUnsigned(BinaryWriter &writer) = 0;
+  virtual void deserializeUnsigned(BinaryReader &reader);
+  virtual void serializeUnsigned(BinaryWriter &writer);
   std::vector<unsigned char> getHashData() {
     BinaryWriter writer;
     serializeUnsigned(writer);

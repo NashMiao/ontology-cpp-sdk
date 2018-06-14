@@ -2,6 +2,7 @@
 #define TRANSACTION_H
 
 #include "../../core/asset/Fee.h"
+#include "../../core/transaction/Transaction.h"
 #include "../Inventory.h"
 #include "../asset/Sig.h"
 #include "Attribute.h"
@@ -32,15 +33,17 @@ public:
     version = 0;
   }
 
+  void set_sigs(std::vector<Sig> &_sigs) { sigs = _sigs; }
+
   nlohmann::json json_out() {
     nlohmann::json Result;
     Result["version"] = version;
-    Result["TxType"] = txType;
+    // Result["TxType"] = txType;
     Result["Nonce"] = nonce;
-    Result["Attributes"] = attributes;
-    Result["Fee"] = fee;
+    // Result["Attributes"] = attributes;
+    // Result["Fee"] = fee;
     Result["NetworkFee"] = networkFee;
-    Result["Sigs"] = sigs;
+    // Result["Sigs"] = sigs;
     return json_out;
   }
 

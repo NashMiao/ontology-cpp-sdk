@@ -7,6 +7,7 @@
 #include "core/transaction/Transaction.h"
 #include "crypto/AES.h"
 #include "crypto/Signature.h"
+#include "demo/MakeTxWithoutWalletDemo.h"
 #include "network/restful/Result.h"
 #include "network/restful/http.h"
 #include <boost/algorithm/hex.hpp>
@@ -404,6 +405,11 @@ void test_base58() {
   }
 }
 
+void test_MakeTxWithoutWalletDemo() {
+  MakeTxWithoutWalletDemo make_tx_without_wallet_demo;
+  make_tx_without_wallet_demo.transer();
+}
+
 int main() {
   // sign_by_pri_key();
   // sign_by_set_pub_pri();
@@ -431,5 +437,7 @@ int main() {
 
   // test_helper();
 
-  test_base58();
+  // test_base58();
+
+  test_MakeTxWithoutWalletDemo();
 }

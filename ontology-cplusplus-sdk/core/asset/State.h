@@ -5,7 +5,7 @@
 #include "../../io/Serializable.h"
 #include <nlohmann/json.hpp>
 
-class State::public Serializable {
+class State : public Serializable {
 private:
   Address from;
   Address to;
@@ -19,7 +19,7 @@ public:
     value = amount;
   }
 
-  void deserialize(BinaryReader & reader){
+  void deserialize(BinaryReader &reader) {
     try {
       reader.readSerializable(from);
       reader.readSerializable(to);
@@ -29,7 +29,7 @@ public:
     }
   }
 
-  void serialize(BinaryWriter & writer){
+  void serialize(BinaryWriter &writer) {
     writer.writeSerializable(from);
     writer.writeSerializable(to);
     writer.writeVarInt(value);

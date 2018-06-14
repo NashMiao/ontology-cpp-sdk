@@ -21,7 +21,8 @@
 
 using namespace std;
 
-enum class CurveName {
+enum class CurveName : int
+{
   p224 = NID_secp224k1,
   /* ANSI X9.62 Prime 256v1 curve */
   p256 = NID_X9_62_prime256v1,
@@ -30,7 +31,13 @@ enum class CurveName {
   SM2P256V1 = NID_sm2
 };
 
-class Signature {
+int get_curve_nid(CurveName curve_name)
+{
+  return static_cast<int>(curve_name);
+}
+
+class Signature
+{
 private:
   SignatureScheme scheme;
   CurveName curve;
@@ -43,43 +50,48 @@ private:
                           EVP_MD_CTX *md_ctx);
 
 protected:
-  bool EC_set_public_key(const string &str_public_key, CurveName curve_nid);
-  bool EC_set_private_key(const string &str_private_key, CurveName curve_nid);
+  bool EC_set_public_key(const string &str_public_key, CurveName curve_name);
+  bool EC_set_private_key(const string &str_private_key, CurveName curve_name);
 
 public:
   Signature() { key = EVP_PKEY_new(); }
   Signature(SignatureScheme _scheme, CurveName _curve, std::string private_key,
-            std::string msg) {}
-  ~Signature() {
-    if (ec_key != NULL) {
+            std::string msg);
+  ~Signature()
+  {
+    if (ec_key != NULL)
+    {
       EC_KEY_free(ec_key);
     }
-    if (!value.empty()) {
-      value.erase();
+    if (!value.empty())
+    {
+      value.erase(value.begin(), value.end());
     }
     EVP_cleanup();
   }
 
-  bool EC_init(CurveName curve_nid = CurveName::p256);
-  bool ECDSA_key_generate(CurveName curve_nid = CurveName::p256);
+  std::vector<unsigned char> get_EC_Q(EVP_PKEY *evp_key);
+  bool EC_init(CurveName curve_name = CurveName::p256);
+  bool ECDSA_key_generate(CurveName curve_name = CurveName::p256);
   bool EC_get_public_key(string &str_public_key);
   bool EC_get_private_key(string &str_private_key);
   bool EC_set_key(const string &str_public_key, const string &str_private_key,
-                  CurveName curve_nid);
+                  CurveName curve_name);
   bool EC_get_pubkey_by_prikey(const string &str_private_key,
-                               string &str_public_key, CurveName curve_nid);
+                               string &str_public_key, CurveName curve_name);
   bool EC_sign(const std::string &msg, std::string &str_sign_dgst,
-               SignatureScheme sign_scheme = SHA256withECDSA);
+               SignatureScheme sign_scheme = SignatureScheme::SHA256withECDSA);
   bool EC_veri(const std::string &msg, std::string &str_sign_dgst,
-               SignatureScheme sign_scheme = SHA256withECDSA);
+               SignatureScheme sign_scheme = SignatureScheme::SHA256withECDSA);
   // bool SM_sign(const std::string &msg, std::string str_sign_dgst,
   //              SignatureScheme sign_scheme = SM3withSM2);
 
-  std::vector<unsigned char> toBytes() {
+  std::vector<unsigned char> toBytes()
+  {
     std::vector<unsigned char> ret_vec;
-    ret_vec.push_back(unsigned char(scheme));
-    ret_vec.push_back(unsigned char(surve));
-    ret_vec += value;
+    ret_vec.push_back(static_cast<unsigned char>(scheme));
+    ret_vec.push_back(static_cast<unsigned char>(curve));
+    ret_vec.insert(ret_vec.end(), value.begin(), value.end());
     return ret_vec;
   }
 };

@@ -21,4 +21,8 @@ VmType valueOf(unsigned char v) {
   return ret;
 }
 
+unsigned char get_uc_vmtype(VmType type) {
+  return static_cast<unsigned char>(type);
+}
+
 #endif

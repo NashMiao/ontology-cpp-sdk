@@ -48,9 +48,9 @@ public:
     
   }
 
-  void deserialize(BinaryReader &reader) {
+  void deserialize(BinaryReader *reader) {
     std::string str;
-    str = reader.readVarBytes();
+    str = reader->readVarBytes();
     memcpy(ZERO, (unsigned char *)str.c_str(), 20);
   }
 

@@ -36,7 +36,17 @@ public:
     recvAddr.set_zero(std::string("TA5SgQXTeKWyN4GNfWGoXqioEQ4eCDFMqE"));
     long long amount = 1000;
     Ont ont;
-    Transaction tx = ont.makeTransfer(sender, recvAddr, amount, sender, 30000, 0);
+    Transaction tx =
+        ont.makeTransfer(sender, recvAddr, amount, sender, 30000, 0);
+    std::vector<unsigned char> tx_hash = tx.hash();
+    std::vector<unsigned char>::const_iterator tx_hash_cit;
+    for (tx_hash_cit = tx_hash.cbegin(); tx_hash_cit != tx_hash.cend();
+         tx_hash_cit++) {
+      cout << *tx_hash_cit;
+    }
+    cout << endl;
+    std::string str_tx = tx.toHexString();
+    cout << str_tx << endl;
   }
 };
 #endif

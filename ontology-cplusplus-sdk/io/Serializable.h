@@ -8,6 +8,7 @@
 #include <vector>
 
 class Serializable {
+public:
   virtual void serialize(BinaryWriter &writer) = 0;
   virtual void deserialize(BinaryReader &reader) = 0;
   std::vector<unsigned char> toArray() {
@@ -17,7 +18,7 @@ class Serializable {
   }
   std::string toHexString() {
     Helper helper;
-    helper.toHexString();
+    return helper.toHexString();
   }
 };
 

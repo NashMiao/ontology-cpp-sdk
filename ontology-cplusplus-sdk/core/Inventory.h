@@ -1,11 +1,19 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
+#include "../crypto/Digest.h"
 #include "Signable.h"
-#include <boost/multiprecision/cpp_int.hpp>
 
-class Inventory::public Signable {
+class Inventory : public Signable, public Digest {
 private:
-  boost::multiprecision::uint256_t hash;
+  std::vector<unsigned char> hash;
+
+public:
+  std::vector<unsigned char> hash() {
+    if (hash.empty()) {
+      hash = hash256(getHashData());
+    }
+    return hash;
+  }
 };
 #endif

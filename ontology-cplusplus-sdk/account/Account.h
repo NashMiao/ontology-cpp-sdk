@@ -2,6 +2,7 @@
 #define ACCOUNT_H
 
 #include "../common/Address.h"
+#include "../crypto/KeyType.h"
 #include "../crypto/Signature.h"
 #include "../crypto/SignatureScheme.h"
 
@@ -10,22 +11,31 @@
 
 class Account {
 private:
+  EVP_PKEY *evp_key;
   std::string PrivateKey;
   std::string PublicKey;
-  Address addressU160;
+  KeyType Address addressU160;
   SignatureScheme signatureScheme;
 
 public:
   Account(SignatureScheme scheme) {
+    evp_kep = EVP_PKEY_new();
     addressU160 = Address.addressFromPubKey(serializePublicKey());
+  }
+  ~Account() {
+    if (ec_key != NULL) {
+      EC_KEY_free(ec_key);
+    }
+    EVP_cleanup();
   }
   Address getAddressU160() { return addressU160; }
 
-  std::vector<unsigned char> generateSignature(std::string msg, SignatureScheme scheme, CurveName curve) {
-    if (msg.length == 0) {
+  std::vector<unsigned char>
+  generateSignature(std::string msg, SignatureScheme scheme, CurveName curve) {
+    if (msg.empty()) {
       throw "ErrorCode.InvalidMessage";
     }
-    if (PrivateKey == NULL) {
+    if (PrivateKey.empty()) {
       throw "ErrorCode.WithoutPrivate";
     }
 
@@ -34,8 +44,29 @@ public:
     return uc_vec;
   }
 
-  bool verifySignature(std::vector<unsigned char> msg, std::vector signature){
-    
+  std::vector<unsigned char> serializePublicKey() {
+    std::vector<unsigned char> act_uc_vec;
+    try {
+      switch (KeyType) {
+      case KeyType::ECDSA: {
+        Signature sig;
+        std::vector<unsigned char> ec_q;
+        ec_q = sig.get_EC_Q(evp_key);
+        act_uc_vec.insert(act_uc_vec.end(), ec_q.begin(), ec_q.end());
+      } break;
+      case KeyType::SM2:
+        break;
+      default:
+        throw "Exception(ErrorCode.UnknownKeyType)";
+      }
+    } catch (const char *e) {
+      cerr << e << endl;
+    }
+    return act_uc_vec;
+  }
+
+  bool verifySignature(std::vector<unsigned char> msg, std::vector signature) {
+    return true;
   }
 };
 
