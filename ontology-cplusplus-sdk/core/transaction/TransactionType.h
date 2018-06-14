@@ -7,7 +7,7 @@
 /**
  * list transaction types
  */
-enum TransactionType {
+enum class TransactionType {
   Bookkeeping = 0x00,
   Bookkeeper = 0x02,
   Claim = 0x03,
@@ -22,25 +22,25 @@ TransactionType TxTypeDeserialize(BinaryReader &reader) {
   int val = reader.readByte();
   switch (val) {
   case 0x00:
-    TxType = Bookkeeping;
+    TxType = TransactionType::Bookkeeping;
     break;
   case 0x02:
-    TxType = Bookkeeper;
+    TxType = TransactionType::Bookkeeper;
     break;
   case 0x03:
-    TxType = Claim;
+    TxType = TransactionType::Claim;
     break;
   case 0x04:
-    TxType = Enrollment;
+    TxType = TransactionType::Enrollment;
     break;
   case 0x05:
-    TxType = Vote;
+    TxType = TransactionType::Vote;
     break;
   case 0xd0:
-    TxType = DeployCode;
+    TxType = TransactionType::DeployCode;
     break;
   case 0xd1:
-    TxType = InvokeCode;
+    TxType = TransactionType::InvokeCode;
     break;
   default:
     throw "IOException";

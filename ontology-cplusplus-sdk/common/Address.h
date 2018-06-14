@@ -33,6 +33,14 @@ public:
     memcpy(ZERO, (unsigned char *)str_zero.c_str(), 20);
   }
 
+  Address operator=(const Address& b){
+    Address ret_address;
+    ret_address.zero_size = b.zero_size;
+    ret_address.ZERO = b.ZERO;
+    ret_address.COIN_VERSION = b.COIN_VERSION;
+    return ret_address;
+  }
+
   Address parse(std::string value) {
     if (value.empty()) {
       throw "NullPointerException";

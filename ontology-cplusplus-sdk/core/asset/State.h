@@ -19,11 +19,11 @@ public:
     value = amount;
   }
 
-  void deserialize(BinaryReader &reader) {
+  void deserialize(BinaryReader *reader) {
     try {
-      reader.readSerializable(from);
-      reader.readSerializable(to);
-      value = reader.readVarInt();
+      reader->readSerializable(from);
+      reader->readSerializable(to);
+      value = reader->readVarInt();
     } catch (const char *e) {
       cerr << e << endl;
     }

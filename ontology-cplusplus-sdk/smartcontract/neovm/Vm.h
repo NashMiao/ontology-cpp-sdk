@@ -3,7 +3,7 @@
 
 #include "../..//OntSdk.h"
 #include "../../common/Helper.h"
-#include "../../core/VmType.h"
+#include "../../core/payload/InvokeCode.h"
 #include <string>
 #include <vector>
 
@@ -15,7 +15,8 @@ private:
 public:
   Vm(Ontsdk _sdk) { sdk = _sdk; }
   void setCodeAddress(std::string codeHash) {
-    if (codeHash[0] == "0" && (codeHash[1] == "x" || codeHash[1] == "X")) {
+    if (codeHash.at(0) == '0' &&
+        (codeHash.at(1) == 'x' || codeHash.at(1) == 'X')) {
       codeHash = codeHash.substr(2);
     }
     contractAddress = codeHash;
@@ -50,7 +51,7 @@ public:
     tx.code = params;
     tx.gasLimit = gaslimit;
     tx.gasPrice = gasprice;
-    if (payer != NULL) {
+    if (!payer.empty()) {
       tx.payer = Address.decodeBase58(payer.replace(Common.didont, ""));
     }
 

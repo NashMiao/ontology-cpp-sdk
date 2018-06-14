@@ -7,7 +7,6 @@
 
 class InvokeCode : public Transaction {
 private:
-  unsigned char vmType;
   std::vector<unsigned char> code;
 
 public:

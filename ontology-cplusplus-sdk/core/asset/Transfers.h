@@ -12,7 +12,9 @@ private:
 
 public:
   Transfers() {}
-  Transfers(const std::vector<State> &_states) { states = _states; }
+  Transfers(const std::vector<State> &_states) {
+    states.insert(states.end(), _states.begin(), _states.end());
+  }
   Transfers(const State &_states) { states.push_back(_states); }
   void deserialize(BinaryReader &reader) {
     int len = (int)reader.readVarInt();

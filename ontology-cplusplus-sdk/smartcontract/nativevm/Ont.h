@@ -6,6 +6,7 @@
 #include "../../core/asset/State.h"
 #include "../../core/asset/Transfers.h"
 #include "../../core/transaction/Transaction.h"
+#include "../neovm/Vm.h"
 #include <string>
 
 class Ont {
