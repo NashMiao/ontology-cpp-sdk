@@ -125,7 +125,7 @@ public:
 
   template <class T> bool writeSerializableArray(std::vector<T> t_vec) {
     if (!writeVarInt(t_vec.size())) {
-      std::vector<T>::const_iterator cst_it;
+      T std::vector<T>::const_iterator cst_it;
       for (cst_it = t_vec.cbegin(); cst_it != t_vec.cend(); cst_it++) {
         cst_it->serialize(this);
       }

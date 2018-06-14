@@ -30,14 +30,16 @@ public:
   std::string ontContractAddr = "ff00000000000000000000000000000000000001";
 
   void transer() {
-    Address sender;
-    sender.set_zero(std::string("TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq"));
-    Address recvAddr;
-    recvAddr.set_zero(std::string("TA5SgQXTeKWyN4GNfWGoXqioEQ4eCDFMqE"));
+    // Address sender;
+    // sender.set_zero(std::string("TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq"));
+    // Address recvAddr;
+    // recvAddr.set_zero(std::string("TA5SgQXTeKWyN4GNfWGoXqioEQ4eCDFMqE"));
+    std::string sender = "TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq";
+    std::string recvAddr = "TA5SgQXTeKWyN4GNfWGoXqioEQ4eCDFMqE";
     long long amount = 1000;
     Ont ont;
-    Transaction tx =
-        ont.makeTransfer(sender, recvAddr, amount, sender, 30000, 0);
+    Transaction tx;
+    tx = ont.makeTransfer(sender, recvAddr, amount, sender, 30000, 0);
     std::vector<unsigned char> tx_hash = tx.hash();
     std::vector<unsigned char>::const_iterator tx_hash_cit;
     for (tx_hash_cit = tx_hash.cbegin(); tx_hash_cit != tx_hash.cend();

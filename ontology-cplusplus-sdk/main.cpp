@@ -15,7 +15,7 @@
 #include <openssl/kdf.h>
 
 void sign_by_set_pub_pri() {
-  Sign ec_sign;
+  Signature ec_sign;
   ec_sign.EC_init();
   CurveName curve_name = CurveName::p256;
   std::string private_key =
@@ -46,7 +46,7 @@ void sign_by_set_pub_pri() {
 }
 
 void sign_by_gen_key() {
-  Sign ec_sign;
+  Signature ec_sign;
   ec_sign.EC_init();
   ec_sign.ECDSA_key_generate();
   std::string out_public_key;
@@ -68,8 +68,8 @@ void sign_by_gen_key() {
 }
 
 void sign_by_pri_key() {
-  Sign ec_sign;
-  CurveName CurveName::curve_name = CurveName::p256;
+  Signature ec_sign;
+  CurveName curve_name = CurveName::p256;
   ec_sign.EC_init();
   std::string private_key =
       "70789d4ac31576c61c5d12e38a66de605b18faf2c8d60a2c1952a6286b67318f";

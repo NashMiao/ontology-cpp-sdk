@@ -9,8 +9,8 @@
 
 class Serializable {
 public:
-  virtual void serialize(BinaryWriter &writer) = 0;
-  virtual void deserialize(BinaryReader &reader) = 0;
+  virtual void serialize(BinaryWriter &writer);
+  virtual void deserialize(BinaryReader &reader);
   std::vector<unsigned char> toArray() {
     BinaryWriter writer;
     serialize(writer);

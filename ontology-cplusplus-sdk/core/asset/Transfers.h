@@ -6,7 +6,7 @@
 #include "State.h"
 #include <vector>
 
-class Transfers::public Serializable {
+class Transfers : public Serializable {
 private:
   std::vector<State> states;
 
@@ -14,7 +14,7 @@ public:
   Transfers() {}
   Transfers(const std::vector<State> &_states) { states = _states; }
   Transfers(const State &_states) { states.push_back(_states); }
-  void deserialize(BinaryReader & reader) {
+  void deserialize(BinaryReader &reader) {
     int len = (int)reader.readVarInt();
     for (int i = 0; i < len; i++) {
       State state_item;
@@ -23,7 +23,7 @@ public:
     }
   }
 
-  void serialize(BinaryWriter & writer) {
+  void serialize(BinaryWriter &writer) {
     writer.writeSerializableArray(states);
   }
 };

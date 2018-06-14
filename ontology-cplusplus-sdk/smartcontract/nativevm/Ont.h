@@ -2,7 +2,9 @@
 #define ONT_H
 
 #include "../../OntSdk.h"
+#include "../../core/VmType.h"
 #include "../../core/asset/State.h"
+#include "../../core/asset/Transfers.h"
 #include "../../core/transaction/Transaction.h"
 #include <string>
 
@@ -37,7 +39,8 @@ public:
     helper.DecodeBase58(sender, recvAddr_vchRet);
     State state(Address(sender_vchRet), Address(recvAddr_vchRet), amount);
     Transfers transfers = Transfers(state);
-    Transaction tx = makeInvokeCodeTransaction(
+    Vm vm;
+    Transaction tx = vm.makeInvokeCodeTransaction(
         ontContract, "transfer", transfers.toArray(),
         get_uc_vmtype(VmType::Native), payer, gaslimit, gasprice);
     return tx;

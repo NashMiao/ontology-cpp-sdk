@@ -11,15 +11,13 @@ class Address {
 private:
   constexpr std::size_t zero_size;
   std::vector<unsigned char> ZERO;
-  unsigned char COIN_VERSION_ONT;
-  unsigned char COIN_VERSIO_NEO;
+  unsigned char COIN_VERSION;
 
 public:
   Address() {
     zero_size = 20;
     ZERO.reserve(zero_size);
-    COIN_VERSION_ONT = 0x41;
-    COIN_VERSIO_NEO = 0x17;
+    COIN_VERSIO= 0x17;
   }
 
   Address(const std::vector<unsigned char> &_zero) {
@@ -58,6 +56,13 @@ public:
     std::vector<unsigned char> value;
     Helper helper;
     return helper.toHexString(value);
+  }
+
+  std::string toBase58(){
+    std::vector<unsigned char> data;
+    data.push_back(COIN_VERSION);
+    // TODO
+    return "";
   }
 };
 
