@@ -3,7 +3,8 @@
 
 #include "sdk/manager/WalletMgr.h"
 #include "sdk/manager/OntAssetTx.h"
-#include "crypto/Sign.h"
+#include "crypto/Signature.h"
+#include "core/asset/Sig.h"
 
 class OntSdk
 {
@@ -30,7 +31,10 @@ class OntSdk
     }
 
     Transaction signTx(Transaction tx, std::vector<Account> accounts){
-      
+      std::vector<Sig> sigs;
+      for (int i = 0; i < accounts.size();i++){
+        Sig sig_item;
+      }
     }
 };
 #endif // !ONTSDK_H
