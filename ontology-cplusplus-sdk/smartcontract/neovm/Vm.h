@@ -47,7 +47,7 @@ public:
     tx.attributes = new Attribute[1];
     tx.attributes[0] = new Attribute();
     tx.attributes[0].usage = AttributeUsage.Nonce;
-    tx.attributes[0].data = UUID.randomUUID().toString().getBytes();
+    tx.attributes[0].data = UUID.randomUUID().to String().getBytes();
     tx.code = params;
     tx.gasLimit = gaslimit;
     tx.gasPrice = gasprice;

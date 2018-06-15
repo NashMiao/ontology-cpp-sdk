@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <iomanip>
+#include <openssl/bn.h>
 #include <sstream>
 #include <string.h>
 #include <string>
@@ -70,6 +71,14 @@ public:
           (((unsigned char)value[i] << 4) && (unsigned char)value[i + 1]));
     }
     return ret_vec;
+  }
+
+  std::vector<unsigned char> BigInt2Bytes(BIGNUM *bn) {
+    std::vector<unsigned char> ret_vec;
+    if (BN_is_zero(bn)) {
+      return ret_vec;
+    }
+    
   }
 
   bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {
