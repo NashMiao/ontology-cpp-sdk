@@ -79,7 +79,8 @@ public:
       throw "BN_set_word: error!";
     }
     if (BN_cmp(bn, BN_zero) == 1 && BN_cmp(num, bn) == 1) {
-      return add(ScriptOp::OP_1 - 1 + BN_get_word(bn));
+      return add(
+          ((unsigned long)getByte(ScriptOp::OP_1) - 1 + BN_get_word(bn)));
     }
     if (BN_get_word(bn) < 0 ||
         BN_get_word(bn) > std::numeric_limits<long long>::max()) {
@@ -89,10 +90,16 @@ public:
 
   ScriptBuilder pushNum(short num) {
     if (num == 0) {
-      return add(ScriptOp.OP_0);
+      return add(ScriptOp::OP_0);
     } else if (num < 16) {
-      return add(ScriptOp.valueOf(num - 1 + ScriptOp::OP_1.getByte()));
+      return add(num - 1 + (short)getByte(ScriptOp::OP_1));
     }
+  }
+
+  ScriptBuilder pushPack() { return add(ScriptOp::OP_PACK); }
+
+  std::vector<unsigned char> toArray(){
+    return uc_vec;
   }
 };
 

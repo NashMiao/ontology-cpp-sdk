@@ -12,6 +12,12 @@ private:
   std::vector<std::string> sigData;
 
 public:
+  void Sig(const std::vector<std::string> &_pubKeys, int _M,
+           const std::vector<std::string> &_sigData) {
+    pubKeys.insert(pubKeys.end(), _pubKeys.begin(), _pubKeys.end());
+    M = _M;
+    sigData.insert(sigData.end(), _sigData.begin(), _sigData.end());
+  }
   void add_sigData(std::vector<unsigned char> &_sig_data) {
     std::string str(_sig_data.begin(), _sig_data.end());
     sigData.push_back(str);

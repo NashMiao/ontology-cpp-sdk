@@ -41,6 +41,20 @@ public:
 
   void set_sigs(std::vector<Sig> &_sigs) { sigs = _sigs; }
 
+  Sig get_sig(int i) {
+    Sig ret_sig;
+    try {
+      ret_sig = sigs[i];
+    } catch (const std::out_of_range &oor) {
+      std::cerr << "Out of Range error: " << oor.what() << '\n';
+    }
+    return ret_sig;
+  }
+
+  int sigs_length() { return (int)sigs.size(); }
+
+  bool sigs_empty() { return sigs.empty(); }
+
   nlohmann::json json_out() {
     nlohmann::json Result;
     Result["version"] = version;

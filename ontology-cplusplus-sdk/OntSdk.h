@@ -9,6 +9,8 @@
 class OntSdk {
 private:
   WalletMgr walletMgr;
+  SignatureScheme defaultSignScheme = SignatureScheme::SHA256WITHECDSA;
+  CurveName defaultCurveName = CurveName::p256;
   // ConnectMgr connRpc;
   // ConnectMgr connRestful;
   // ConnectMgr connWebSocket;
@@ -46,6 +48,23 @@ public:
       sigs.push_back(sig_item);
     }
     tx.set_sigs(sigs);
+    return tx;
+  }
+
+  Transaction addMultiSign(Transaction tx, int M, std::vector<Account> acct) {
+    std::vector<Sig> _sigs;
+    for (int i = 0; i < tx.sigs_length(); i++) {
+      _sigs.push_back(tx.get_sig(i));
+    }
+    std::vector<std::string> _pubKeys;
+    std::vector<std::string> _sigData;
+    for (int i = 0; i < acct.size(); i++) {
+      _pubKeys.push_back(acct[i].serializePublicKey());
+      _sigData.push_back(tx.sign(acct[i], defaultSignScheme, defaultCurveName));
+      Sig sig_item(_pubKeys, M, _sigData);
+      _sigs.push_back(sig_item);
+    }
+    tx.set_sigs(_sigs);
     return tx;
   }
 };
