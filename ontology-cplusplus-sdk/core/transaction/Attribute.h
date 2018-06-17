@@ -36,7 +36,8 @@ public:
       usage = valueOf(reader->readByte());
       if (usage == AttributeUsage::Script || usage == AttributeUsage::DescriptionUrl || usage == AttributeUsage::Description ||
           usage == AttributeUsage::Nonce) {
-        data = reader->readVarBytes(255);
+        
+        data = reader->readVarBytes_vec(255);
       } else {
         throw "IOException";
       }

@@ -24,7 +24,7 @@ public:
   std::string getCodeAddress() { return contractAddress; }
   InvokeCode makeInvokeCodeTransaction(std::string codeAddr, std::string method,
                                        std::vector<unsigned char> params,
-                                       unsigned char vmtype, std::string payer,
+                                       VmType vmtype, std::string payer,
                                        long gaslimit, long gasprice) {
     std::vector<unsigned char> _code;
     Helper helper;

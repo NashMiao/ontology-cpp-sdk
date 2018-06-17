@@ -27,7 +27,7 @@ public:
   Account(std::vector<unsigned char> prikey, SignatureScheme scheme) {
     signatureScheme = scheme;
     if (scheme == SignatureScheme::SM3withSM2) {
-      keyType = KeyTyp::SM2;
+      keyType = KeyType::SM2;
     } else if (scheme == SignatureScheme::SHA256withECDSA) {
       keyType = KeyType::ECDSA;
     } else {
@@ -54,7 +54,7 @@ public:
   void setAccount(std::vector<unsigned char> prikey, SignatureScheme scheme) {
     signatureScheme = scheme;
     if (scheme == SignatureScheme::SM3withSM2) {
-      keyType = KeyTyp::SM2;
+      keyType = KeyType::SM2;
     } else if (scheme == SignatureScheme::SHA256withECDSA) {
       keyType = KeyType::ECDSA;
     } else {
@@ -90,7 +90,7 @@ public:
   std::vector<unsigned char> serializePublicKey() {
     std::vector<unsigned char> act_uc_vec;
     try {
-      switch (KeyType) {
+      switch (keyType) {
       case KeyType::ECDSA: {
         Signature sig;
         std::vector<unsigned char> ec_q;

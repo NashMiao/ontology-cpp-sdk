@@ -106,7 +106,11 @@ public:
     ScriptBuilder script_builder;
     script_builder.push(publicKey);
     script_builder.push(ScriptOp::OP_CHECKSIG);
-    script_builder.toArray();
+    Digest digest;
+    std::vector<unsigned char> hash160_vec;
+    hash160_vec = digest.hash160(script_builder.toArray());
+    Address address(hash160_vec);
+    return address;
   }
 
   Address addressFromMultiPubKeys(int m,
