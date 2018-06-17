@@ -8,7 +8,7 @@
 class Digest
 {
 public:
-  std::vector<unsigned char> hash256(std::vector<unsigned char> &value)
+  std::vector<unsigned char> sha256(std::vector<unsigned char> &value)
   {
     unsigned char hash256_uc[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256_ctx;
@@ -34,7 +34,11 @@ public:
 
   std::vector<unsigned char> hash160(std::vector<unsigned char> &value)
   {
-    return ripemd160(hash256(value));
+    return ripemd160(sha256(value));
+  }
+
+  std::vector<unsigned char> hash256(std::vector<unsigned char> &value){
+    return sha256(sha256(value));
   }
 };
 #endif
