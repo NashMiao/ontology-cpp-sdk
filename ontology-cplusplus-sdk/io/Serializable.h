@@ -4,7 +4,7 @@
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 
-#include <vector>d
+#include <vector>
 
 class Serializable{
 public:

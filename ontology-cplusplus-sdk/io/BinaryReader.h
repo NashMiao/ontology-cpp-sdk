@@ -83,7 +83,9 @@ public:
   std::vector<unsigned char> toByteArray() { return uc_vec; }
 
 void read(std::vector<unsigned char> &buffer){
-
+  // TODO
+  buffer.insert(buffer.begin(), uc_vec_iter, uc_vec_iter + buffer.size());
+  uc_vec_iter += buffer.size();
 }
 
   long long readVarInt(long long max) {

@@ -1,9 +1,9 @@
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
+#ifndef WALLET_ACCOUNT_H
+#define WALLET_ACCOUNT_H
 #include <string>
 #include <unordered_map>
 
-class Account {
+class WalletAccount {
 public:
   std::string label;
   std::string address;
@@ -18,7 +18,7 @@ public:
   std::string signatureScheme;
   std::string passwordHash;
   // Object extra = null;
-  Account() {
+  WalletAccount() {
     label = "";
     address = "";
     isDefault = false;

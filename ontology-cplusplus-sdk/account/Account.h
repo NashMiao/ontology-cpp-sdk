@@ -39,8 +39,8 @@ public:
       evp_kep = EVP_PKEY_new();
       addressU160 = Address.addressFromPubKey(serializePublicKey());
       break;
-      default:
-        throw "Exception(ErrorCode.UnsupportedKeyType)";
+    default:
+      throw "Exception(ErrorCode.UnsupportedKeyType)";
     }
   }
 

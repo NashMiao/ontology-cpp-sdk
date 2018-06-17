@@ -21,16 +21,11 @@ public:
   Address() {
     zero_size = 20;
     ZERO.reserve(zero_size);
-    COIN_VERSIO = 0x17;
+    COIN_VERSION = 0x17;
   }
 
-  Address(const std::vector<unsigned char> &_zero) {
-    zero_size = 20;
-    ZERO.reserve(zero_size);
-    if (_zero.size() != zero_size) {
-      throw "Address Error: zero size error!"
-    }
-    ZERO = _zero;
+  Address(const std::vector<unsigned char> &value) {
+    this->UIntBase::UIntBase(20, value);
   }
 
   void set_zero(std::string str_zero) {
@@ -39,6 +34,7 @@ public:
 
   Address operator=(const Address &b) {
     Address ret_address;
+    ret_address.set_data_bytes(b.get_data_bytes);
     ret_address.zero_size = b.zero_size;
     ret_address.ZERO = b.ZERO;
     ret_address.COIN_VERSION = b.COIN_VERSION;
@@ -83,16 +79,80 @@ public:
     return code;
   }
 
-  void deserialize(BinaryReader &reader) {
-    std::string str;
-    str = reader.readVarBytes();
-    memcpy(ZERO, (unsigned char *)str.c_str(), 20);
+  Address AddressFromePubKeyNeo(std::vector<unsigned char> publicKey) {
+    ScriptBuilder builder;
+    builder.push(publicKey);
+    builder.add(ScriptOp::OP_CHECKSIG);
+    Digest digest;
+    std::vector<unsigned char> hash160;
+    hash160 = digest.hash160(builder.toArray());
+    Address address(hash160);
+    return address;
   }
+
+  // void deserialize(BinaryReader &reader) {
+  //   std::string str;
+  //   str = reader.readVarBytes();
+  //   memcpy(ZERO, (unsigned char *)str.c_str(), 20);
+  // }
 
   std::string toHexString() {
     std::vector<unsigned char> value;
     Helper helper;
     return helper.toHexString(value);
+  }
+
+  Address addressFromPubKey(std::vector<unsigned char> publicKey) {
+    ScriptBuilder script_builder;
+    script_builder.push(publicKey);
+    script_builder.push(ScriptOp::OP_CHECKSIG);
+    script_builder.toArray();
+  }
+
+  Address addressFromMultiPubKeys(int m,
+                                  std::vector<unsigned char> publicKeys) {
+    if (m <= 0 || m > publicKeys.size() || publicKeys.size() > 24) {
+      throw "SDKException(ErrorCode.ParamError)";
+    }
+    try {
+      BinaryWriter writer;
+      writer.writeByte((unsigned char)publicKeys.size());
+      writer.writeByte((unsigned char)m);
+      for (size_t i = 0; i < publicKeys.size(); i++) {
+        writer.writeVarBytes(publicKeys[i]);
+      }
+      std::vector<unsigned char> hash160;
+      Digest digest;
+      hash160 = digest.hash160(writer.toByteArray());
+      hash160[0] = 0x02;
+    } catch (const char *e) {
+      cerr << e << endl;
+    }
+    Address u160(hash160);
+    return u160;
+  }
+
+  Address decodeBase58(std::string address) {
+    Helper helper;
+    std::vector<unsigned char> data;
+    data = helper.DecodeBase58(address);
+    if (data.size() != 25) {
+      throw "SDKException(ErrorCode.ParamError)";
+    }
+    if (data[0] != COIN_VERSION) {
+      throw "SDKException(ErrorCode.ParamError)";
+    }
+    Digest digest;
+    std::vector<unsigned char> checksum =
+        digest.sha256(digest.sha256(data, 0, 21));
+    for (int i = 0; i < 4; i++) {
+      if (data[data.size() - 4 + i] != checksum[i]) {
+        throw "SDKException(ErrorCode.ParamError)";
+      }
+    }
+    std::vector<unsigned char> buffer;
+    buffer.assign(data.begin() + 1, data.begin() + 21);
+    return Address(buffer);
   }
 
   std::string toBase58() {
@@ -109,15 +169,6 @@ public:
     std::string str;
     str = helper.EncodeBase58(data);
     return str;
-  }
-
-  
-
-  Address addressFromPubKey(std::vector<unsigned char> publicKey) {
-    ScriptBuilder script_builder;
-    script_builder.push(publicKey);
-    script_builder.push(ScriptOp::OP_CHECKSIG);
-    script_builder.toArray();
   }
 };
 
