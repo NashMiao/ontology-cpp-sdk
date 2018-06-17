@@ -16,17 +16,18 @@ public:
     states.insert(states.end(), _states.begin(), _states.end());
   }
   Transfers(const State &_states) { states.push_back(_states); }
-  void deserialize(BinaryReader &reader) {
+
+  void deserialize(BinaryReader *reader) {
     int len = (int)reader.readVarInt();
     for (int i = 0; i < len; i++) {
       State state_item;
-      reader.readSerializable(state_item);
+      reader->readSerializable(state_item);
       states.push_back(state_item);
     }
   }
 
-  void serialize(BinaryWriter &writer) {
-    writer.writeSerializableArray(states);
+  void serialize(BinaryWriter *writer) {
+    writer->writeSerializableArray(states);
   }
 };
 

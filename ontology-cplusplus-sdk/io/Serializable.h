@@ -1,17 +1,34 @@
 #ifndef SERIALIZABLE_H
 #define SERIALIZABLE_H
 
+#include "../common/Helper.h"
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 
 #include <vector>
 
-class Serializable{
+class Serializable {
 public:
   virtual void serialize(BinaryWriter *writer) = 0;
-  virtual void deserialize(BinaryReader *dreader) = 0;
-  virtual std::vector<unsigned char> toArray() = 0;
-  virtual std::string toHexString() = 0;
+  virtual void deserialize(BinaryReader *reader) = 0;
+  
+  std::vector<unsigned char> toArray() {
+    BinaryWriter writer;
+    try {
+      serialize(writer);
+    } catch (const char *ex) {
+      cerr << ex << endl;
+      throw "UnsupportedOperationException(ex)";
+    }
+    return writer.toByteArray();
+  }
+  
+  std::string toHexString() {
+    Helper helper;
+    std::string str;
+    str = helper.toHexString(toArray());
+    return str;
+  };
 };
 
 #endif

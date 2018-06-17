@@ -1,7 +1,7 @@
 #ifndef VM_H
 #define VM_H
 
-#include "../..//OntSdk.h"
+#include "../../OntSdk.h"
 #include "../../common/Helper.h"
 #include "../../core/payload/InvokeCode.h"
 #include <string>
@@ -43,19 +43,8 @@ public:
     } else {
       throw "IllegalArgumentException";
     }
-    InvokeCode tx = new InvokeCode();
-    tx.attributes = new Attribute[1];
-    tx.attributes[0] = new Attribute();
-    tx.attributes[0].usage = AttributeUsage.Nonce;
-    tx.attributes[0].data = UUID.randomUUID().to String().getBytes();
-    tx.code = params;
-    tx.gasLimit = gaslimit;
-    tx.gasPrice = gasprice;
-    if (!payer.empty()) {
-      tx.payer = Address.decodeBase58(payer.replace(Common.didont, ""));
-    }
-
-    //   tx.vmType = vmtype;
+    // TODO
+    InvokeCode tx;
     return tx;
   }
 };

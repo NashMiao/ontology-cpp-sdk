@@ -19,11 +19,11 @@ private:
   SignatureScheme signatureScheme;
 
 public:
+  Account() {}
   Account(SignatureScheme scheme) {
     evp_kep = EVP_PKEY_new();
     addressU160 = Address.addressFromPubKey(serializePublicKey());
   }
-
   Account(std::vector<unsigned char> prikey, SignatureScheme scheme) {
     signatureScheme = scheme;
     if (scheme == SignatureScheme::SM3withSM2) {
@@ -50,6 +50,27 @@ public:
     }
     EVP_cleanup();
   }
+
+  void setAccount(std::vector<unsigned char> prikey, SignatureScheme scheme) {
+    signatureScheme = scheme;
+    if (scheme == SignatureScheme::SM3withSM2) {
+      keyType = KeyTyp::SM2;
+    } else if (scheme == SignatureScheme::SHA256withECDSA) {
+      keyType = KeyType::ECDSA;
+    } else {
+      throw "SignatureScheme Error!";
+    }
+    switch (scheme) {
+    case SignatureScheme::SHA256withECDSA:
+    case SignatureScheme::SM3withSM2:
+      evp_kep = EVP_PKEY_new();
+      addressU160 = Address.addressFromPubKey(serializePublicKey());
+      break;
+    default:
+      throw "Exception(ErrorCode.UnsupportedKeyType)";
+    }
+  }
+
   Address getAddressU160() { return addressU160; }
 
   std::vector<unsigned char>

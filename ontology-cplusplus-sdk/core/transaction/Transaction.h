@@ -67,20 +67,20 @@ public:
     return json_out;
   }
 
-  void serializeUnsigned(BinaryWriter &writer) {
-    writer.writeByte(version);
-    writer.writeByte(txType;
-    writer.writeInt(nonce);
-    writer.writeLong(gasPrice);
-    writer.writeLong(gasLimit);
-    writer.writeSerializable(payer);
-    serializeExclusiveData(writer);
-    writer.writeSerializableArray(attributes);
+  void serializeUnsigned(BinaryWriter *writer) {
+    writer->writeByte(version);
+    writer->writeByte(txType;
+    writer->writeInt(nonce);
+    writer->writeLong(gasPrice);
+    writer->writeLong(gasLimit);
+    writer->writeSerializable(payer);
+    serializeExclusiveData(*writer);
+    writer->writeSerializableArray(attributes);
   }
 
-  void serialize(BinaryWriter &writer) {
-    serializeUnsigned(writer);
-    writer.writeSerializableArray(sigs);
+  void serialize(BinaryWriter *writer) {
+    serializeUnsigned(*writer);
+    writer->writeSerializableArray(sigs);
   }
 
   void deserialize() {
@@ -105,15 +105,11 @@ public:
 
   void deserializeUnsigned(BinaryReader &reader) {
     version = reader.readByte();
-    cout << "version: " << version << endl;
     if (txType != reader.readByte()) {
       throw "IOException";
     }
-    cout << "t_txtype: " << txType << endl;
     gasPrice = reader.readLong();
     gasLimit = reader.readLong();
-    cout << "gasPrice: " << gasPrice << endl;
-    cout << "gasLimit: " << gasLimit << endl;
     // try{
 
     // }

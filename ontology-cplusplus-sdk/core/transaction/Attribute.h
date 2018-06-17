@@ -17,12 +17,12 @@ private:
 
 public:
   void serialize(BinaryWriter *writer) {
-    writer.writeByte(usage);
+    writer->writeByte(usage);
     try
     {
       if (usage == AttributeUsage::Script || usage == AttributeUsage::DescriptionUrl || usage == AttributeUsage::Description ||
           usage == AttributeUsage::Nonce) {
-        writer.writeVarBytes(data);
+        writer->writeVarBytes(data);
       } else {
         throw "IOException";
       }
@@ -31,14 +31,12 @@ public:
     }
   }
 
-  void deserialize(BinaryReader &reader) {
+  void deserialize(BinaryReader *reader) {
     try {
-      usage = valueOf(reader.readByte());
-      cout << "usage: " << usage << endl;
+      usage = valueOf(reader->readByte());
       if (usage == AttributeUsage::Script || usage == AttributeUsage::DescriptionUrl || usage == AttributeUsage::Description ||
           usage == AttributeUsage::Nonce) {
-        data = reader.readVarBytes(255);
-        cout << "data: " << data << endl;
+        data = reader->readVarBytes(255);
       } else {
         throw "IOException";
       }

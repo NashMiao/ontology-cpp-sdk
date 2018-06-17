@@ -82,11 +82,11 @@ public:
 
   std::vector<unsigned char> toByteArray() { return uc_vec; }
 
-void read(std::vector<unsigned char> &buffer){
-  // TODO
-  buffer.insert(buffer.begin(), uc_vec_iter, uc_vec_iter + buffer.size());
-  uc_vec_iter += buffer.size();
-}
+  void read(std::vector<unsigned char> &buffer) {
+    // TODO
+    buffer.insert(buffer.begin(), uc_vec_iter, uc_vec_iter + buffer.size());
+    uc_vec_iter += buffer.size();
+  }
 
   long long readVarInt(long long max) {
     int tag;
@@ -295,10 +295,9 @@ void read(std::vector<unsigned char> &buffer){
 
   template <class T> void readSerializableArray(std::vector<T> &t_vec) {
     int vec_len = (int)readVarInt(0x10000000);
-    cout << "vec_len: " << vec_len << endl;
     for (int i = 0; i < vec_len; i++) {
       T t_item;
-      t_item.deserialize(*this);
+      t_item.deserialize(this);
       t_vec.push_back(t_item);
     }
   }

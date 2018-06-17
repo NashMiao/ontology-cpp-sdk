@@ -2,6 +2,7 @@
 #define UINTBASE_H
 
 #include "../io/Serializable.h"
+#include "Helper.h"
 #include <string>
 #include <vector>
 
@@ -29,10 +30,17 @@ public:
 
   void serialize(BinaryWriter *writer) { writer->write(data_bytes); }
 
-  void deserialize(BinaryReader &reader) { reader.read(data_bytes); }
+  void deserialize(BinaryReader *reader) { reader->read(data_bytes); }
 
-  virtual std::vector<unsigned char> toArray() = 0;
-  virtual std::string toHexString() = 0;
+  std::vector<unsigned char> toArray() { return data_bytes; }
+
+  std::string toHexString() {
+    Helper helper;
+    std::string str;
+    str = helper.toHexString(toArray());
+    str.reserve(str.begin(), str.end());
+    return str;
+  }
 };
 
 #endif

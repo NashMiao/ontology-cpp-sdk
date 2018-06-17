@@ -46,7 +46,7 @@ public:
 
   std::vector<unsigned char> toByteArray() { return uc_vec; }
 
-  void write(const std::vector<unsigned char>& buffer) {
+  void write(const std::vector<unsigned char> &buffer) {
     uc_vec.insert(uc_vec.end(), buffer.begin(), buffer.end());
   }
 
@@ -131,9 +131,11 @@ public:
 
   template <class T> bool writeSerializableArray(std::vector<T> t_vec) {
     if (!writeVarInt(t_vec.size())) {
-      T std::vector<T>::const_iterator cst_it;
-      for (cst_it = t_vec.cbegin(); cst_it != t_vec.cend(); cst_it++) {
-        cst_it->serialize(*this);
+      s int vec_len = (int)t_vec.size();
+      for (int i = 0; i < vec_len; i++) {
+        T t_item;
+        t_item = t_vec[i];
+        t_item.serialize(this);
       }
       return false;
     }
