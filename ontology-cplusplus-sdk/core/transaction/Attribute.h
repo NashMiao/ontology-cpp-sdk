@@ -31,13 +31,13 @@ public:
     }
   }
 
-  void deserialize(BinaryReader *reader) {
+  void deserialize(BinaryReader &reader) {
     try {
-      usage = valueOf(reader->readByte());
+      usage = valueOf(reader.readByte());
       cout << "usage: " << usage << endl;
       if (usage == AttributeUsage::Script || usage == AttributeUsage::DescriptionUrl || usage == AttributeUsage::Description ||
           usage == AttributeUsage::Nonce) {
-        data = reader->readVarBytes(255);
+        data = reader.readVarBytes(255);
         cout << "data: " << data << endl;
       } else {
         throw "IOException";

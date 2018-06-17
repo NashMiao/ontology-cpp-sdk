@@ -71,9 +71,6 @@ private:
   }
 
 public:
-  std::vector<unsigned char> toByteArray() {
-    return uc_vec;
-  }
   void set_uc_vec(std::string &str) {
     // std::string hex_str = boost::algorithm::hex(str);
     uc_vec.clear();
@@ -82,6 +79,12 @@ public:
     }
     uc_vec_iter = uc_vec.begin();
   }
+
+  std::vector<unsigned char> toByteArray() { return uc_vec; }
+
+void read(std::vector<unsigned char> &buffer){
+
+}
 
   long long readVarInt(long long max) {
     int tag;
@@ -181,7 +184,9 @@ public:
 
   std::string readVarBytes() { return readVarBytes(0X7fffffc7); }
 
-  std::vector<unsigned char> readVarBytes_vec() { return readVarBytes_vec(0X7fffffc7); }
+  std::vector<unsigned char> readVarBytes_vec() {
+    return readVarBytes_vec(0X7fffffc7);
+  }
 
   std::string readVarBytes(int max) {
     int len = (int)readVarInt(max);
@@ -291,7 +296,7 @@ public:
     cout << "vec_len: " << vec_len << endl;
     for (int i = 0; i < vec_len; i++) {
       T t_item;
-      t_item.deserialize(this);
+      t_item.deserialize(*this);
       t_vec.push_back(t_item);
     }
   }

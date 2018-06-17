@@ -4,12 +4,12 @@
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 
-#include <vector>
+#include <vector>d
 
 class Serializable{
 public:
-  virtual void serialize(BinaryWriter &writer) = 0;
-  virtual void deserialize(BinaryReader &reader) = 0;
+  virtual void serialize(BinaryWriter *writer) = 0;
+  virtual void deserialize(BinaryReader *dreader) = 0;
   virtual std::vector<unsigned char> toArray() = 0;
   virtual std::string toHexString() = 0;
 };

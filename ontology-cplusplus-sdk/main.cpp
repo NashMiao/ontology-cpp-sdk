@@ -407,7 +407,7 @@ void test_base58() {
 
 void test_MakeTxWithoutWalletDemo() {
   MakeTxWithoutWalletDemo make_tx_without_wallet_demo;
-  make_tx_without_wallet_demo.transer();
+  make_tx_without_wallet_demo.init();
 }
 
 int main() {

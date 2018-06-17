@@ -32,6 +32,14 @@ public:
     curve_nid = CurveName::p256;
   }
 
+  SignatureScheme getDefaultSignScheme(){
+    return defaultSignScheme;
+  }
+
+  CurveName getCurveName(){
+    return defaultCurveName;
+  }
+
   Transaction signTx(Transaction tx, const std::vector<Account> &accounts) {
     std::vector<Sig> sigs;
     for (size_t i = 0; i < accounts.size(); i++) {

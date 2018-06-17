@@ -23,11 +23,17 @@ public:
   }
 
   std::vector<unsigned char> get_data_bytes(){
-    return data_bytes;
+    return data_bytes;dd
+  }
+  
+  void serialize(BinaryWriter *writer){
+    writer->write(data_bytes);
   }
 
-  virtual void serialize(BinaryWriter &writer) = 0;
-  virtual void deserialize(BinaryReader &reader) = 0;
+  void deserialize(BinaryReader &reader){
+    reader.read(data_bytes);
+  }
+
   virtual std::vector<unsigned char> toArray() = 0;
   virtual std::string toHexString() = 0;
 };

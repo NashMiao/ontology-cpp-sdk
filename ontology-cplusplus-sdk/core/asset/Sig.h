@@ -40,15 +40,15 @@ public:
       writer.writeVarBytes(*cst_it);
     }
   }
-  void deserialize(BinaryReader *reader) {
-    long long pub_key_len = reader->readVarInt();
+  void deserialize(BinaryReader &reader) {
+    long long pub_key_len = reader.readVarInt();
     for (int i = 0; i < pub_key_len; i++) {
-      pubKeys.push_back(reader->readVarBytes());
+      pubKeys.push_back(reader.readVarBytes());
     }
     M = (int)reader.readVarInt();
-    int sig_data_len = (int)reader->readVarInt();
+    int sig_data_len = (int)reader.readVarInt();
     for (int i = 0; i < sig_data_len; i++) {
-      sigData.push_back(reader->readVarBytes());
+      sigData.push_back(reader.readVarBytes());
     }
   }
 };

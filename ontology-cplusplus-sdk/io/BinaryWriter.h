@@ -41,8 +41,14 @@ private:
 
 public:
   BinaryWriter() { outfile.open("outfile", ios::out | ios::binary); }
+
   void set_ofstream(std::ofstream &ofstrm) { outfile.copyfmt(ofstrm); }
+
   std::vector<unsigned char> toByteArray() { return uc_vec; }
+
+  void write(const std::vector<unsigned char>& buffer) {
+    uc_vec.insert(uc_vec.end(), buffer.begin(), buffer.end());
+  }
 
   bool writeVarInt(long long v) {
     if (v < 0xFD) {
@@ -127,7 +133,7 @@ public:
     if (!writeVarInt(t_vec.size())) {
       T std::vector<T>::const_iterator cst_it;
       for (cst_it = t_vec.cbegin(); cst_it != t_vec.cend(); cst_it++) {
-        cst_it->serialize(this);
+        cst_it->serialize(*this);
       }
       return false;
     }
