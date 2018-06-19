@@ -1,6 +1,7 @@
 #ifndef ONTSDK_H
 #define ONTSDK_H
 
+#include "account/Account.h"
 #include "core/asset/Sig.h"
 #include "crypto/Signature.h"
 #include "sdk/manager/OntAssetTx.h"
@@ -11,8 +12,8 @@
 class OntSdk {
 private:
   WalletMgr walletMgr;
-  static SignatureScheme defaultSignScheme = SignatureScheme::SHA256withECDSA;
-  static CurveName defaultCurveName = CurveName::p256;
+  const SignatureScheme static defaultSignScheme = SignatureScheme::SHA256withECDSA;
+  const CurveName static defaultCurveName = CurveName::p256;
   // ConnectMgr connRpc;
   // ConnectMgr connRestful;
   // ConnectMgr connWebSocket;
