@@ -26,22 +26,20 @@ public:
     this->set_data_bytes(20, value);
   }
 
-  void set_zero(std::string str_zero)
-  {
-    memcpy(ZERO, (unsigned char *)str_zero.c_str(), 20);
-  }
+  void set_zero(std::string str_zero) { memcpy(&ZERO[0], &str_zero[0], 20); }
 
   Address operator=(const Address &b)
   {
     Address ret_address;
-    ret_address.set_data_bytes(b.get_data_bytes());
+    std::vector<unsigned char> b_data_bytes;
+    b_data_bytes = b.get_data_bytes();
+    ret_address.set_data_bytes(b_data_bytes);
     ret_address.ZERO = b.ZERO;
     ret_address.COIN_VERSION = b.COIN_VERSION;
-    ret_address.set_data_bytes(b.get_data_bytes());
     return ret_address;
   }
 
-  Address parse(std::string value)
+  static Address parse(std::string value)
   {
     if (value.empty())
     {
@@ -56,8 +54,7 @@ public:
       throw "IllegalArgumentException";
     }
     std::vector<unsigned char> v;
-    Help help;
-    v = help.hexToBytes(value);
+    v = Helper::hexToBytes(value);
     Address ret_address(v);
     return ret_address;
   }
@@ -67,7 +64,7 @@ public:
     try
     {
       Address v = parse(s);
-      data_type = v.get_data_bytes();
+      this->set_data_bytes(v.get_data_bytes());
       return true;
     }
     catch (const char *err)
@@ -75,7 +72,7 @@ public:
       cerr << err << endl;
     }
   }
-
+  
   Address toScriptHash(std::vector<unsigned char> script)
   {
     Digest digest;
@@ -85,7 +82,9 @@ public:
 
   Address AddressFromVmCode(std::string codeHexStr)
   {
-    Address code = Address.toScriptHash();
+    std::vector<unsigned char> codeUcVec;
+    codeUcVec = Helper::hexToBytes(codeHexStr);
+    Address code = toScriptHash(codeUcVec);
     return code;
   }
 
@@ -93,7 +92,7 @@ public:
   {
     ScriptBuilder builder;
     builder.push(publicKey);
-    builder.add(ScriptOp::OP_CHECKSIG);
+    builder.add(getByte(ScriptOp::OP_CHECKSIG));
     Digest digest;
     std::vector<unsigned char> hash160;
     hash160 = digest.hash160(builder.toArray());
@@ -118,7 +117,7 @@ public:
   {
     ScriptBuilder script_builder;
     script_builder.push(publicKey);
-    script_builder.push(ScriptOp::OP_CHECKSIG);
+    script_builder.push(getByte(ScriptOp::OP_CHECKSIG));
     Digest digest;
     std::vector<unsigned char> hash160_vec;
     hash160_vec = digest.hash160(script_builder.toArray());
@@ -127,7 +126,7 @@ public:
   }
 
   Address addressFromMultiPubKeys(int m,
-                                  std::vector<unsigned char> publicKeys)
+                                  std::vector<std::string> publicKeys)
   {
     if (m <= 0 || m > publicKeys.size() || publicKeys.size() > 24)
     {

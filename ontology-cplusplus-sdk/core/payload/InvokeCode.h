@@ -1,7 +1,8 @@
 #ifndef INVOKECODE_H
 #define INVOKECODE_H
 
-#include "../transaction/Transaction.h"
+#include "../../core/transaction/Transaction.h"
+#include "../../core/transaction/TransactionType.h"
 
 #include <vector>
 
@@ -10,7 +11,9 @@ private:
   std::vector<unsigned char> code;
 
 public:
-  InvokeCode() {}
-  void 
+  InvokeCode() { 
+    this->Transaction(TransactionType::InvokeCode);
+  }
+  InvokeCode(const std::vector<unsigned char>& _code,long long _gasPrice,long long _gasLimit,Address _payer):code(_code),gasPrice(_gasPrice),gasLimit(_gasLimit),payer(_payer){}
 };
 #endif

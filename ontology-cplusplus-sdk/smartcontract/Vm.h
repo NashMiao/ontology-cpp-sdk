@@ -1,9 +1,11 @@
 #ifndef VM_H
 #define VM_H
 
-#include "../../OntSdk.h"
-#include "../../common/Helper.h"
-#include "../../core/payload/InvokeCode.h"
+#include "../OntSdk.h"
+#include "../common/Common.h"
+#include "../common/Address.h"
+#include "../common/Helper.h"
+#include "../core/payload/InvokeCode.h"
 #include <string>
 #include <vector>
 
@@ -27,24 +29,20 @@ public:
                                        std::vector<unsigned char> params,
                                        VmType vmtype, std::string payer,
                                        long long gaslimit, long long gasprice) {
-    std::vector<unsigned char> _code;
-    Helper helper;
-    Address codeAddr;
-    codeAddr = codeAddr.parse(codeAddr);
-    if (vmtype == VmType::NEOVM) {
-      Contract contract(unsigned char(0), _code, codeAddr, "", params);
-      params = helper.addBytes(unsigned char(0x67), contract.toArray());
-    } else if (vmtype == VmType::WASMVM) {
-      Contract contract((unsigned char)1, _code, codeAddr, method, params);
-      params = contract.toArray();
-    } else if (vmtype == VmType::Native) {
-      Contract contract((unsigned char)0, _code, codeAddr, method, params);
-      params = contract.toArray();
-    } else {
-      throw "IllegalArgumentException";
+    std::vector<unsigned char> params_item;
+    params_item.push_back(0x67);
+    params = Helper::addBytes(params, params_item);
+    Address code_address;
+    code_address = Address::parse(codeAddr);
+    params_item=code_address.toArray();
+    params = Helper::addBytes(params, params_item);
+    sizt_t didont_pos=payer.find(Common::didont); 
+    if(didont_pos!=0){
+      payer.replace(didont_pos, Common::didont.size(), "");
     }
-    // TODO
-    InvokeCode tx;
+    Address payer_addresss;
+    payer_address=payer_address.decodeBase58(payer);
+    InvokeCode tx(params,gaslimit,gasprice,payer_address);
     return tx;
   }
 };

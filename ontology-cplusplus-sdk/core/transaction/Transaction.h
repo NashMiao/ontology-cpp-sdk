@@ -21,6 +21,7 @@ private:
   long long gasPrice;
   long long gasLimit;
   int nonce;
+  Address payer;
   std::vector<Attribute> attributes;
   std::vector<Fee> fee;
   long long networkFee;
@@ -34,6 +35,7 @@ public:
     srand((unsigned)time(NULL));
     nonce = rand();
   }
+
   Transaction(unsigned int version, TransactionType txType, long long gasPrice,
               long long gasLimit, int nonce, const std::vector<Attribute>& attributes,
               const std::vector<Fee> &fee, long long networkFee, const std::vector<Sig> &sigs)
@@ -60,6 +62,10 @@ public:
   int sigs_length() { return (int)sigs.size(); }
 
   bool sigs_empty() { return sigs.empty(); }
+
+  void set_payer(Address _payer){
+    payer = _payer;
+  }
 
   nlohmann::json json_out()
   {

@@ -5,7 +5,7 @@
 
 class Common {
 public:
-  std::string didont = "did:ont:";
+  static std::string didont = "did:ont:";
 };
 
 #endif

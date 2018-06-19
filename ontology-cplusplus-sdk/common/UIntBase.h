@@ -23,11 +23,11 @@ public:
     }
   }
 
-  void set_data_bytes(const std::vector<unsigned char> &_data_bytes) {
+  void set_data_bytes (const std::vector<unsigned char>& _data_bytes) {
     data_bytes = _data_bytes;
   }
 
-  set_data_bytes(int bytes, const std::vector<unsigned char> &value) {
+  void set_data_bytes (int bytes, const std::vector<unsigned char> &value) {
     if (value.empty()) {
       data_bytes.assign(bytes, '0');
     } else if (int(value.size()) != bytes) {
@@ -43,7 +43,7 @@ public:
     return ret_base;
   }
 
-  std::vector<unsigned char> get_data_bytes() { return data_bytes; }
+  std::vector<unsigned char> get_data_bytes() const { return data_bytes; }
 
   void serialize(BinaryWriter *writer) { writer->write(data_bytes); }
 

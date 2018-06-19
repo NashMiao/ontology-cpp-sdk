@@ -57,7 +57,7 @@ public:
     return stream.str();
   }
 
-  static std::vector<unsigned char> hexToBytes(std::string value) {
+  static std::vector<unsigned char> hexToBytes(const std::string& value) {
     std::vector<unsigned char> ret_vec;
     if (value.empty()) {
       return ret_vec;
