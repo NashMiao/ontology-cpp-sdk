@@ -22,7 +22,7 @@ public:
   Account() {}
   Account(SignatureScheme scheme) {
     evp_kep = EVP_PKEY_new();
-    addressU160 = Address.addressFromPubKey(serializePublicKey());
+    addressU160 = Address::addressFromPubKey(serializePublicKey());
   }
   Account(std::vector<unsigned char> prikey, SignatureScheme scheme) {
     signatureScheme = scheme;
@@ -37,7 +37,7 @@ public:
     case SignatureScheme::SHA256withECDSA:
     case SignatureScheme::SM3withSM2:
       evp_kep = EVP_PKEY_new();
-      addressU160 = Address.addressFromPubKey(serializePublicKey());
+      addressU160 = Address::addressFromPubKey(serializePublicKey());
       break;
     default:
       throw "Exception(ErrorCode.UnsupportedKeyType)";
@@ -45,8 +45,8 @@ public:
   }
 
   ~Account() {
-    if (ec_key != NULL) {
-      EC_KEY_free(ec_key);
+    if (evp_key != NULL) {
+      EVP_PKEY_free(evp_key);
     }
     EVP_cleanup();
   }
@@ -63,8 +63,7 @@ public:
     switch (scheme) {
     case SignatureScheme::SHA256withECDSA:
     case SignatureScheme::SM3withSM2:
-      evp_kep = EVP_PKEY_new();
-      addressU160 = Address.addressFromPubKey(serializePublicKey());
+      addressU160 = Address::addressFromPubKey(serializePublicKey());
       break;
     default:
       throw "Exception(ErrorCode.UnsupportedKeyType)";
@@ -108,7 +107,7 @@ public:
     return act_uc_vec;
   }
 
-  bool verifySignature(std::vector<unsigned char> msg, std::vector signature) {
+  bool verifySignature(std::vector<unsigned char> msg, std::vector<Signature> signature) {
     return true;
   }
 };

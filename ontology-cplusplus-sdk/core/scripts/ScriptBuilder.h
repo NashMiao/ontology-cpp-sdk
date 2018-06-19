@@ -21,19 +21,19 @@ private:
 public:
   ScriptBuilder add(unsigned char op) {
     uc_vec.push_back(op);
-    return this;
+    return *this;
   }
 
-  ScriptBuilder add(std::vector<unsigned char> script) {
+  ScriptBuilder add(const std::vector<unsigned char> &script) {
     uc_vec.insert(uc_vec.end(), script.begin(), script.end());
-    return this;
+    return *this;
   }
 
   ScriptBuilder push(bool b) {
     if (b == true) {
-      return add(ScriptOp::OP_1);
+      return add(getByte(ScriptOp::OP_1));
     }
-    return add(ScriptOp::OP_0);
+    return add(getByte(ScriptOp::OP_0));
   }
 
   ScriptBuilder push(const long long num, int bytes_len) {
@@ -50,16 +50,16 @@ public:
       uc_vec.push_back((unsigned char)data.size());
       add(data);
     } else if (data.size() < 0x100) {
-      add(ScriptOp::OP_PUSHDATA1);
+      add(getByte(ScriptOp::OP_PUSHDATA1));
       push((long long)data.size(), 1);
-      long2bytes((long long)data.size(), 2);
+      num2bytes((long long)data.size(), 2);
       add(data);
     } else if (data.size() < 0x10000) {
-      add(ScriptOp::OP_PUSHDATA2);
+      add(getByte(ScriptOp::OP_PUSHDATA2));
       push((long long)data.size(), 2);
       add(data);
     } else if (data.size() < 0x10000000) {
-      add(ScriptOp::OP_PUSHDATA4);
+      add(getByte(ScriptOp::OP_PUSHDATA4));
       push((long long)data.size(), 4);
       add(data);
     } else {
@@ -68,17 +68,13 @@ public:
   }
 
   ScriptBuilder push(BIGNUM *bn) {
-    BIGNUM *num = BN_new();
     if (BN_is_word(bn, -1)) {
-      return add(ScriptOp::OP_1NEGATE);
+      return add(getByte(ScriptOp::OP_1NEGATE));
     }
     if (BN_is_zero(bn)) {
-      return add(ScriptOP::OP_0);
+      return add(getByte(ScriptOp::OP_0));
     }
-    if (!BN_set_word(bn, 16)) {
-      throw "BN_set_word: error!";
-    }
-    if (BN_cmp(bn, BN_zero) == 1 && BN_cmp(num, bn) == 1) {
+    if (BN_get_word(bn) > 0 && BN_get_word(bn) < 16) {
       return add(
           ((unsigned long)getByte(ScriptOp::OP_1) - 1 + BN_get_word(bn)));
     }
@@ -90,17 +86,15 @@ public:
 
   ScriptBuilder pushNum(short num) {
     if (num == 0) {
-      return add(ScriptOp::OP_0);
+      return add(getByte(ScriptOp::OP_0));
     } else if (num < 16) {
       return add(num - 1 + (short)getByte(ScriptOp::OP_1));
     }
   }
 
-  ScriptBuilder pushPack() { return add(ScriptOp::OP_PACK); }
+  ScriptBuilder pushPack() { return add(getByte(ScriptOp::OP_PACK)); }
 
-  std::vector<unsigned char> toArray(){
-    return uc_vec;
-  }
+  std::vector<unsigned char> toArray() { return uc_vec; }
 };
 
 #endif

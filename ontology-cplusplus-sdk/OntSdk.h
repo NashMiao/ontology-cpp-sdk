@@ -6,11 +6,13 @@
 #include "sdk/manager/OntAssetTx.h"
 #include "sdk/manager/WalletMgr.h"
 
+#include <vector>
+
 class OntSdk {
 private:
   WalletMgr walletMgr;
-  SignatureScheme defaultSignScheme = SignatureScheme::SHA256WITHECDSA;
-  CurveName defaultCurveName = CurveName::p256;
+  static SignatureScheme defaultSignScheme = SignatureScheme::SHA256withECDSA;
+  static CurveName defaultCurveName = CurveName::p256;
   // ConnectMgr connRpc;
   // ConnectMgr connRestful;
   // ConnectMgr connWebSocket;
@@ -25,22 +27,13 @@ private:
   // static OntSdk instance = null;
 
 public:
-  SignatureScheme signatureScheme;
-  CurveName curve_nid;
-  OntSdk() {
-    signatureScheme = SignatureScheme::SHA256withECDSA;
-    curve_nid = CurveName::p256;
-  }
+  OntSdk() {}
 
-  SignatureScheme getDefaultSignScheme(){
-    return defaultSignScheme;
-  }
+  SignatureScheme getDefaultSignScheme() { return defaultSignScheme; }
 
-  CurveName getCurveName(){
-    return defaultCurveName;
-  }
+  CurveName getCurveName() { return defaultCurveName; }
 
-  Transaction signTx(Transaction tx, const std::vector<Account> &accounts) {
+  static void signTx(Transaction &tx, const std::vector<Account> &accounts) {
     std::vector<Sig> sigs;
     for (size_t i = 0; i < accounts.size(); i++) {
       Sig sig_item;
@@ -56,24 +49,23 @@ public:
       sigs.push_back(sig_item);
     }
     tx.set_sigs(sigs);
-    return tx;
   }
 
-  Transaction addMultiSign(Transaction tx, int M, std::vector<Account> acct) {
+  static void addMultiSign(Transaction &tx, int M,
+                           const std::vector<Account> &acct) {
     std::vector<Sig> _sigs;
     for (int i = 0; i < tx.sigs_length(); i++) {
       _sigs.push_back(tx.get_sig(i));
     }
     std::vector<std::string> _pubKeys;
     std::vector<std::string> _sigData;
-    for (int i = 0; i < acct.size(); i++) {
+    for (size_t i = 0; i < acct.size(); i++) {
       _pubKeys.push_back(acct[i].serializePublicKey());
       _sigData.push_back(tx.sign(acct[i], defaultSignScheme, defaultCurveName));
       Sig sig_item(_pubKeys, M, _sigData);
       _sigs.push_back(sig_item);
     }
     tx.set_sigs(_sigs);
-    return tx;
   }
 };
 #endif // !ONTSDK_H

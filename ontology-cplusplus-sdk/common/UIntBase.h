@@ -26,6 +26,12 @@ public:
     data_bytes = _data_bytes;
   }
 
+  UIntBase operator=(const UIntBase & base){
+    UIntBae ret_base;
+    ret_base.data_bytes = base.data_bytes;
+    return ret_base;
+  }
+
   std::vector<unsigned char> get_data_bytes() { return data_bytes; }
 
   void serialize(BinaryWriter *writer) { writer->write(data_bytes); }

@@ -34,14 +34,14 @@ public:
   std::vector<unsigned char> addBytes(const std::vector<unsigned char> &data1,
                                       const std::vector<unsigned char> &data2) {
     std::vector<unsigned char> data3 = data1;
-    data3.insert(data3.end(), data2, begin(), data2.end());
+    data3.insert(data3.end(), data2.begin(), data2.end());
     return data3;
   }
   std::vector<unsigned char> addBytes(const unsigned char data1,
                                       const std::vector<unsigned char> &data2) {
     std::vector<unsigned char> data3;
     data3.push_back(data1);
-    data3.insert(data3.end(), data2, begin(), data2.end());s
+    data3.insert(data3.end(), data2.begin(), data2.end());
     return data3;
   }
 

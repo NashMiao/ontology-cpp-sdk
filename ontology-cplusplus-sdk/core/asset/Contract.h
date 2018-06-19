@@ -29,6 +29,7 @@ public:
     method = _method;
     args = _args;
   }
+
   void serialize(BinaryWrite &writer) {
     writer.writeByte(version);
     writer.writeVarBytes(code);
@@ -46,6 +47,16 @@ public:
     } catch (const char *e) {
       std::cerr << e << std::endl;
     }
+  }
+
+  Contract operator=(const Contract &c){
+    Contract ret_contract;
+    ret_contract.version = c.version;
+    ret_contract.code = c.code;
+    ret_contract.constracHash = c.constracHash;
+    ret_contract.method = c.method;
+    ret_contract.args = c.args;
+    return ret_contract;
   }
 };
 

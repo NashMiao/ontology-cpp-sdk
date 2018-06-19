@@ -38,6 +38,7 @@ public:
     ret_address.zero_size = b.zero_size;
     ret_address.ZERO = b.ZERO;
     ret_address.COIN_VERSION = b.COIN_VERSION;
+    ret_address.UIntBase = b.UIntBase;
     return ret_address;
   }
 
@@ -63,7 +64,7 @@ public:
       Address v = parse(s);
       data_type = v.get_data_bytes();
       return true;
-    } catch (const char *err) î {
+    } catch (const char *err) {
       cerr << err << endl;
     }
   }
@@ -79,7 +80,7 @@ public:
     return code;
   }
 
-  Address AddressFromePubKeyNeo(std::vector<unsigned char> publicKey) {
+  static Address AddressFromePubKeyNeo(std::vector<unsigned char> publicKey) {
     ScriptBuilder builder;
     builder.push(publicKey);
     builder.add(ScriptOp::OP_CHECKSIG);
@@ -102,7 +103,7 @@ public:
     return helper.toHexString(value);
   }
 
-  Address addressFromPubKey(std::vector<unsigned char> publicKey) {
+  static Address addressFromPubKey(std::vector<unsigned char> publicKey) {
     ScriptBuilder script_builder;
     script_builder.push(publicKey);
     script_builder.push(ScriptOp::OP_CHECKSIG);
