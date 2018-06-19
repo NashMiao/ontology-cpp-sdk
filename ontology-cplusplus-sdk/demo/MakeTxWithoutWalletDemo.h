@@ -4,8 +4,10 @@
 #include "../OntSdk.h"
 #include "../account/Account.h"
 #include "../common/Address.h"
+#include "../core/payload/InvokeCodeTransaction.h"
 #include "../core/transaction/Transaction.h"
 #include "../smartcontract/nativevm/Ont.h"
+#include "../smartcontract/nativevm/abi/Struct.h"
 #include <string>
 
 class MakeTxWithoutWalletDemo {
@@ -82,12 +84,15 @@ public:
     // std::string recvAddr = "TA5SgQXTeKWyN4GNfWGoXqioEQ4eCDFMqE";
     Address sender = acct0.getAddressU160();
     Address recvAddr;
-    recvAddr = recvAddr.addressFromMultiPubKeys(2, acct1.serializePublicKey(),
-                                                acct2.serializePublicKey());
-    Transaction tx;
+    std::vector<std::string> multiPubKey;
+    multiPubKey.push_back(acct1.serializePublicKey_str());
+    multiPubKey.push_back(acct2.serializePublicKey_str());
+    recvAddr = recvAddr.addressFromMultiPubKeys(2, multiPubKey);
+    InvokeCodeTransaction tx;
     long long amount = 1000000000;
-    tx = Ont::makeTransfer(sender.toBase58(), recvAddr.toBase58(), amount,
-                           sender.toBase58(), 30000, 0);
+    Ont ont;
+    tx = ont.makeTransfer(sender.toBase58(), recvAddr.toBase58(), amount,
+                          sender.toBase58(), 30000, 0);
     cout << tx.json_out() << endl;
 
     std::vector<Account> vec_accounts;
