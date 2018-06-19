@@ -6,15 +6,16 @@
 
 class Inventory : public Signable {
 private:
-  std::vector<unsigned char> hash;
+  std::vector<unsigned char> _hash;
 
 public:
   std::vector<unsigned char> hash() {
-    if (hash.empty()) {
-      Digest digest;
-      hash = digest.hash256(getHashData());
+    if (_hash.empty()) {
+      std::vector<unsigned char> hash_data;
+      hash_data = getHashData();
+      _hash = Digest::hash256(hash_data);
     }
-    return hash;
+    return _hash;
   }
 };
 #endif

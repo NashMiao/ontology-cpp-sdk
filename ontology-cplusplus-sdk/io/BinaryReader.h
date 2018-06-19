@@ -243,7 +243,7 @@ public:
 
   long long readLong() {
     char buf[16];
-    if (sizeof(int) != 4) {
+    if (sizeof(long long) != 8) {
       throw "IOException";
     }
     for (int i = 0; i < 16; i += 2) {

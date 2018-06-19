@@ -81,6 +81,33 @@ public:
 
   void writeByte(unsigned char v) { uc_vec.push_back(v); }
 
+  void writeShort(short v) {
+    if (sizeof(short) != 2) {
+      throw "IOException";
+    }
+    for (int i = 0; i < 4; i++) {
+      uc_vec.push_back((unsigned char)(v >> (32 - (i + 1))));
+    }
+  }
+
+  void writeInt(int v) {
+    if (sizeof(int) != 4) {
+      throw "IOException";
+    }
+    for (int i = 0; i < 8; i++) {
+      uc_vec.push_back((unsigned char)(v >> (64 - (i + 1) * 8)));
+    }
+  }
+
+  void writeLong(long long v) {
+    if (sizeof(long long) != 8) {
+      throw "IOException";
+    }
+    for (int i = 0; i < 16; i++) {
+      uc_vec.push_back((unsigned char)(v >> (128 - (i + 1) * 8)));
+    }
+  }
+
   bool writeVarBytes(const unsigned char *v) {
     long long len = (sizeof(v) / sizeof(unsigned char));
 
@@ -129,7 +156,9 @@ public:
     return true;
   }
 
-  template <class T> bool writeSerializableArray(const std::vector<T>& t_vec) {
+  template <class T> void writeSerializable(const T &v) { v.sreialize(this); }
+
+  template <class T> bool writeSerializableArray(const std::vector<T> &t_vec) {
     if (!writeVarInt(t_vec.size())) {
       for (size_t i = 0; i < t_vec.size(); i++) {
         T t_item;

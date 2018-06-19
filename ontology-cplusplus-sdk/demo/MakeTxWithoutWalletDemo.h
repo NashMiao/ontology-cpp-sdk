@@ -94,7 +94,8 @@ public:
     vec_accounts.push_back(acct0);
     OntSdk::signTx(tx, vec_accounts);
     vec_accounts.push_back(acct1);
-    OntSdk::addMultiSign(tx, 2, vec_accounts);
+    int m = 2;
+    OntSdk::addMultiSign(tx, m, vec_accounts);
 
     std::vector<unsigned char> tx_hash = tx.hash();
     std::vector<unsigned char>::const_iterator tx_hash_cit;

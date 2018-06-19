@@ -17,7 +17,7 @@ private:
 
 public:
   void serialize(BinaryWriter *writer) {
-    writer->writeByte(usage);
+    writer->writeByte(getByte(usage));
     try
     {
       if (usage == AttributeUsage::Script || usage == AttributeUsage::DescriptionUrl || usage == AttributeUsage::Description ||

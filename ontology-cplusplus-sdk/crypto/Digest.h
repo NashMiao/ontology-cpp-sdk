@@ -7,7 +7,7 @@
 
 class Digest {
 public:
-  std::vector<unsigned char> sha256(const std::vector<unsigned char> &value) {
+  static std::vector<unsigned char> sha256(const std::vector<unsigned char> &value) {
     unsigned char sha256_uc[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256_ctx;
     SHA256_Init(&sha256_ctx);
@@ -18,7 +18,7 @@ public:
     return uc_vec;
   }
 
-  std::vector<unsigned char> sha256(const std::vector<unsigned char> &value,
+  static std::vector<unsigned char> sha256(const std::vector<unsigned char> &value,
                                     int offset, int length) {
     if (offset + length > int(value.size())) {
       throw "Error offset and length";
@@ -32,7 +32,7 @@ public:
     return sha256(array);
   }
 
-  std::vector<unsigned char> ripemd160(std::vector<unsigned char> &value) {
+  static std::vector<unsigned char> ripemd160(std::vector<unsigned char> &value) {
     unsigned char ripemd160_uc[RIPEMD160_DIGEST_LENGTH];
     RIPEMD160_CTX ripemd160_ctx;
     RIPEMD160_Init(&ripemd160_ctx);
@@ -43,13 +43,13 @@ public:
     return uc_vec;
   }
 
-  std::vector<unsigned char> hash160(const std::vector<unsigned char> &value) {
+  static std::vector<unsigned char> hash160(const std::vector<unsigned char> &value) {
     std::vector<unsigned char> sha256_vec;
     sha256_vec = sha256(value);
     return ripemd160(sha256_vec);
   }
 
-  std::vector<unsigned char> hash256(const std::vector<unsigned char> &value) {
+  static std::vector<unsigned char> hash256(const std::vector<unsigned char> &value) {
     std::vector<unsigned char> sha256_vec;
     sha256_vec = sha256(value);
     return sha256(sha256_vec);

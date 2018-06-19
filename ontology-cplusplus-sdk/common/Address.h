@@ -72,7 +72,7 @@ public:
       cerr << err << endl;
     }
   }
-  
+
   Address toScriptHash(std::vector<unsigned char> script)
   {
     Digest digest;
@@ -128,10 +128,11 @@ public:
   Address addressFromMultiPubKeys(int m,
                                   std::vector<std::string> publicKeys)
   {
-    if (m <= 0 || m > publicKeys.size() || publicKeys.size() > 24)
+    if (m <= 0 || m > int(publicKeys.size()) || int(publicKeys.size()) > 24)
     {
       throw "SDKException(ErrorCode.ParamError)";
     }
+    std::vector<unsigned char> hash160_vec;
     try
     {
       BinaryWriter writer;
@@ -141,24 +142,22 @@ public:
       {
         writer.writeVarBytes(publicKeys[i]);
       }
-      std::vector<unsigned char> hash160;
       Digest digest;
-      hash160 = digest.hash160(writer.toByteArray());
-      hash160[0] = 0x02;
+      hash160_vec = digest.hash160(writer.toByteArray());
+      hash160_vec[0] = 0x02;
     }
     catch (const char *e)
     {
       cerr << e << endl;
     }
-    Address u160(hash160);
-    return u160;
+    Address u160_addr(hash160_vec);
+    return u160_addr;
   }
 
   Address decodeBase58(std::string address)
   {
-    Helper helper;
     std::vector<unsigned char> data;
-    data = helper.DecodeBase58(address);
+    Helper::DecodeBase58(address, data);
     if (data.size() != 25)
     {
       throw "SDKException(ErrorCode.ParamError)";
@@ -188,7 +187,7 @@ public:
     data.push_back(COIN_VERSION);
     std::vector<unsigned char> data_bytes;
     data_bytes = toArray();
-    data.insert(data.end(), date_bytes.begin(), data_bytes.begin() + 20);
+    data.insert(data.end(), data_bytes.begin(), data_bytes.begin() + 20);
     Digest digest;
     std::vector<unsigned char> checksum;
     checksum = digest.sha256(data, 0, 21);

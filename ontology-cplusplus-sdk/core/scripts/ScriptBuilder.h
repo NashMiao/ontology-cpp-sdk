@@ -40,9 +40,10 @@ public:
     std::vector<unsigned char> vec;
     vec = num2bytes(num, bytes_len);
     return add(vec);
+    return *this;
   }
 
-  ScriptBuilder push(std::vector<unsigned char> data) {
+  ScriptBuilder push(const std::vector<unsigned char>& data) {
     if (data.empty()) {
       throw "NullPointerException";
     }
@@ -65,6 +66,12 @@ public:
     } else {
       throw "IllegalArgumentException";
     }
+    return *this;
+  }
+
+  ScriptBuilder push(std::string str){
+    std::vector<unsigned char> vec(str.begin(), str.end());
+    return push(vec);
   }
 
   ScriptBuilder push(BIGNUM *bn) {
@@ -82,6 +89,7 @@ public:
         BN_get_word(bn) > std::numeric_limits<long long>::max()) {
       throw "IllegalArgumentException";
     }
+    return *this;
   }
 
   ScriptBuilder pushNum(short num) {
@@ -90,6 +98,7 @@ public:
     } else if (num < 16) {
       return add(num - 1 + (short)getByte(ScriptOp::OP_1));
     }
+    return *this;
   }
 
   ScriptBuilder pushPack() { return add(getByte(ScriptOp::OP_PACK)); }
