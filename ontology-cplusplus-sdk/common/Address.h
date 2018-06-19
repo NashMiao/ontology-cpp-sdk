@@ -11,45 +11,48 @@
 #include <string>
 #include <vector>
 
-class Address : public UIntBase {
+class Address : public UIntBase
+{
 private:
-  constexpr std::size_t zero_size;
+  static constexpr std::size_t zero_size = 20;
   std::vector<unsigned char> ZERO;
   unsigned char COIN_VERSION;
 
 public:
-  Address() {
-    zero_size = 20;
-    ZERO.reserve(zero_size);
-    COIN_VERSION = 0x17;
+  Address() : COIN_VERSION(0x17) { ZERO.reserve(zero_size); }
+
+  Address(const std::vector<unsigned char> &value)
+  {
+    this->set_data_bytes(20, value);
   }
 
-  Address(const std::vector<unsigned char> &value) {
-    this->UIntBase::UIntBase(20, value);
-  }
-
-  void set_zero(std::string str_zero) {
+  void set_zero(std::string str_zero)
+  {
     memcpy(ZERO, (unsigned char *)str_zero.c_str(), 20);
   }
 
-  Address operator=(const Address &b) {
+  Address operator=(const Address &b)
+  {
     Address ret_address;
-    ret_address.set_data_bytes(b.get_data_bytes);
-    ret_address.zero_size = b.zero_size;
+    ret_address.set_data_bytes(b.get_data_bytes());
     ret_address.ZERO = b.ZERO;
     ret_address.COIN_VERSION = b.COIN_VERSION;
-    ret_address.UIntBase = b.UIntBase;
+    ret_address.set_data_bytes(b.get_data_bytes());
     return ret_address;
   }
 
-  Address parse(std::string value) {
-    if (value.empty()) {
+  Address parse(std::string value)
+  {
+    if (value.empty())
+    {
       throw "NullPointerException";
     }
-    if (value.substr(0, 2) == "0x") {
+    if (value.substr(0, 2) == "0x")
+    {
       value = value.substr(2);
     }
-    if (value.length() != 40) {
+    if (value.length() != 40)
+    {
       throw "IllegalArgumentException";
     }
     std::vector<unsigned char> v;
@@ -59,28 +62,35 @@ public:
     return ret_address;
   }
 
-  bool tryParse(std::string s, Address result) {
-    try {
+  bool tryParse(std::string s, Address result)
+  {
+    try
+    {
       Address v = parse(s);
       data_type = v.get_data_bytes();
       return true;
-    } catch (const char *err) {
+    }
+    catch (const char *err)
+    {
       cerr << err << endl;
     }
   }
 
-  Address toScriptHash(std::vector<unsigned char> script) {
+  Address toScriptHash(std::vector<unsigned char> script)
+  {
     Digest digest;
     Address address(digest.hash160(script));
     return address;
   }
 
-  Address AddressFromVmCode(std::string codeHexStr) {
+  Address AddressFromVmCode(std::string codeHexStr)
+  {
     Address code = Address.toScriptHash();
     return code;
   }
 
-  static Address AddressFromePubKeyNeo(std::vector<unsigned char> publicKey) {
+  static Address AddressFromePubKeyNeo(std::vector<unsigned char> publicKey)
+  {
     ScriptBuilder builder;
     builder.push(publicKey);
     builder.add(ScriptOp::OP_CHECKSIG);
@@ -97,13 +107,15 @@ public:
   //   memcpy(ZERO, (unsigned char *)str.c_str(), 20);
   // }
 
-  std::string toHexString() {
+  std::string toHexString()
+  {
     std::vector<unsigned char> value;
     Helper helper;
     return helper.toHexString(value);
   }
 
-  static Address addressFromPubKey(std::vector<unsigned char> publicKey) {
+  static Address addressFromPubKey(std::vector<unsigned char> publicKey)
+  {
     ScriptBuilder script_builder;
     script_builder.push(publicKey);
     script_builder.push(ScriptOp::OP_CHECKSIG);
@@ -115,43 +127,54 @@ public:
   }
 
   Address addressFromMultiPubKeys(int m,
-                                  std::vector<unsigned char> publicKeys) {
-    if (m <= 0 || m > publicKeys.size() || publicKeys.size() > 24) {
+                                  std::vector<unsigned char> publicKeys)
+  {
+    if (m <= 0 || m > publicKeys.size() || publicKeys.size() > 24)
+    {
       throw "SDKException(ErrorCode.ParamError)";
     }
-    try {
+    try
+    {
       BinaryWriter writer;
       writer.writeByte((unsigned char)publicKeys.size());
       writer.writeByte((unsigned char)m);
-      for (size_t i = 0; i < publicKeys.size(); i++) {
+      for (size_t i = 0; i < publicKeys.size(); i++)
+      {
         writer.writeVarBytes(publicKeys[i]);
       }
       std::vector<unsigned char> hash160;
       Digest digest;
       hash160 = digest.hash160(writer.toByteArray());
       hash160[0] = 0x02;
-    } catch (const char *e) {
+    }
+    catch (const char *e)
+    {
       cerr << e << endl;
     }
     Address u160(hash160);
     return u160;
   }
 
-  Address decodeBase58(std::string address) {
+  Address decodeBase58(std::string address)
+  {
     Helper helper;
     std::vector<unsigned char> data;
     data = helper.DecodeBase58(address);
-    if (data.size() != 25) {
+    if (data.size() != 25)
+    {
       throw "SDKException(ErrorCode.ParamError)";
     }
-    if (data[0] != COIN_VERSION) {
+    if (data[0] != COIN_VERSION)
+    {
       throw "SDKException(ErrorCode.ParamError)";
     }
     Digest digest;
     std::vector<unsigned char> checksum =
         digest.sha256(digest.sha256(data, 0, 21));
-    for (int i = 0; i < 4; i++) {
-      if (data[data.size() - 4 + i] != checksum[i]) {
+    for (int i = 0; i < 4; i++)
+    {
+      if (data[data.size() - 4 + i] != checksum[i])
+      {
         throw "SDKException(ErrorCode.ParamError)";
       }
     }
@@ -160,19 +183,20 @@ public:
     return Address(buffer);
   }
 
-  std::string toBase58() {
+  std::string toBase58()
+  {
     std::vector<unsigned char> data;
     data.push_back(COIN_VERSION);
     std::vector<unsigned char> data_bytes;
     data_bytes = toArray();
-    data.insert(data.end(), date_bytes.begin(), data_bytes.end());
+    data.insert(data.end(), date_bytes.begin(), data_bytes.begin() + 20);
     Digest digest;
     std::vector<unsigned char> checksum;
-    checksum = digest.sha256(data);
+    checksum = digest.sha256(data, 0, 21);
     checksum = digest.sha256(checksum);
-    Helper helper;
+    data.insert(data.end(), checksum.begin(), checksum.begin() + 4);
     std::string str;
-    str = helper.EncodeBase58(data);
+    str = Helper::EncodeBase58(data);
     return str;
   }
 };

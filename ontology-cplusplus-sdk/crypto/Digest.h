@@ -44,15 +44,15 @@ public:
   }
 
   std::vector<unsigned char> hash160(const std::vector<unsigned char> &value) {
-    std::vector<unsigned char> sha256;
-    sha256 = sha256(value);
-    return ripemd160(sha256);
+    std::vector<unsigned char> sha256_vec;
+    sha256_vec = sha256(value);
+    return ripemd160(sha256_vec);
   }
 
   std::vector<unsigned char> hash256(const std::vector<unsigned char> &value) {
-    std::vector<unsigned char> sha256;
-    sha256 = sha256(value);
-    return sha256(sha256);
+    std::vector<unsigned char> sha256_vec;
+    sha256_vec = sha256(value);
+    return sha256(sha256_vec);
   }
 };
 #endif

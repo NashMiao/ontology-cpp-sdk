@@ -15,7 +15,7 @@ public:
   std::vector<unsigned char> toArray() {
     BinaryWriter writer;
     try {
-      serialize(writer);
+      serialize(&writer);
     } catch (const char *ex) {
       cerr << ex << endl;
       throw "UnsupportedOperationException(ex)";

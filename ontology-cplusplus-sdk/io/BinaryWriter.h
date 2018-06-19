@@ -79,7 +79,7 @@ public:
     return true;
   }
 
-  bool writeByte(unsigned char v) { uc_vec.push_back(v); }
+  void writeByte(unsigned char v) { uc_vec.push_back(v); }
 
   bool writeVarBytes(const unsigned char *v) {
     long long len = (sizeof(v) / sizeof(unsigned char));
@@ -95,13 +95,13 @@ public:
     return true;
   }
 
-  bool writeVarBytes(std::vector<unsigned char> _vec) {
-    long long len = _vec.length();
+  bool writeVarBytes(const std::vector<unsigned char> &_vec) {
+    long long len = _vec.size();
 
     if (!writeVarInt(len)) {
       return false;
     }
-    uc_vec.insert(uc_vec.cend(), _vec.cbegin(), _vec_cend());
+    uc_vec.insert(uc_vec.cend(), _vec.cbegin(), _vec.cend());
     return true;
   }
 
@@ -129,10 +129,9 @@ public:
     return true;
   }
 
-  template <class T> bool writeSerializableArray(std::vector<T> t_vec) {
+  template <class T> bool writeSerializableArray(const std::vector<T>& t_vec) {
     if (!writeVarInt(t_vec.size())) {
-      s int vec_len = (int)t_vec.size();
-      for (int i = 0; i < vec_len; i++) {
+      for (size_t i = 0; i < t_vec.size(); i++) {
         T t_item;
         t_item = t_vec[i];
         t_item.serialize(this);

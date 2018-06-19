@@ -31,7 +31,7 @@ static const int8_t mapBase58[256] = {
 
 class Helper {
 public:
-  std::vector<unsigned char> addBytes(const std::vector<unsigned char> &data1,
+  static std::vector<unsigned char> addBytes(const std::vector<unsigned char> &data1,
                                       const std::vector<unsigned char> &data2) {
     std::vector<unsigned char> data3 = data1;
     data3.insert(data3.end(), data2.begin(), data2.end());
@@ -45,7 +45,7 @@ public:
     return data3;
   }
 
-  std::string toHexString(const std::vector<unsigned char> &value) {
+  static std::string toHexString(const std::vector<unsigned char> &value) {
     std::string hex_str;
     std::vector<unsigned char>::const_iterator value_cit;
     std::stringstream stream;
@@ -57,7 +57,7 @@ public:
     return stream.str();
   }
 
-  std::vector<unsigned char> hexToBytes(std::string value) {
+  static std::vector<unsigned char> hexToBytes(std::string value) {
     std::vector<unsigned char> ret_vec;
     if (value.empty()) {
       return ret_vec;
@@ -74,14 +74,14 @@ public:
     return ret_vec;
   }
 
-  std::vector<unsigned char> BigInt2Bytes(BIGNUM *bn) {
+  static std::vector<unsigned char> BigInt2Bytes(BIGNUM *bn) {
     std::vector<unsigned char> ret_vec;
     if (BN_is_zero(bn)) {
       return ret_vec;
     }
   }
 
-  bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {
+  static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {
     // Skip leading spaces.
     while (*psz && isspace(*psz))
       psz++;
@@ -132,7 +132,7 @@ public:
     return true;
   }
 
-  std::string EncodeBase58(const unsigned char *pbegin,
+  static std::string EncodeBase58(const unsigned char *pbegin,
                            const unsigned char *pend) {
     // Skip & count leading zeroes.
     int zeroes = 0;
@@ -174,11 +174,11 @@ public:
     return str;
   }
 
-  std::string EncodeBase58(const std::vector<unsigned char> &vch) {
+  static std::string EncodeBase58(const std::vector<unsigned char> &vch) {
     return EncodeBase58(vch.data(), vch.data() + vch.size());
   }
 
-  bool DecodeBase58(const std::string &str,
+  static bool DecodeBase58(const std::string &str,
                     std::vector<unsigned char> &vchRet) {
     return DecodeBase58(str.c_str(), vchRet);
   }
