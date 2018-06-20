@@ -88,9 +88,10 @@ public:
     multiPubKey.push_back(acct1.serializePublicKey_str());
     multiPubKey.push_back(acct2.serializePublicKey_str());
     recvAddr = recvAddr.addressFromMultiPubKeys(2, multiPubKey);
-    InvokeCodeTransaction tx;
+    
     long long amount = 1000000000;
     Ont ont;
+    InvokeCodeTransaction tx;
     tx = ont.makeTransfer(sender.toBase58(), recvAddr.toBase58(), amount,
                           sender.toBase58(), 30000, 0);
     cout << tx.json_out() << endl;
@@ -98,6 +99,7 @@ public:
     std::vector<Account> vec_accounts;
     vec_accounts.push_back(acct0);
     OntSdk::signTx(tx, vec_accounts);
+    
     vec_accounts.push_back(acct1);
     int m = 2;
     OntSdk::addMultiSign(tx, m, vec_accounts);

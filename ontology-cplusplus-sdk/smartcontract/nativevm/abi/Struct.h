@@ -9,16 +9,14 @@ private:
   std::list<boost::any> List;
 
 public:
-  Struct add(std::list<boost::any> objs) {
-    std::list<boost::any>::iterator it;
-    for (it = objs.begin(); it != objs.end(); it++) {
-      List.push_back(*it);
-    }
+  Struct() {}
+  Struct(std::list<boost::any> _list) : List(_list) {}
+  Struct add(const std::list<boost::any> &objs) {
+    std::list<boost::any>::const_iterator cit;
+    List.insert(List.end(), objs.begin(), objs.end());
     return *this;
   }
 
-  std::list<boost::any>& getList(){
-    return List;
-  }
+  std::list<boost::any> getList() { return List; }
 };
 #endif

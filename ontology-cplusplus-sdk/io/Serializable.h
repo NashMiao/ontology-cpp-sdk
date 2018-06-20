@@ -11,7 +11,7 @@ class Serializable {
 public:
   virtual void serialize(BinaryWriter *writer) = 0;
   virtual void deserialize(BinaryReader *reader) = 0;
-  
+
   std::vector<unsigned char> toArray() {
     BinaryWriter writer;
     try {
@@ -22,7 +22,7 @@ public:
     }
     return writer.toByteArray();
   }
-  
+
   std::string toHexString() {
     Helper helper;
     std::string str;

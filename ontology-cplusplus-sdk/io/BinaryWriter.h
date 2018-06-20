@@ -164,7 +164,7 @@ public:
     return true;
   }
 
-  template <class T> void writeSerializable(const T &v) { v.serialize(this); }
+  template <class T> void writeSerializable (T &v) { v.serialize(this); }
 
   template <class T> bool writeSerializableArray(const std::vector<T> &t_vec) {
     if (!writeVarInt(t_vec.size())) {

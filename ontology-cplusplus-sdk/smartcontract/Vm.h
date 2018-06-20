@@ -7,6 +7,7 @@
 #include "../common/Helper.h"
 #include "../core/payload/InvokeCodeTransaction.h"
 #include <vector>
+#include <string.h>
 
 class Vm
 {
@@ -18,7 +19,8 @@ private:
 public:
   Vm() {}
   Vm(OntSdk _sdk) : sdk(_sdk) {}
-  void setCodeAddress(std::string codeHash)
+  
+  void setContractAddress(std::string codeHash)
   {
     if (codeHash.at(0) == '0' &&
         (codeHash.at(1) == 'x' || codeHash.at(1) == 'X'))
@@ -27,9 +29,9 @@ public:
     }
     contractAddress = codeHash;
   }
-  std::string getCodeAddress() { return contractAddress; }
+  std::string getContractAddress() { return contractAddress; }
 
-  InvokeCodeTransaction
+  static InvokeCodeTransaction
   makeInvokeCodeTransaction(std::string codeAddr, std::string method,
                             std::vector<unsigned char> params,
                             std::string payer, long long gaslimit,
@@ -46,7 +48,7 @@ public:
     didont_pos = payer.find(Common::didont);
     if (didont_pos != 0)
     {
-      payer.replace(didont_pos, Common::didont.size(), "");
+      payer.replace(didont_pos, strlen(Common::didont), "");
     }
     Address payer_address;
     payer_address = payer_address.decodeBase58(payer);
@@ -54,7 +56,7 @@ public:
     return tx;
   }
 
-  InvokeCodeTransaction
+  static InvokeCodeTransaction
   makeInvokeCodeTransaction(const std::vector<unsigned char> &params,
                             std::string payer, long long gaslimit,
                             long long gasprice)
@@ -63,7 +65,7 @@ public:
     didont_pos = payer.find(Common::didont);
     if (didont_pos != 0)
     {
-      payer.replace(didont_pos, Common::didont.size(), "");
+      payer.replace(didont_pos, strlen(Common::didont), "");
     }
     Address payer_address;
     payer_address = payer_address.decodeBase58(payer);
@@ -71,7 +73,7 @@ public:
     return tx;
   }
 
-  InvokeCodeTransaction buildNativeParams(Address codeAddr,
+  static InvokeCodeTransaction buildNativeParams(Address codeAddr,
                                           std::string initMethod,
                                           std::vector<unsigned char> args,
                                           std::string payer, long long gaslimit,
