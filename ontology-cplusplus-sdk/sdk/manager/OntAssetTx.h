@@ -7,7 +7,6 @@
 class OntAssetTx
 {
   private:
-    OntSdk sdk;
     std::string ontContract;
     std::string ongContract;
     int precision;

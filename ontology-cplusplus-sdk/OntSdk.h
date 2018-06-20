@@ -12,7 +12,8 @@
 class OntSdk {
 private:
   WalletMgr walletMgr;
-  const SignatureScheme static defaultSignScheme = SignatureScheme::SHA256withECDSA;
+  const SignatureScheme static defaultSignScheme =
+      SignatureScheme::SHA256withECDSA;
   const CurveName static defaultCurveName = CurveName::p256;
   // ConnectMgr connRpc;
   // ConnectMgr connRestful;
@@ -42,7 +43,7 @@ public:
         std::vector<unsigned char> pub_key;
         std::vector<unsigned char> signature;
         pub_key = accounts[j].serializePublicKey();
-        signature = tx.sign(accounts[j], SignatureScheme, curve_nid);
+        signature = tx.sign(accounts[j], defaultSignScheme, defaultCurveName);
         sig_item.add_M();
         sig_item.add_sigData(signature);
         sig_item.add_pubKeys(pub_key);
@@ -61,8 +62,9 @@ public:
     std::vector<std::string> _pubKeys;
     std::vector<std::string> _sigData;
     for (size_t i = 0; i < acct.size(); i++) {
-      _pubKeys.push_back(acct[i].serializePublicKey());
-      _sigData.push_back(tx.sign(acct[i], defaultSignScheme, defaultCurveName));
+      _pubKeys.push_back((acct[i].serializePublicKey_str()));
+      _sigData.push_back(
+          (tx.sign_str(acct[i], defaultSignScheme, defaultCurveName)));
       Sig sig_item(_pubKeys, M, _sigData);
       _sigs.push_back(sig_item);
     }
