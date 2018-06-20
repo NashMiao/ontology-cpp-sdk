@@ -24,6 +24,12 @@ public:
     return *this;
   }
 
+  ScriptBuilder add(ScriptOp sop) {
+    unsigned char uc_sop;
+    uc_sop = getByte(sop);
+    return add(uc_sop);
+  }
+
   ScriptBuilder add(const std::vector<unsigned char> &script) {
     uc_vec.insert(uc_vec.end(), script.begin(), script.end());
     return *this;
@@ -43,7 +49,7 @@ public:
     return *this;
   }
 
-  ScriptBuilder push(const std::vector<unsigned char>& data) {
+  ScriptBuilder push(const std::vector<unsigned char> &data) {
     if (data.empty()) {
       throw "NullPointerException";
     }
@@ -69,7 +75,7 @@ public:
     return *this;
   }
 
-  ScriptBuilder push(std::string str){
+  ScriptBuilder push(std::string str) {
     std::vector<unsigned char> vec(str.begin(), str.end());
     return push(vec);
   }

@@ -1,11 +1,9 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <string>
-
 class Common {
 public:
-  const std::string static didont = "did:ont:";
+   static constexpr const char * didont = "did:ont:";
 };
 
 #endif

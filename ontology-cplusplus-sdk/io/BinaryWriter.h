@@ -51,7 +51,7 @@ public:
   }
 
   void writeBool(bool v) {
-    if (sizeof(bool) !=) {
+    if (sizeof(bool) != 1) {
       throw "writeBool Error!";
     }
     unsigned char v_uc = v ? 1 : 0;

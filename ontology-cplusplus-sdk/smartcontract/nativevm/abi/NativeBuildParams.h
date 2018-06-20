@@ -19,7 +19,9 @@ private:
     try {
       boost::any val = obj;
       if (val.type == typeid(std::vector<unsigned char>)) {
-        builder.push(val);
+        std::vector<unsigned char> value;
+        value = boost::any_cast<std::vector<unsigned char>>(val);
+        builder.push(value);
       } else if (val.type() == typeid(bool)) {
         bool value = boost::any_cast<bool>(val);
         builder.push(value);
@@ -41,8 +43,9 @@ private:
       } else if (val.type() == typeid(Struct)) {
         Struct value = boost::any_cast<Struct>(val);
         std::list<boost::any> value_list = value.getList();
-        for (size_t i = 0; i < value_list.size(); i++) {
-          boost::any o = value_list[i];
+        std::list<boost::any>::const_iterator cit;
+        for (cit = value_list.cbegin(); cit != value_list.cend(); ++cit) {
+          boost::any o = *cit;
           createCodeParamsScript(builder, o);
           builder.add(ScriptOp::OP_DUPFROMALTSTACK);
           builder.add(ScriptOp::OP_SWAP);
@@ -64,7 +67,9 @@ private:
     for (rit = list.rbegin(); rit != list.rend(); ++rit) {
       boost::any val = *rit;
       if (val.type == typeid(std::vector<unsigned char>)) {
-        builder.push(val);
+        std::vector<unsigned char> value;
+        value = boost::any_cast<std::vector<unsigned char>>(val);
+        builder.push(value);
       } else if (val.type() == typeid(bool)) {
         bool value = boost::any_cast<bool>(val);
         builder.push(value);
@@ -102,7 +107,9 @@ public:
     for (rit = list.rbegin(); rit != list.rend(); ++rit) {
       boost::any val = *rit;
       if (val.type == typeid(std::vector<unsigned char>)) {
-        builder.push(val);
+        std::vector<unsigned char> value;
+        value = boost::any_cast<std::vector<unsigned char>>(val);
+        builder.push(value);
       } else if (val.type() == typeid(bool)) {
         bool value = boost::any_cast<bool>(val);
         builder.push(value);
@@ -122,23 +129,25 @@ public:
         BIGNUM value = boost::any_cast<BIGNUM>(val);
         builder.push((long long)BN_get_word(value));
       } else if (val.type() == typeid(Struct)) {
-        builder.push((long long)0);
-        builder.add(getByte(ScriptOp::OP_NEWSTRUCT));
-        builder.add(getByte(ScriptOp::OP_TOALTSTACK));
+        long long zero = 0;
+        builder.push(zero);
+        builder.add(ScriptOp::OP_NEWSTRUCT);
+        builder.add(ScriptOp::OP_TOALTSTACK);
         Struct value = boost::any_cast<Struct>(val);
         std::list<boost::any> value_list = value.getList();
         for (size_t i = 0; i < value_list.size(); i++) {
           boost::any o = value_list[i];
           createCodeParamsScript(builder, o);
-          builder.add(getByte(ScriptOp::OP_DUPFROMALTSTACK));
-          builder.add(getByte(ScriptOp::OP_SWAP));
-          builder.add(getByte(ScriptOp::OP_APPEND));
+          builder.add(ScriptOp::OP_DUPFROMALTSTACK);
+          builder.add(ScriptOp::OP_SWAP);
+          builder.add(ScriptOp::OP_APPEND);
         }
-        builder.add(getByte(ScriptOp::OP_FROMALTSTACK));
+        builder.add(ScriptOp::OP_FROMALTSTACK);
       } else if (val.type() == typeid(std::vector<Struct>)) {
-        builder.push((long long)0);
-        builder.add(getByte(ScriptOp::OP_NEWSTRUCT));
-        builder.add(getByte(ScriptOp::OP_TOALTSTACK));
+        long long zero = 0;
+        builder.push(zero);
+        builder.add(ScriptOp::OP_NEWSTRUCT);
+        builder.add(ScriptOp::OP_TOALTSTACK);
         std::vector<Struct> struct_vec;
         struct_vec = boost::any_cast<std::vector<Struct>>(val);
         for (size_t i = 0; i < struct_vec.size(); i++) {
@@ -150,7 +159,7 @@ public:
       } else if (val.type() == typeid(std::list<boost::any>)) {
         std::list<boost::any> list_value = val;
         createCodeParamsScript(builder, list_value);
-        builder.push((long long)struct_vec.size());
+        builder.push((long long)list_value.size());
         builder.pushPack();
       } else {
         throw "createCodeParamsScript: TypeError!";
