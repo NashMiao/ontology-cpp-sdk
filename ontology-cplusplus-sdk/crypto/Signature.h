@@ -50,6 +50,7 @@ protected:
 
 public:
   Signature() { key = EVP_PKEY_new(); }
+  Signature(SignatureScheme _scheme, CurveName _curve, std::string private_key);
   Signature(SignatureScheme _scheme, CurveName _curve, std::string private_key,
             std::string msg);
   ~Signature()
@@ -66,12 +67,14 @@ public:
   }
 
   std::vector<unsigned char> get_EC_Q(EVP_PKEY *evp_key);
+  std::vector<unsigned char> get_EC_Q(EC_KEY *ec_key);
   bool EC_init(CurveName curve_name = CurveName::p256);
   bool ECDSA_key_generate(CurveName curve_name = CurveName::p256);
   bool EC_get_public_key(string &str_public_key);
   bool EC_get_private_key(string &str_private_key);
   bool EC_set_key(const string &str_public_key, const string &str_private_key,
                   CurveName curve_name);
+  EC_KEY *get_EC_key();
   bool EC_get_pubkey_by_prikey(const string &str_private_key,
                                string &str_public_key, CurveName curve_name);
   bool EC_sign(const std::string &msg, std::string &str_sign_dgst,

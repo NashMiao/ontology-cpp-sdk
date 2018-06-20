@@ -53,20 +53,18 @@ private:
   }
 
   void account_init() {
-    Helper helper;
-    OntSdk ontSdk;
-    acct0.setAccount(helper.hexToBytes(privatekey0),
-                     ontSdk.getDefaultSignScheme());
-    acct1.setAccount(helper.hexToBytes(privatekey1),
-                     ontSdk.getDefaultSignScheme());
-    acct2.setAccount(helper.hexToBytes(privatekey2),
-                     ontSdk.getDefaultSignScheme());
-    acct3.setAccount(helper.hexToBytes(privatekey3),
-                     ontSdk.getDefaultSignScheme());
-    acct4.setAccount(helper.hexToBytes(privatekey4),
-                     ontSdk.getDefaultSignScheme());
-    acct5.setAccount(helper.hexToBytes(privatekey5),
-                     ontSdk.getDefaultSignScheme());
+      acct0.setAccount(privatekey0, OntSdk::getDefaultSignScheme(),
+                       OntSdk::getDefaultCurveName());
+      acct1.setAccount(privatekey1, OntSdk::getDefaultSignScheme(),
+                       OntSdk::getDefaultCurveName());
+      acct2.setAccount(privatekey2, OntSdk::getDefaultSignScheme(),
+                       OntSdk::getDefaultCurveName());
+      acct3.setAccount(privatekey3, OntSdk::getDefaultSignScheme(),
+                       OntSdk::getDefaultCurveName());
+      acct4.setAccount(privatekey4, OntSdk::getDefaultSignScheme(),
+                       OntSdk::getDefaultCurveName());
+      acct5.setAccount(privatekey5, OntSdk::getDefaultSignScheme(),
+                       OntSdk::getDefaultCurveName());
   }
 
 public:
@@ -88,7 +86,7 @@ public:
     multiPubKey.push_back(acct1.serializePublicKey_str());
     multiPubKey.push_back(acct2.serializePublicKey_str());
     recvAddr = recvAddr.addressFromMultiPubKeys(2, multiPubKey);
-    
+
     long long amount = 1000000000;
     Ont ont;
     InvokeCodeTransaction tx;
@@ -99,7 +97,7 @@ public:
     std::vector<Account> vec_accounts;
     vec_accounts.push_back(acct0);
     OntSdk::signTx(tx, vec_accounts);
-    
+
     vec_accounts.push_back(acct1);
     int m = 2;
     OntSdk::addMultiSign(tx, m, vec_accounts);

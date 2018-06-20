@@ -31,9 +31,9 @@ private:
 public:
   OntSdk() {}
 
-  SignatureScheme getDefaultSignScheme() { return defaultSignScheme; }
+  static SignatureScheme getDefaultSignScheme() { return defaultSignScheme; }
 
-  CurveName getCurveName() { return defaultCurveName; }
+  static CurveName getDefaultCurveName() { return defaultCurveName; }
 
   static void signTx(Transaction &tx, const std::vector<Account> &accounts) {
     std::vector<Sig> sigs;
