@@ -97,7 +97,7 @@ public:
     }
     return *this;
   }
-
+ 
   ScriptBuilder pushNum(short num) {
     if (num == 0) {
       return add(getByte(ScriptOp::OP_0));

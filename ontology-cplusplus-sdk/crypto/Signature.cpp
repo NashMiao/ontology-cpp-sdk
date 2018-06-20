@@ -1,5 +1,10 @@
 #include "Signature.h"
 
+int get_curve_nid(CurveName curve_name)
+{
+  return static_cast<int>(curve_name);
+}
+
 Signature::Signature(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key, std::string msg) {
   scheme = _scheme;

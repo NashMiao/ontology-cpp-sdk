@@ -31,11 +31,6 @@ enum class CurveName : int
   SM2P256V1 = NID_sm2
 };
 
-int get_curve_nid(CurveName curve_name)
-{
-  return static_cast<int>(curve_name);
-}
-
 class Signature
 {
 private:

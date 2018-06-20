@@ -15,17 +15,18 @@
 class NativeBuildParams
 {
 private:
-  constexpr static const std::vector<unsigned char> uc_vec_type;
-  constexpr static const BIGNUM *bn_type = BN_new();
+  std::list<boost::any> any_list_type;
+  std::vector<unsigned char> uc_vec_type;
+  BIGNUM *bn_type;
 
 protected:
-  std::vector<unsigned char>
-  createCodeParamsScript(ScriptBuilder &builder, boost::any &obj)
+  std::vector<unsigned char> createCodeParamsScript(ScriptBuilder &builder,
+                                                    boost::any obj)
   {
     try
     {
       boost::any val = obj;
-      if (val.type == typeid(uc_vec_type))
+      if (val.type() == typeid(uc_vec_type))
       {
         std::vector<unsigned char> value;
         value = boost::any_cast<std::vector<unsigned char>>(val);
@@ -60,7 +61,7 @@ protected:
       {
         BIGNUM *value;
         value = BN_new();
-        value = boost::any_cast<bn_type>(val);
+        value = boost::any_cast<BIGNUM *>(val);
         builder.push((long long)BN_get_word(value));
       }
       else if (val.type() == typeid(Struct))
@@ -97,7 +98,7 @@ protected:
     for (rit = any_list.rbegin(); rit != any_list.rend(); ++rit)
     {
       boost::any val = *rit;
-      if (val.type == typeid(uc_vec_type))
+      if (val.type() == typeid(uc_vec_type))
       {
         std::vector<unsigned char> value;
         value = boost::any_cast<std::vector<unsigned char>>(val);
@@ -132,12 +133,12 @@ protected:
       {
         BIGNUM *value;
         value = BN_new();
-        value = boost::any_cast<bn_type>(val);
+        value = boost::any_cast<BIGNUM *>(val);
         builder.push((long long)BN_get_word(value));
       }
-      else if (val.type() == typeid(std::list<boost::any>))
+      else if (val.type() == typeid(any_list_type))
       {
-        std::list<boost::any> list_value = val;
+        std::list<boost::any> list_value = boost::any_cast<std::list<boost::any>>(val);
         createCodeParamsScript(builder, list_value);
         builder.push((long long)list_value.size());
         builder.pushPack();
@@ -150,6 +151,8 @@ protected:
   }
 
 public:
+  NativeBuildParams() {}
+
   std::vector<unsigned char>
   createCodeParamsScript(std::list<boost::any> list)
   {
@@ -158,7 +161,7 @@ public:
     for (rit = list.rbegin(); rit != list.rend(); ++rit)
     {
       boost::any val = *rit;
-      if (val.type == typeid(uc_vec_type))
+      if (val.type() == typeid(uc_vec_type))
       {
         std::vector<unsigned char> value;
         value = boost::any_cast<std::vector<unsigned char>>(val);
@@ -193,7 +196,7 @@ public:
       {
         BIGNUM *value;
         value = BN_new();
-        value = boost::any_cast<bn_type>(val);
+        value = boost::any_cast<BIGNUM *>(val);
         builder.push((long long)BN_get_word(value));
       }
       else if (val.type() == typeid(Struct))
@@ -233,9 +236,9 @@ public:
         builder.push((long long)struct_vec.size());
         builder.pushPack();
       }
-      else if (val.type() == typeid(std::list<boost::any>))
+      else if (val.type() == typeid(any_list_type))
       {
-        std::list<boost::any> list_value = val;
+        std::list<boost::any> list_value = boost::any_cast<std::list<boost::any>>(val);
         createCodeParamsScript(builder, list_value);
         builder.push((long long)list_value.size());
         builder.pushPack();
