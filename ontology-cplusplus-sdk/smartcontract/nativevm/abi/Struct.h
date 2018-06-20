@@ -14,7 +14,7 @@ public:
     for (it = objs.begin(); it != objs.end(); it++) {
       List.push_back(*it);
     }
-    return this;
+    return *this;
   }
 };
 #endif

@@ -6,7 +6,6 @@
 #include "../common/Common.h"
 #include "../common/Helper.h"
 #include "../core/payload/InvokeCodeTransaction.h"
-#include <string>
 #include <vector>
 
 class Vm
@@ -14,11 +13,11 @@ class Vm
 private:
   OntSdk sdk;
   std::string contractAddress;
-  static std::string NATIVE_INVOKE_NAME = "Ontology.Native.Invoke";
+  static constexpr const char * NATIVE_INVOKE_NAME = "Ontology.Native.Invoke";
 
 public:
   Vm() {}
-  Vm(Ontsdk _sdk) : sdk(_sdk) {}
+  Vm(OntSdk _sdk) : sdk(_sdk) {}
   void setCodeAddress(std::string codeHash)
   {
     if (codeHash.at(0) == '0' &&
