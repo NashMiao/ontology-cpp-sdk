@@ -101,7 +101,7 @@ public:
     return uc_vec;
   }
 
-  std::vector<unsigned char> serializePublicKey() {
+  std::vector<unsigned char> serializePublicKey() const {
     std::vector<unsigned char> act_uc_vec;
     try {
       switch (keyType) {
@@ -122,10 +122,10 @@ public:
     return act_uc_vec;
   }
 
-  std::string serializePublicKey_str() {
+  std::string serializePublicKey_str() const {
     std::vector<unsigned char> pubkey_vec;
     pubkey_vec = serializePublicKey();
-    std::string str(pubkey_vec.begin(), pubkey.end());
+    std::string str(pubkey_vec.begin(), pubkey_vec.end());
     return str;
   }
 

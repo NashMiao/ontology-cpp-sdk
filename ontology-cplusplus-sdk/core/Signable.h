@@ -20,9 +20,18 @@ public:
     serializeUnsigned(writer);
     return writer.toByteArray();
   }
+
   std::vector<unsigned char> sign(Account account, SignatureScheme scheme,
                                   CurveName curve) {
     return account.generateSignature(getHashData(), scheme, curve);
+  }
+
+  std::string sign_str(Account account, SignatureScheme scheme,
+                       CurveName curve) {
+    std::vector<unsigned char> vec;
+    vec = sign(account, scheme, curve);
+    std::string str(vec.begin(), vec.end());
+    return str;
   }
   // bool verifySignature(Account account, std::vector<unsigned char> data,
   //                      std::vector<unsigned char> signature) {

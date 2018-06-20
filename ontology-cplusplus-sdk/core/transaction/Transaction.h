@@ -24,6 +24,14 @@ private:
   int nonce;
 
 public:
+  Transaction(Address _payer, unsigned int _version = 0,
+              long long _gasPrice = 0, long long _gasLimit = 0)
+      : version(_version), gasPrice(_gasPrice), gasLimit(_gasLimit),
+        payer(_payer) {
+    srand((unsigned)time(NULL));
+    nonce = rand();
+  }
+
   Transaction(unsigned int _version = 0, long long _gasPrice = 0,
               long long _gasLimit = 0)
       : version(_version), gasPrice(_gasPrice), gasLimit(_gasLimit) {

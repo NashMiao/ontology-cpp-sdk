@@ -29,6 +29,7 @@ public:
     contractAddress = codeHash;
   }
   std::string getCodeAddress() { return contractAddress; }
+
   InvokeCodeTransaction
   makeInvokeCodeTransaction(std::string codeAddr, std::string method,
                             std::vector<unsigned char> params,
@@ -48,9 +49,9 @@ public:
     {
       payer.replace(didont_pos, Common::didont.size(), "");
     }
-    Address payer_addresss;
+    Address payer_address;
     payer_address = payer_address.decodeBase58(payer);
-    InvokeCode tx(params, gaslimit, gasprice, payer_address);
+    InvokeCodeTransaction tx(params, gasprice, gaslimit, payer_address);
     return tx;
   }
 

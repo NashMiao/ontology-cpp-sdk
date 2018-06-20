@@ -34,7 +34,7 @@ public:
       throw "SDKException.ParamErr: amount or gasprice or gaslimit should not "
             "be less than 0";
     }
-    std::list;
+    // std::list;
 
     // amount = amount * precision;
     // Helper helper;

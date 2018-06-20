@@ -18,7 +18,7 @@ public:
   Transfers(const State &_states) { states.push_back(_states); }
 
   void deserialize(BinaryReader *reader) {
-    int len = (int)reader.readVarInt();
+    int len = (int)reader->readVarInt();
     for (int i = 0; i < len; i++) {
       State state_item;
       reader->readSerializable(state_item);

@@ -31,8 +31,9 @@ static const int8_t mapBase58[256] = {
 
 class Helper {
 public:
-  static std::vector<unsigned char> addBytes(const std::vector<unsigned char> &data1,
-                                      const std::vector<unsigned char> &data2) {
+  static std::vector<unsigned char>
+  addBytes(const std::vector<unsigned char> &data1,
+           const std::vector<unsigned char> &data2) {
     std::vector<unsigned char> data3 = data1;
     data3.insert(data3.end(), data2.begin(), data2.end());
     return data3;
@@ -57,7 +58,7 @@ public:
     return stream.str();
   }
 
-  static std::vector<unsigned char> hexToBytes(const std::string& value) {
+  static std::vector<unsigned char> hexToBytes(const std::string &value) {
     std::vector<unsigned char> ret_vec;
     if (value.empty()) {
       return ret_vec;
@@ -133,7 +134,7 @@ public:
   }
 
   static std::string EncodeBase58(const unsigned char *pbegin,
-                           const unsigned char *pend) {
+                                  const unsigned char *pend) {
     // Skip & count leading zeroes.
     int zeroes = 0;
     int length = 0;
@@ -179,7 +180,7 @@ public:
   }
 
   static bool DecodeBase58(const std::string &str,
-                    std::vector<unsigned char> &vchRet) {
+                           std::vector<unsigned char> &vchRet) {
     return DecodeBase58(str.c_str(), vchRet);
   }
 };
