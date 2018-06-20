@@ -50,6 +50,14 @@ public:
     uc_vec.insert(uc_vec.end(), buffer.begin(), buffer.end());
   }
 
+  void writeBool(bool v) {
+    if (sizeof(bool) !=) {
+      throw "writeBool Error!";
+    }
+    unsigned char v_uc = v ? 1 : 0;
+    uc_vec.push_back(v_uc);
+  }
+
   bool writeVarInt(long long v) {
     if (v < 0xFD) {
       unsigned char buffer = v & 0xFF;

@@ -16,5 +16,9 @@ public:
     }
     return *this;
   }
+
+  std::list<boost::any>& getList(){
+    return List;
+  }
 };
 #endif
