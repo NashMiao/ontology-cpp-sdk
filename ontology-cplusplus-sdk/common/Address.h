@@ -138,8 +138,7 @@ public:
       {
         writer.writeVarBytes(publicKeys[i]);
       }
-      Digest digest;
-      hash160_vec = digest.hash160(writer.toByteArray());
+      hash160_vec = Digest::hash160(writer.toByteArray());
       hash160_vec[0] = 0x02;
     }
     catch (const char *e)

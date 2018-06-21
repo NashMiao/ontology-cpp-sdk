@@ -70,8 +70,8 @@ public:
     EVP_cleanup();
   }
 
-  std::vector<unsigned char> get_EC_Q(EVP_PKEY *evp_key);
-  std::vector<unsigned char> get_EC_Q(EC_KEY *ec_key);
+  std::vector<unsigned char> EVP_PKEY_2_EC_Q(EVP_PKEY *evp_key);
+  std::vector<unsigned char> EC_KEY_2_EC_Q(EC_KEY *ec_key);
   bool EC_init(CurveName curve_name = CurveName::p256);
   bool ECDSA_key_generate(CurveName curve_name = CurveName::p256);
   bool EC_get_public_key(string &str_public_key);
