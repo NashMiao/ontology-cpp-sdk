@@ -6,27 +6,33 @@
 
 #include <vector>
 
-class InvokeCodeTransaction : public Transaction {
+class InvokeCodeTransaction : public Transaction
+{
 private:
   std::vector<unsigned char> code;
 
 public:
   InvokeCodeTransaction() : Transaction(TransactionType::InvokeCode) {}
+
   InvokeCodeTransaction(const std::vector<unsigned char> &_code,
                         long long _gasPrice, long long _gasLimit,
                         Address _payer)
-      : Transaction(_payer = _payer, _gasPrice = _gasPrice,
-                    _gasLimit = _gasLimit) {
-    code = _code;
-  }
+      : Transaction(TransactionType::InvokeCode, _payer = _payer,
+                    _gasPrice = _gasPrice, _gasLimit = _gasLimit),
+        code(_code) {}
 
-  void serializeExclusiveData(BinaryWriter *writer) {
+  void serializeExclusiveData(BinaryWriter *writer)
+  {
     writer->writeVarBytes(code);
   }
-  void deserializeExclusiveData(BinaryReader *reader) {
-    try {
+  void deserializeExclusiveData(BinaryReader *reader)
+  {
+    try
+    {
       code = reader->readVarBytes_vec();
-    } catch (const char *err) {
+    }
+    catch (const char *err)
+    {
       cerr << err << endl;
     }
   }
