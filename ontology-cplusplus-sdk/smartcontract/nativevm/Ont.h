@@ -22,7 +22,7 @@ private:
 public:
   Ont()
   {
-    ontContract = "ff00000000000000000000000000000000000001";
+    ontContract = "0000000000000000000000000000000000000001";
     precision = 1;
   }
   std::string getContractAddress() { return ontContract; }
@@ -53,10 +53,8 @@ public:
     std::vector<unsigned char> args;
     NativeBuildParams native_build_params;
     args = native_build_params.createCodeParamsScript(structs_list);
-
     Address ContractAddress(Helper::hexToBytes(ontContract));
     std::string init_method = "transfer";
-
     InvokeCodeTransaction tx;
     tx = Vm::buildNativeParams(ContractAddress, init_method, args, payer_str,
                                gaslimit, gasprice);

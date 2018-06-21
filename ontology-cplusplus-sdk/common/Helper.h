@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <iomanip>
+#include <iostream>
 #include <openssl/bn.h>
 #include <sstream>
 #include <string.h>
@@ -58,7 +59,7 @@ public:
     return stream.str();
   }
 
-  static std::vector<unsigned char> hexToBytes(const std::string &value) {
+  static std::vector<unsigned char> hexToBytes(std::string value) {
     std::vector<unsigned char> ret_vec;
     if (value.empty()) {
       return ret_vec;
@@ -67,10 +68,16 @@ public:
     if (len % 2 == 1) {
       throw "IllegalArgumentException";
     }
-    len /= 2;
-    for (int i = 0; i < len; i += 2) {
-      ret_vec.push_back(
-          (((unsigned char)value[i] << 4) && (unsigned char)value[i + 1]));
+    size_t i = 0;
+    while (i < value.size()) {
+      i += 2;
+      value.insert(i, 1, ' ');
+      i += 1;
+    }
+    std::istringstream hex_chars_stream(value);
+    unsigned int c;
+    while (hex_chars_stream >> std::hex >> c) {
+      ret_vec.push_back(c);
     }
     return ret_vec;
   }

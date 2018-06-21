@@ -524,7 +524,7 @@ int main()
 
   // test_sha256();
 
-  test_sha256sha256();
+  // test_sha256sha256();
 
-  // test_MakeTxWithoutWalletDemo();
+  test_MakeTxWithoutWalletDemo();
 }
