@@ -95,6 +95,11 @@ class MakeTxWithoutWalletDemo
         long long amount = 1000000000;
         Ont ont;
         InvokeCodeTransaction tx;
+
+        std::string test_addr;
+        test_addr = sender.toBase58();
+        sender.decodeBase58(test_addr);
+
         tx = ont.makeTransfer(sender.toBase58(), recvAddr.toBase58(), amount,
                               sender.toBase58(), 30000, 0);
         cout << tx.json_out() << endl;
