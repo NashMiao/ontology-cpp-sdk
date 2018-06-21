@@ -1,13 +1,17 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#include "boost/any.hpp"
 #include <assert.h>
 #include <iomanip>
 #include <iostream>
+#include <map>
+#include <nlohmann/json.hpp>
 #include <openssl/bn.h>
 #include <sstream>
 #include <string.h>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
@@ -189,6 +193,56 @@ public:
   static bool DecodeBase58(const std::string &str,
                            std::vector<unsigned char> &vchRet) {
     return DecodeBase58(str.c_str(), vchRet);
+  }
+
+  static std::string
+  ToJSONString(std::unordered_map<std::string, std::string> uord_map) {
+    std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
+    nlohmann::json json_uord_map;
+    for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();
+         uord_map_it++) {
+      json_uord_map[uord_map_it->first] = uord_map_it->second;
+    }
+    std::string str_uord_map = json_uord_map.dump();
+    return str_uord_map;
+  }
+
+  static std::string ToJSONString(std::map<std::string, std::string> str_map) {
+    std::map<std::string, std::string>::const_iterator str_map_it;
+    nlohmann::json json_str_map;
+    for (str_map_it = str_map.cbegin(); str_map_it != str_map.cend();
+         str_map_it++) {
+      json_str_map[str_map_it->first] = str_map_it->second;
+    }
+    std::string str_strmap = json_str_map.dump();
+    return str_strmap;
+  }
+
+  static std::string ToJSONString(std::map<std::string, boost::any> any_map) {
+    std::map<std::string, boost::any>::const_iterator any_map_it;
+    nlohmann::json json_any_map;
+    for (any_map_it = any_map.cbegin(); any_map_it != any_map.cend();
+         any_map_it++) {
+      boost::any val = any_map_it->second;
+      if (val.type() == typeid(bool)) {
+        bool value = boost::any_cast<bool>(val);
+        json_any_map[any_map_it->first] = value;
+      } else if (val.type() == typeid(int)) {
+        int value = boost::any_cast<int>(val);
+        json_any_map[any_map_it->first] = value;
+      } else if (val.type() == typeid(long long)) {
+        long long value = boost::any_cast<long long>(val);
+        json_any_map[any_map_it->first] = value;
+      } else if (val.type() == typeid(std::string)) {
+        std::string value = boost::any_cast<std::string>(val);
+        json_any_map[any_map_it->first] = value;
+      }
+      else{
+        throw "ToJSONString Unsupport Type";
+      }
+    }
+    std::string str_anymap = json_any_map.dump();
+    return str_anymap;
   }
 };
 
