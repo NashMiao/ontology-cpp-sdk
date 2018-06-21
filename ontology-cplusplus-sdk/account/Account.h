@@ -120,8 +120,10 @@ public:
       ec_key = ec_sign.get_EC_key();
       std::vector<unsigned char> uc_pub_key;
       uc_pub_key = serializePublicKey();
-      cout << "!!!" << endl;
-      cout << "here" << endl;
+      for (size_t i = 0; i < uc_pub_key.size(); i++) {
+        cout << uc_pub_key[i];
+      }
+      cout << "!!!!" << endl;
       addressU160 = Address::addressFromPubKey(uc_pub_key);
       cout << "here" << endl;
       break;
@@ -206,11 +208,10 @@ public:
         std::vector<unsigned char> ec_q;
         ec_q = sig.get_EC_Q(ec_key);
         act_uc_vec.insert(act_uc_vec.end(), ec_q.begin(), ec_q.end());
-        cout << "@@" << endl;
         break;
       }
       case KeyType::SM2: {
-         throw "Exception(KeyType::SM2)";
+        throw "Exception(KeyType::SM2)";
         break;
       }
       default: { throw "Exception(ErrorCode.UnknownKeyType)"; }
@@ -218,7 +219,6 @@ public:
     } catch (const char *e) {
       cerr << e << endl;
     }
-    cout << "!!!" << endl;
     return act_uc_vec;
   }
 
