@@ -398,16 +398,19 @@ std::vector<unsigned char> Signature::get_EC_Q(EC_KEY *ec_key)
     throw "EC_KEY_get0_public_key: NULL";
   }
 
-  const EC_GROUP *group;
-  group = EC_KEY_get0_group(ec_key);
+  EC_GROUP *group;
+  group = (EC_GROUP *)EC_KEY_get0_group(ec_key);
   if (group == NULL)
   {
+    EC_POINT_free(pub);
     throw "EC_KEY_get0_group: NULL";
   }
   std::string hex_pub;
   hex_pub = EC_POINT_point2hex(group, pub, POINT_CONVERSION_COMPRESSED, NULL);
   if (hex_pub.length() == 0)
   {
+    EC_POINT_free(pub);
+    EC_GROUP_free(group);
     throw "EC_POINT_point2hex: NULL";
   }
   std::vector<unsigned char> vec_pub;
@@ -415,6 +418,8 @@ std::vector<unsigned char> Signature::get_EC_Q(EC_KEY *ec_key)
   {
     vec_pub.push_back(hex_pub[i]);
   }
+  EC_POINT_free(pub);
+  EC_GROUP_free(group);
   return vec_pub;
 }
 
@@ -460,7 +465,6 @@ bool Signature::EC_set_public_key(const string &str_public_key,
   }
   if (EC_KEY_set_public_key(ec_key, pub) != 1)
   {
-    EC_KEY_free(ec_key);
     EC_GROUP_free(group);
     return false;
   }
@@ -487,10 +491,10 @@ bool Signature::EC_set_private_key(const string &str_private_key,
   BN_hex2bn(&prv, str_private_key.c_str());
   if (EC_KEY_set_private_key(ec_key, prv) != 1)
   {
-    EC_KEY_free(ec_key);
     EC_GROUP_free(group);
     return false;
   }
+  EC_GROUP_free(group);
   return true;
 }
 
