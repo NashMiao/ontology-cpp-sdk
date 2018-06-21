@@ -6,20 +6,20 @@
 #include "../common/Common.h"
 #include "../common/Helper.h"
 #include "../core/payload/InvokeCodeTransaction.h"
-#include <vector>
 #include <string.h>
+#include <vector>
 
 class Vm
 {
 private:
   OntSdk sdk;
   std::string contractAddress;
-  static constexpr const char * NATIVE_INVOKE_NAME = "Ontology.Native.Invoke";
+  static constexpr const char *NATIVE_INVOKE_NAME = "Ontology.Native.Invoke";
 
 public:
   Vm() {}
   Vm(OntSdk _sdk) : sdk(_sdk) {}
-  
+
   void setContractAddress(std::string codeHash)
   {
     if (codeHash.at(0) == '0' &&
@@ -46,7 +46,7 @@ public:
     params = Helper::addBytes(params, params_item);
     size_t didont_pos = 0;
     didont_pos = payer.find(Common::didont);
-    if (didont_pos != 0)
+    if (didont_pos != std::string::npos)
     {
       payer.replace(didont_pos, strlen(Common::didont), "");
     }
@@ -61,9 +61,9 @@ public:
                             std::string payer, long long gaslimit,
                             long long gasprice)
   {
-    size_t didont_pos = 0;
+    string::size_type didont_pos = 0;
     didont_pos = payer.find(Common::didont);
-    if (didont_pos != 0)
+    if (didont_pos != std::string::npos)
     {
       payer.replace(didont_pos, strlen(Common::didont), "");
     }
@@ -74,10 +74,10 @@ public:
   }
 
   static InvokeCodeTransaction buildNativeParams(Address codeAddr,
-                                          std::string initMethod,
-                                          std::vector<unsigned char> args,
-                                          std::string payer, long long gaslimit,
-                                          long long gasprice)
+                                                 std::string initMethod,
+                                                 std::vector<unsigned char> args,
+                                                 std::string payer, long long gaslimit,
+                                                 long long gasprice)
   {
     ScriptBuilder builder;
     if (args.size() > 0)
