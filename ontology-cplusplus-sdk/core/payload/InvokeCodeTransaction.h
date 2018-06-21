@@ -20,12 +20,12 @@ public:
     code = _code;
   }
 
-  void serializeExclusiveData(BinaryWriter &writer) {
-    writer.writeVarBytes(code);
+  void serializeExclusiveData(BinaryWriter *writer) {
+    writer->writeVarBytes(code);
   }
-  void deserializeExclusiveData(BinaryReader &reader) {
+  void deserializeExclusiveData(BinaryReader *reader) {
     try {
-      code = reader.readVarBytes_vec();
+      code = reader->readVarBytes_vec();
     } catch (const char *err) {
       cerr << err << endl;
     }

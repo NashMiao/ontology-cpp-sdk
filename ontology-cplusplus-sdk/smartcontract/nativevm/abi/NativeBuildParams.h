@@ -138,7 +138,8 @@ protected:
       }
       else if (val.type() == typeid(any_list_type))
       {
-        std::list<boost::any> list_value = boost::any_cast<std::list<boost::any>>(val);
+        std::list<boost::any> list_value =
+            boost::any_cast<std::list<boost::any>>(val);
         createCodeParamsScript(builder, list_value);
         builder.push((long long)list_value.size());
         builder.pushPack();
@@ -148,6 +149,7 @@ protected:
         throw "SDKException(ErrorCode.OtherError(not this type)";
       }
     }
+    return builder.toArray();
   }
 
 public:
@@ -238,7 +240,8 @@ public:
       }
       else if (val.type() == typeid(any_list_type))
       {
-        std::list<boost::any> list_value = boost::any_cast<std::list<boost::any>>(val);
+        std::list<boost::any> list_value =
+            boost::any_cast<std::list<boost::any>>(val);
         createCodeParamsScript(builder, list_value);
         builder.push((long long)list_value.size());
         builder.pushPack();
@@ -248,6 +251,7 @@ public:
         throw "createCodeParamsScript: TypeError!";
       }
     }
+    return builder.toArray();
   }
 };
 

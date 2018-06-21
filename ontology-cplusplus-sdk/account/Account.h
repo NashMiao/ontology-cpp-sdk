@@ -97,9 +97,9 @@ public:
     if (evp_key != NULL) {
       EVP_PKEY_free(evp_key);
     }
-    if (ec_key != NULL) {
-      EC_KEY_free(ec_key);
-    }
+    // if (ec_key != NULL) {
+    //   EC_KEY_free(ec_key);
+    // }
     EVP_cleanup();
   }
 
@@ -120,12 +120,7 @@ public:
       ec_key = ec_sign.get_EC_key();
       std::vector<unsigned char> uc_pub_key;
       uc_pub_key = serializePublicKey();
-      for (size_t i = 0; i < uc_pub_key.size(); i++) {
-        cout << uc_pub_key[i];
-      }
-      cout << "!!!!" << endl;
       addressU160 = Address::addressFromPubKey(uc_pub_key);
-      cout << "here" << endl;
       break;
     }
     case SignatureScheme::SM3withSM2: {

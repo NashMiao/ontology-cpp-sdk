@@ -9,6 +9,7 @@ private:
   std::vector<unsigned char> _hash;
 
 public:
+  Inventory() : Signable() {}
   std::vector<unsigned char> hash() {
     if (_hash.empty()) {
       std::vector<unsigned char> hash_data;

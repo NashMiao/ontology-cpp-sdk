@@ -55,10 +55,14 @@ public:
             std::string msg);
   ~Signature()
   {
-    if (ec_key != NULL)
+    if (key != NULL)
     {
-      EC_KEY_free(ec_key);
+      EVP_PKEY_free(key);
     }
+    // if (ec_key != NULL)
+    // {
+    //   EC_KEY_free(ec_key);
+    // }
     if (!value.empty())
     {
       value.erase(value.begin(), value.end());

@@ -9,25 +9,28 @@
 
 #include <vector>
 
-class Signable : public Serializable {
+class Signable
+{
 public:
-  void serialize(BinaryWriter *writer) {}
-  void deserialize(BinaryReader *reader) {}
-  virtual void deserializeUnsigned(BinaryReader &reader);
-  virtual void serializeUnsigned(BinaryWriter &writer);
-  std::vector<unsigned char> getHashData() {
+  Signable() {}
+  virtual void deserializeUnsigned(BinaryReader *reader);
+  virtual void serializeUnsigned(BinaryWriter *writer);
+  std::vector<unsigned char> getHashData()
+  {
     BinaryWriter writer;
     serializeUnsigned(writer);
     return writer.toByteArray();
   }
 
   std::vector<unsigned char> sign(Account account, SignatureScheme scheme,
-                                  CurveName curve) {
+                                  CurveName curve)
+  {
     return account.generateSignature(getHashData(), scheme, curve);
   }
 
   std::string sign_str(Account account, SignatureScheme scheme,
-                       CurveName curve) {
+                       CurveName curve)
+  {
     std::vector<unsigned char> vec;
     vec = sign(account, scheme, curve);
     std::string str(vec.begin(), vec.end());
