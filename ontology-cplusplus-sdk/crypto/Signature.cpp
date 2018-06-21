@@ -464,6 +464,7 @@ bool Signature::EC_set_public_key(const string &str_public_key,
     EC_GROUP_free(group);
     return false;
   }
+  EC_POINT_free(pub);
   return true;
 }
 
