@@ -13,12 +13,12 @@ class Signable
 {
 public:
   Signable() {}
-  virtual void deserializeUnsigned(BinaryReader *reader);
-  virtual void serializeUnsigned(BinaryWriter *writer);
+  virtual void deserializeUnsigned(BinaryReader *reader){};
+  virtual void serializeUnsigned(BinaryWriter *writer){};
   std::vector<unsigned char> getHashData()
   {
     BinaryWriter writer;
-    serializeUnsigned(writer);
+    serializeUnsigned(&writer);
     return writer.toByteArray();
   }
 

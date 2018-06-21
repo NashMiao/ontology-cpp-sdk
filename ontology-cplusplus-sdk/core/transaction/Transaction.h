@@ -127,7 +127,7 @@ public:
 
   void deserializeUnsigned(BinaryReader *reader) {
     version = reader->readByte();
-    if (txType != getTransactionType(reader.readByte())) {
+    if (txType != getTransactionType(reader->readByte())) {
       throw "IOException";
     }
     gasPrice = reader->readLong();
