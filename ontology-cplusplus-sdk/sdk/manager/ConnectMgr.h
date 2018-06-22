@@ -11,13 +11,14 @@
 class ConnectMgr {
 private:
   IConnector *connector;
+  RpcClient rpc_client;
 
 public:
   ConnectMgr() {}
 
-  ConnectMgr(std::string url, ConnectType type) {
+  ConnectMgr(const std::string& _url, ConnectType type) {
     if (type == ConnectType::RPC) {
-      RpcClient rpc_client(url);
+      rpc_client.setUrl(_url);
       connector = &rpc_client;
     } else if (type == ConnectType::RESTful) {
       // TODO

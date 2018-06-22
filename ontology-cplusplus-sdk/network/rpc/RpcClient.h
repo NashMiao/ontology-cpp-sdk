@@ -22,6 +22,8 @@ public:
     }
   }
 
+  void setUrl(const std::string _url) { rpc.setUrl(_url); }
+
   std::string getUrl() override { return rpc.getHost(); }
 
   boost::any getBalance(std::string address) override {
