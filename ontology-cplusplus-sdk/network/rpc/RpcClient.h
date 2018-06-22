@@ -27,6 +27,19 @@ public:
     boost::any result;
     result = rpc.call("getbalance", address);
   }
+
+  boost::any sendRawTransaction(bool preExec, std::string userid,
+                                std::string sData) {
+    boost::any result;
+    std::vector<boost::any> any_vec;
+    any_vec.push_back(sData);
+    if (preExec) {
+      result = rpc.call("sendrawtransaction", any_vec, 1);
+    } else {
+      result = rpc.call("sendrawtransaction", any_vec);
+    }
+    return result;
+  }
 };
 
 #endif
