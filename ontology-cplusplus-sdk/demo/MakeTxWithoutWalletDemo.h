@@ -123,9 +123,9 @@ class MakeTxWithoutWalletDemo
         cout << endl;
         std::string str_tx = tx.toHexString();
         std::string url;
-        RpcClient rpc(url);
+        RpcClient rpc_client(url);
         boost::any obj;
-        obj = rpc.sendRawTransactionPreExec(str_tx);
+        obj = rpc_client.sendRawTransactionPreExec(str_tx);
     }
 };
 #endif

@@ -4,6 +4,7 @@
 #include "boost/any.hpp"
 
 class IConnector {
+public:
   virtual std::string getUrl() {}
   virtual boost::any getBalance(std::string address) {}
   virtual boost::any sendRawTransaction(bool preExec, std::string userid,

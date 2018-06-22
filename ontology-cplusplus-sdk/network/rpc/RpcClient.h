@@ -1,7 +1,7 @@
 #ifndef RPCCLIENT_H
 #define RPCCLIENT_H
 
-#include "../connect/IConnector.h"
+#include "../../network/connect/IConnector.h"
 #include "RpcInterfaces.h"
 #include "boost/any.hpp"
 #include <iostream>
