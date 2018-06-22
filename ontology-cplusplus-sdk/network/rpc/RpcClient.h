@@ -41,6 +41,18 @@ public:
     }
     return result;
   }
+
+  std::string sendRawTransaction(const std::string &sData) {
+    boost::any val;
+    std::string value;
+    val = rpc.call("sendrawtransaction", sData);
+    if (val.type() == typeid(std::string)) {
+      value = boost::any_cast<std::string>(val);
+    } else {
+      throw "sendRawTransaction: return type error!";
+    }
+    return value;
+  }
 };
 
 #endif

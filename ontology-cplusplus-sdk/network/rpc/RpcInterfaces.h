@@ -76,6 +76,12 @@ public:
     }
     return ret_value;
   }
+
+  boost::any call(const std::string &method, const std::string &params) {
+    std::vector<boost::any> any_vec;
+    any_vec.push_back(params);
+    return call(method, params);
+  }
 };
 
 #endif
