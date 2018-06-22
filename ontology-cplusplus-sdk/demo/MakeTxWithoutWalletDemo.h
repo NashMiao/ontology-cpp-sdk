@@ -6,7 +6,7 @@
 #include "../common/Address.h"
 #include "../core/payload/InvokeCodeTransaction.h"
 #include "../core/transaction/Transaction.h"
-#include "../network/rpc/RpcClient.h"
+#include "../sdk/manager/ConnectMgr.h"
 #include "../smartcontract/nativevm/Ont.h"
 #include "../smartcontract/nativevm/abi/Struct.h"
 #include <string>
@@ -123,9 +123,9 @@ class MakeTxWithoutWalletDemo
         cout << endl;
         std::string str_tx = tx.toHexString();
         std::string url;
-        RpcClient rpc_client(url);
         boost::any obj;
-        obj = rpc_client.sendRawTransactionPreExec(str_tx);
+        ConnectMgr connect_mgr(url, ConnectType::RPC);
+        obj = connect_mgr.sendRawTransactionPreExec(str_tx);
     }
 };
 #endif

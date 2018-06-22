@@ -4,6 +4,7 @@
 #include "account/Account.h"
 #include "core/asset/Sig.h"
 #include "crypto/Signature.h"
+#include "sdk/manager/ConnectMgr.h"
 #include "sdk/manager/OntAssetTx.h"
 #include "sdk/manager/WalletMgr.h"
 
@@ -15,10 +16,10 @@ private:
   const SignatureScheme static defaultSignScheme =
       SignatureScheme::SHA256withECDSA;
   const CurveName static defaultCurveName = CurveName::p256;
-  // ConnectMgr connRpc;
-  // ConnectMgr connRestful;
-  // ConnectMgr connWebSocket;
-  // ConnectMgr connDefault;
+  ConnectMgr connectRpc;
+  ConnectMgr connectRestful;
+  ConnectMgr connectWebSocket;
+  ConnectMgr connectDefault;
 
   // Nep5Tx nep5Tx = null;
   // OntIdTx ontIdTx = null;
@@ -34,6 +35,29 @@ public:
   static SignatureScheme getDefaultSignScheme() { return defaultSignScheme; }
 
   static CurveName getDefaultCurveName() { return defaultCurveName; }
+
+  void setDefaultConnect(ConnectMgr connect) { connectDefault = connect; }
+
+  ConnectMgr getConnect() {
+    if (&connectDefault != NULL) {
+      return connectDefault;
+    } else if (&connectRpc != NULL) {
+      return connectRpc;
+    } else if (&connectRestful != NULL) {
+      return connectRestful;
+    } else if (&connectWebSocket != NULL) {
+      return connectWebSocket;
+    } else {
+      throw "getConnect(): connect uninint";
+    }
+  }
+
+  ConnectMgr getWebSocket() {
+    if (&connectWebSocket == NULL) {
+      throw "SDKException(ErrorCode.WebsocketNotInit)";
+    }
+    return connectWebSocket;
+  }
 
   static void signTx(Transaction &tx, const std::vector<Account> &accounts) {
     std::vector<Sig> sigs;
