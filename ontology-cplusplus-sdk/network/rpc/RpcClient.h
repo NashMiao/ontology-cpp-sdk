@@ -34,7 +34,8 @@ public:
     std::vector<boost::any> any_vec;
     any_vec.push_back(sData);
     if (preExec) {
-      result = rpc.call("sendrawtransaction", any_vec, 1);
+      any_vec.push_back(1);
+      result = rpc.call("sendrawtransaction", any_vec);
     } else {
       result = rpc.call("sendrawtransaction", any_vec);
     }
