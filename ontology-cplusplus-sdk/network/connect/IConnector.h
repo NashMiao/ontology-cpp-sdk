@@ -7,11 +7,10 @@
 class IConnector
 {
 public:
-  virtual std::string getUrl();
-  virtual boost::any getBalance(std::string address);
-  virtual boost::any sendRawTransaction(bool preExec, std::string userid,
-                                        std::string hexData);
-  virtual std::string sendRawTransaction(const std::string &sData);
+  virtual std::string getUrl() = 0;
+  virtual boost::any getBalance(std::string address) = 0;
+  virtual boost::any sendRawTransaction(bool preExec, const std::string &userid,
+                                        const std::string &sData) = 0;
 };
 
 #endif
