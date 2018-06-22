@@ -21,6 +21,15 @@ private:
     return request_str;
   }
 
+  std::string makeRequest(const std::string &method)
+  {
+    nlohmann::json request = {
+        {"jsonrpc", "2.0"}, {"method", method}, {"params", ""}, {"id", 1}};
+    std::string request_str = request.dump();
+    std::cout << "POST url=" + url + "," + request_str << std::endl;
+    return request_str;
+  }
+
   static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
                               void *userp)
   {
@@ -264,10 +273,15 @@ public:
 
   boost::any call(const std::string &method, const std::string &params)
   {
-    std::vector<boost::any> any_vec;
-    any_vec.push_back(params);
-    return call(method, params);
+    nlohmann::json json_array;
+    json_array.push_back(params);
+    return call(method, json_array);
   }
+
+  // boost::any call(const std::string &method)
+  // {
+  //   makeRequest()
+  // }
 };
 
 #endif
