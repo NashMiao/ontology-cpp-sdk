@@ -34,12 +34,13 @@ public:
                                 const std::string &sData) override {
     boost::any result;
     std::vector<boost::any> any_vec;
-    any_vec.push_back(sData);
+    nlohmann::json json_array;
+    json_array.push_back(sData);
     if (preExec) {
-      any_vec.push_back(1);
-      result = rpc.call("sendrawtransaction", any_vec);
+      json_array.push_back(1);
+      result = rpc.call("sendrawtransaction", json_array);
     } else {
-      result = rpc.call("sendrawtransaction", any_vec);
+      result = rpc.call("sendrawtransaction", json_array);
     }
     return result;
   }

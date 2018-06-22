@@ -122,7 +122,7 @@ class MakeTxWithoutWalletDemo
         }
         cout << endl;
         std::string str_tx = tx.toHexString();
-        std::string url;
+        std::string url = "http://polaris1.ont.io:20334/";
         boost::any obj;
         ConnectMgr connect_mgr(url, ConnectType::RPC);
         obj = connect_mgr.sendRawTransactionPreExec(str_tx);
