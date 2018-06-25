@@ -31,15 +31,15 @@ public:
 
   std::string getUrl() override { return rpc.getHost(); }
 
-  boost::any getBalance(std::string address) override
+  nlohmann::json getBalance(std::string address) override
   {
-    boost::any result;
+    nlohmann::json result;
     result = rpc.call("getbalance", address);
     return result;
   }
 
-  boost::any sendRawTransaction(bool preExec, const std::string &userid,
-                                const std::string &sData) override
+  nlohmann::json sendRawTransaction(bool preExec, const std::string &userid,
+                                    const std::string &sData) override
   {
     std::string cut_sData;
     cut_sData.assign(sData, 2, sData.size() - 2);
@@ -47,7 +47,7 @@ public:
          << sData << endl;
     cout << "cut_sData:\n"
          << cut_sData << endl;
-    boost::any result;
+    nlohmann::json result;
     std::vector<boost::any> any_vec;
     nlohmann::json json_array = nlohmann::json::array();
     json_array.push_back(cut_sData);
@@ -79,56 +79,53 @@ public:
 
   std::string sendRawTransaction(const std::string &sData) override
   {
-    boost::any val;
-    std::string value;
+    nlohmann::json val;
     val = rpc.call("sendrawtransaction", sData);
-    if (val.type() == typeid(std::string))
-    {
-      value = boost::any_cast<std::string>(val);
-    }
-    else
+    if (!val.is_string())
     {
       throw "sendRawTransaction: return type error!";
     }
+    std::string value;
+    value = val;
     return value;
   }
 
   int getGenerateBlockTime() override
   {
-    boost::any val;
+    nlohmann::json val;
     val = rpc.call("getgenerateblocktime");
-    if (val.type() != typeid(int))
+    if (!val.is_number())
     {
       throw "getGenerateBlockTime: Type Error!";
     }
     int block_time;
-    block_time = boost::any_cast<int>(val);
+    block_time = val;
     return block_time;
   }
 
   int getNodeCount() override
   {
-    boost::any val;
+    nlohmann::json val;
     val = rpc.call("getconnectioncount");
-    if (val.type() != typeid(nlohmann::detail::value_t::number_unsigned))
+    if (!val.is_number())
     {
       throw "getNodeCount: Type Error!";
     }
     int node_count;
-    node_count = boost::any_cast<int>(val);
+    node_count = val;
     return node_count;
   }
 
   int getBlockHeight() override
   {
-    boost::any val;
+    nlohmann::json val;
     val = rpc.call("getblockcount");
-    if (val.type() != typeid(int))
+    if (!val.is_number())
     {
       throw "getNodeCount: Type Error!";
     }
     int block_height;
-    block_height = boost::any_cast<int>(val);
+    block_height = val;
     return block_height;
   }
 
