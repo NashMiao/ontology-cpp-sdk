@@ -16,7 +16,7 @@ private:
 public:
   ConnectMgr() {}
 
-  ConnectMgr(const std::string& _url, ConnectType type) {
+  ConnectMgr(const std::string &_url, ConnectType type) {
     if (type == ConnectType::RPC) {
       rpc_client.setUrl(_url);
       connector = &rpc_client;
@@ -46,6 +46,19 @@ public:
     //   std::cout << "[" << ex.what() << "]" << std::endl;
     //   throw "connector instanceof Unsupport type";
     // }
+  }
+
+  int getNodeCount()
+  {
+    int count;
+    count = connector->getNodeCount();
+    return count;
+  }
+
+  int getBlockHeight(){
+    int height;
+    height = connector->getBlockHeight();
+    return height;
   }
 };
 

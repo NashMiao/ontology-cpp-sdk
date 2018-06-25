@@ -12,6 +12,20 @@ class RpcInterfaces
 private:
   std::string url;
 
+  std::string
+  ToJSONString(std::unordered_map<std::string, std::string> uord_map)
+  {
+    std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
+    nlohmann::json json_uord_map;
+    for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();
+         uord_map_it++)
+    {
+      json_uord_map[uord_map_it->first] = uord_map_it->second;
+    }
+    std::string str_uord_map = json_uord_map.dump();
+    return str_uord_map;
+  }
+
   std::string makeRequest(const std::string &method, nlohmann::json params)
   {
     nlohmann::json request = {
@@ -23,8 +37,9 @@ private:
 
   std::string makeRequest(const std::string &method)
   {
+    nlohmann::json array = nlohmann::json::array();
     nlohmann::json request = {
-        {"jsonrpc", "2.0"}, {"method", method}, {"params", ""}, {"id", 1}};
+        {"jsonrpc", "2.0"}, {"method", method}, {"params", array}, {"id", 1}};
     std::string request_str = request.dump();
     std::cout << "POST url=" + url + "," + request_str << std::endl;
     return request_str;
@@ -150,7 +165,10 @@ private:
       }
       curl_easy_setopt(curl, CURLOPT_POST, 1);
       curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postParams.c_str());
+      if (postParams.size() != 0)
+      {
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postParams.c_str());
+      }
       curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
       curl_easy_setopt(curl, CURLOPT_READFUNCTION, NULL);
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -161,7 +179,10 @@ private:
       curl_easy_setopt(curl, CURLOPT_HEADER, 1);
       curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10000);
       curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10000);
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_body.c_str());
+      if (post_body.size() != 0)
+      {
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_body.c_str());
+      }
       res = curl_easy_perform(curl);
       if (res != CURLE_OK)
       {
@@ -182,18 +203,37 @@ private:
     return response_body;
   }
 
-  std::string
-  ToJSONString(std::unordered_map<std::string, std::string> uord_map)
+  std::string post(const std::string &url, const std::string &post_data,
+                   bool is_https)
   {
-    std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
-    nlohmann::json json_uord_map;
-    for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();
-         uord_map_it++)
+    CURL *curl;
+    CURLcode res;
+    std::string response_write;
+    std::string response_head;
+    /* get a curl handle */
+    curl = curl_easy_init();
+    if (curl)
     {
-      json_uord_map[uord_map_it->first] = uord_map_it->second;
+      curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+      /* Now specify the POST data */
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&response_write);
+      curl_easy_setopt(curl, CURLOPT_HEADERDATA, (void *)&response_head);
+      /* Perform the request, res will get the return code */
+      res = curl_easy_perform(curl);
+      /* Check for errors */
+      if (res != CURLE_OK)
+      {
+        std::string err_str = "curl_easy_perform() failed: ";
+        err_str.append(curl_easy_strerror(res));
+        throw err_str;
+      }
+      /* always cleanup */
+      curl_easy_cleanup(curl);
+      std::string response_body;
+      response_body =
+          response_write.substr(response_head.size(), response_write.size());
     }
-    std::string str_uord_map = json_uord_map.dump();
-    return str_uord_map;
   }
 
   std::string post(std::string url,
@@ -235,10 +275,10 @@ public:
 
   std::string getHost() { return url; }
 
-  nlohmann::json send(std::string request, bool is_https = false)
+  nlohmann::json send(const std::string &request, bool is_https = false)
   {
     std::string response_body;
-    response_body = curl_post_set_body(url, request, "", is_https);
+    response_body = curl_post_set_body(url, "", request, is_https);
     nlohmann::json ret_json = response_body, _json;
     return ret_json;
   }
@@ -254,7 +294,7 @@ public:
       throw "RpcException(0,ErrorCode.ConnectUrlErr(  " + url +
           "response is null. maybe is connect error)";
     }
-    if (json_response.find("error") == json_response.end())
+    if (json_response.find("error") != json_response.end())
     {
       throw "json_response.find(\"error\")== json_response.end()";
     }
@@ -278,10 +318,34 @@ public:
     return call(method, json_array);
   }
 
-  // boost::any call(const std::string &method)
-  // {
-  //   makeRequest()
-  // }
+  boost::any call(const std::string &method)
+  {
+    std::string request;
+    request = makeRequest(method);
+    nlohmann::json json_response;
+    json_response = send(request);
+    cout << "json_response:" << json_response << endl;
+    if (json_response.size() == 0)
+    {
+      throw "RpcException(0,ErrorCode.ConnectUrlErr(  " + url +
+          "response is null. maybe is connect error)";
+    }
+    if (json_response.find("error") == json_response.end())
+    {
+      throw "json_response.find(\"error\")== json_response.end()";
+    }
+    if (json_response.find("error").value() != 0)
+    {
+      throw "RpcException(0, JSON.toJSONString(response))";
+    }
+    if (json_response.find("result") == json_response.end())
+    {
+      throw "json_response.find(\"result\")== json_response.end()";
+    }
+    boost::any ret_value;
+    ret_value = json_response.find("result").value();
+    return ret_value;
+  }
 };
 
 #endif

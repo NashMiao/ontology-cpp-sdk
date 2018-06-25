@@ -429,6 +429,14 @@ void test_sha256sha256() {
   cout << endl;
 }
 
+void test_rpc_get() {
+  std::string url = "http://localhost:20337";
+  ConnectMgr connect_mgr(url, ConnectType::RPC);
+  int obj;
+  obj = connect_mgr.getNodeCount();
+  cout << "getNodeCount(): " << obj << endl;
+}
+
 void test_MakeTxWithoutWalletDemo() {
   MakeTxWithoutWalletDemo make_tx_without_wallet_demo;
   make_tx_without_wallet_demo.init();
@@ -500,9 +508,11 @@ int main() {
 
   // try_json_cout();
 
-  json_push_back();
-  
+  // json_push_back();
+
   // try_map2json();
 
-  test_MakeTxWithoutWalletDemo();
+  test_rpc_get();
+
+  // test_MakeTxWithoutWalletDemo();
 }

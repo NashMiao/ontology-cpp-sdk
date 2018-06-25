@@ -102,7 +102,7 @@ class MakeTxWithoutWalletDemo
         sender.decodeBase58(test_addr);
 
         tx = ont.makeTransfer(sender.toBase58(), recvAddr.toBase58(), amount,
-                              sender.toBase58(), 30000, 0);
+                              sender.toBase58(), 200000, 0);
         cout << tx.json_out() << endl;
 
         std::vector<Account> vec_accounts;
@@ -110,8 +110,8 @@ class MakeTxWithoutWalletDemo
         OntSdk::signTx(tx, vec_accounts);
 
         vec_accounts.push_back(acct1);
-        int m = 2;
-        OntSdk::addMultiSign(tx, m, vec_accounts);
+        // int m = 2;
+        // OntSdk::addMultiSign(tx, m, vec_accounts);
 
         std::vector<unsigned char> tx_hash = tx.hash();
         std::vector<unsigned char>::const_iterator tx_hash_cit;
