@@ -15,6 +15,11 @@ public:
   virtual int getGenerateBlockTime() = 0;
   virtual int getNodeCount() = 0;
   virtual int getBlockHeight() = 0;
+  virtual nlohmann::json getBlockJson(int index) = 0;
+  virtual nlohmann::json getBlockJson(const std::string &hash) = 0;
+  virtual nlohmann::json getContractJson(const std::string &hash) = 0;
+
+
 };
 
 #endif

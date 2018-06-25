@@ -129,6 +129,36 @@ public:
     return block_height;
   }
 
+  nlohmann::json getBlockJson(int index) override
+  {
+    nlohmann::json json_array = nlohmann::json::array();
+    json_array.push_back(index);
+    json_array.push_back(1);
+    nlohmann::json result;
+    result = rpc.call("getblock", index, 1);
+    return result;
+  }
+
+  nlohmann::json getBlockJson(const std::string &hash) override
+  {
+    nlohmann::json json_array = nlohmann::json::array();
+    json_array.push_back(hash);
+    json_array.push_back(1);
+    nlohmann::json result;
+    result = rpc.call("getblock", json_array);
+    return result;
+  }
+
+  nlohmann::json getContractJson(const std::string &hash) override
+  {
+    nlohmann::json json_array = nlohmann::json::array();
+    json_array.push_back(hash);
+    json_array.push_back(1);
+    nlohmann::json result;
+    result = rpc.call("getcontractstate", json_array);
+    return result;
+  }
+
   // Transaction getRawTransaction(std::string txhash) {
   //   boost::any val;
   //   std::string value;
