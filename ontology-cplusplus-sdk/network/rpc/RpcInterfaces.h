@@ -5,6 +5,7 @@
 #include <curl/curl.h>
 #include <map>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 class RpcInterfaces
@@ -279,11 +280,13 @@ public:
   {
     std::string response_body;
     response_body = curl_post_set_body(url, "", request, is_https);
-    nlohmann::json ret_json = response_body, _json;
+    nlohmann::json ret_json;
+    //  ret_json = response_body, _json;
+    ret_json = nlohmann::json::parse(response_body);
     return ret_json;
   }
 
-  boost::any call(const std::string &method, nlohmann::json &json_array)
+  nlohmann::json call(const std::string &method, nlohmann::json &json_array)
   {
     std::string request;
     request = makeRequest(method, json_array);
@@ -294,31 +297,27 @@ public:
       throw "RpcException(0,ErrorCode.ConnectUrlErr(  " + url +
           "response is null. maybe is connect error)";
     }
-    if (json_response.find("error") != json_response.end())
+    nlohmann::json::iterator it;
+    it = json_response.find("error");
+    if (it == json_response.end())
     {
       throw "json_response.find(\"error\")== json_response.end()";
     }
-    if (json_response.find("error").value() != 0)
+    if (*it != 0)
     {
       throw "RpcException(0, JSON.toJSONString(response))";
     }
-    if (json_response.find("result") == json_response.end())
+    it = json_response.find("result");
+    if (it == json_response.end())
     {
       throw "json_response.find(\"result\")== json_response.end()";
     }
-    boost::any ret_value;
-    ret_value = json_response.find("result").value();
+    nlohmann::json ret_value;
+    ret_value = *it;
     return ret_value;
   }
 
-  boost::any call(const std::string &method, const std::string &params)
-  {
-    nlohmann::json json_array;
-    json_array.push_back(params);
-    return call(method, json_array);
-  }
-
-  boost::any call(const std::string &method)
+  nlohmann::json call(const std::string &method)
   {
     std::string request;
     request = makeRequest(method);
@@ -330,21 +329,31 @@ public:
       throw "RpcException(0,ErrorCode.ConnectUrlErr(  " + url +
           "response is null. maybe is connect error)";
     }
-    if (json_response.find("error") == json_response.end())
+    nlohmann::json::iterator it;
+    it = json_response.find("error");
+    if (it == json_response.end())
     {
       throw "json_response.find(\"error\")== json_response.end()";
     }
-    if (json_response.find("error").value() != 0)
+    if (*it != 0)
     {
       throw "RpcException(0, JSON.toJSONString(response))";
     }
-    if (json_response.find("result") == json_response.end())
+    it = json_response.find("result");
+    if (it == json_response.end())
     {
       throw "json_response.find(\"result\")== json_response.end()";
     }
-    boost::any ret_value;
-    ret_value = json_response.find("result").value();
+    nlohmann::json ret_value;
+    ret_value = *it;
     return ret_value;
+  }
+
+  nlohmann::json call(const std::string &method, const std::string &params)
+  {
+    nlohmann::json json_array;
+    json_array.push_back(params);
+    return call(method, json_array);
   }
 };
 

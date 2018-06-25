@@ -8,16 +8,21 @@
 #include <map>
 #include <vector>
 
-class RpcClient : public IConnector {
+class RpcClient : public IConnector
+{
 private:
   RpcInterfaces rpc;
 
 public:
   RpcClient() {}
-  RpcClient(std::string url) {
-    try {
+  RpcClient(std::string url)
+  {
+    try
+    {
       rpc.setUrl(url);
-    } catch (const char *err) {
+    }
+    catch (const char *err)
+    {
       std::cerr << err << std::endl;
     }
   }
@@ -26,55 +31,74 @@ public:
 
   std::string getUrl() override { return rpc.getHost(); }
 
-  boost::any getBalance(std::string address) override {
+  boost::any getBalance(std::string address) override
+  {
     boost::any result;
     result = rpc.call("getbalance", address);
     return result;
   }
 
   boost::any sendRawTransaction(bool preExec, const std::string &userid,
-                                const std::string &sData) override {
+                                const std::string &sData) override
+  {
     std::string cut_sData;
     cut_sData.assign(sData, 2, sData.size() - 2);
-    cout << "sData:\n" << sData << endl;
-    cout << "cut_sData:\n" << cut_sData << endl;
+    cout << "sData:\n"
+         << sData << endl;
+    cout << "cut_sData:\n"
+         << cut_sData << endl;
     boost::any result;
     std::vector<boost::any> any_vec;
     nlohmann::json json_array = nlohmann::json::array();
     json_array.push_back(cut_sData);
-    if (preExec) {
+    if (preExec)
+    {
       json_array.push_back(1);
-      try {
+      try
+      {
         result = rpc.call("sendrawtransaction", json_array);
-      } catch (const char *e) {
+      }
+      catch (const char *e)
+      {
         cerr << e << endl;
       }
-    } else {
-      try {
+    }
+    else
+    {
+      try
+      {
         result = rpc.call("sendrawtransaction", json_array);
-      } catch (const char *e) {
+      }
+      catch (const char *e)
+      {
         cerr << e << endl;
       }
     }
     return result;
   }
 
-  std::string sendRawTransaction(const std::string &sData) override {
+  std::string sendRawTransaction(const std::string &sData) override
+  {
     boost::any val;
     std::string value;
     val = rpc.call("sendrawtransaction", sData);
-    if (val.type() == typeid(std::string)) {
+    if (val.type() == typeid(std::string))
+    {
       value = boost::any_cast<std::string>(val);
-    } else {
+    }
+    else
+    {
       throw "sendRawTransaction: return type error!";
     }
     return value;
   }
 
-  int getGenerateBlockTime() override {
+  int getGenerateBlockTime() override
+  {
     boost::any val;
     val = rpc.call("getgenerateblocktime");
-    if (val.type() != typeid(int)) {
+    if (val.type() != typeid(int))
+    {
       throw "getGenerateBlockTime: Type Error!";
     }
     int block_time;
@@ -82,10 +106,12 @@ public:
     return block_time;
   }
 
-  int getNodeCount() override {
+  int getNodeCount() override
+  {
     boost::any val;
     val = rpc.call("getconnectioncount");
-    if (val.type() != typeid(int)) {
+    if (val.type() != typeid(nlohmann::detail::value_t::number_unsigned))
+    {
       throw "getNodeCount: Type Error!";
     }
     int node_count;
@@ -93,10 +119,12 @@ public:
     return node_count;
   }
 
-  int getBlockHeight() override {
+  int getBlockHeight() override
+  {
     boost::any val;
     val = rpc.call("getblockcount");
-    if (val.type() != typeid(int)) {
+    if (val.type() != typeid(int))
+    {
       throw "getNodeCount: Type Error!";
     }
     int block_height;
