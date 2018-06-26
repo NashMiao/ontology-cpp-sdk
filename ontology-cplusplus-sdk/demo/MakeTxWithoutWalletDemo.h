@@ -110,8 +110,8 @@ class MakeTxWithoutWalletDemo
         OntSdk::signTx(tx, vec_accounts);
 
         vec_accounts.push_back(acct1);
-        // int m = 2;
-        // OntSdk::addMultiSign(tx, m, vec_accounts);
+        int m = 2;
+        OntSdk::addMultiSign(tx, m, vec_accounts);
 
         std::vector<unsigned char> tx_hash = tx.hash();
         std::vector<unsigned char>::const_iterator tx_hash_cit;
@@ -122,8 +122,8 @@ class MakeTxWithoutWalletDemo
         }
         cout << endl;
         std::string str_tx = tx.toHexString();
-        std::string url = "http://polaris1.ont.io:20334/api/v1/transaction ";
-        boost::any obj;
+        std::string url = "http://localhost:20334/api/v1/transaction ";
+        nlohmann::json obj;
         ConnectMgr connect_mgr(url, ConnectType::RPC);
         obj = connect_mgr.sendRawTransactionPreExec(str_tx);
     }

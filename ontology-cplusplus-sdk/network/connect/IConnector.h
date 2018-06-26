@@ -2,6 +2,7 @@
 #define ICONNECTOR_H
 
 #include "boost/any.hpp"
+#include "nlohmann/json.hpp"
 #include <string>
 
 class IConnector

@@ -135,7 +135,7 @@ public:
     json_array.push_back(index);
     json_array.push_back(1);
     nlohmann::json result;
-    result = rpc.call("getblock", index, 1);
+    result = rpc.call("getblock", json_array);
     return result;
   }
 

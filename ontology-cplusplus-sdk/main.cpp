@@ -512,7 +512,7 @@ int main() {
 
   // try_map2json();
 
-  test_rpc_get();
+  // test_rpc_get();
 
-  // test_MakeTxWithoutWalletDemo();
+  test_MakeTxWithoutWalletDemo();
 }

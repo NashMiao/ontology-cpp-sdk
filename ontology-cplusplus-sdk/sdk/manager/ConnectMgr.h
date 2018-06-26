@@ -30,8 +30,8 @@ public:
 
   ConnectMgr(RpcClient rpc_client) { connector = &rpc_client; }
 
-  boost::any sendRawTransactionPreExec(const std::string &hexData) {
-    boost::any any_ret;
+  nlohmann::json sendRawTransactionPreExec(const std::string &hexData) {
+    nlohmann::json any_ret;
     any_ret = connector->sendRawTransaction(true, "", hexData);
     return any_ret;
     // try

@@ -317,6 +317,13 @@ public:
     return ret_value;
   }
 
+  nlohmann::json call(const std::string &method, const std::string &params)
+  {
+    nlohmann::json json_array;
+    json_array.push_back(params);
+    return call(method, json_array);
+  }
+
   nlohmann::json call(const std::string &method)
   {
     std::string request;
@@ -347,13 +354,6 @@ public:
     nlohmann::json ret_value;
     ret_value = *it;
     return ret_value;
-  }
-
-  nlohmann::json call(const std::string &method, const std::string &params)
-  {
-    nlohmann::json json_array;
-    json_array.push_back(params);
-    return call(method, json_array);
   }
 };
 
