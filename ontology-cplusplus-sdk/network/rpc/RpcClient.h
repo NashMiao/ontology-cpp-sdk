@@ -170,7 +170,7 @@ public:
     }
     else
     {
-      throw new "RuntimeException(e)";
+      throw "new RuntimeException(e)";
     }
     return height;
   }
@@ -218,7 +218,7 @@ public:
   std::string getVersion()
   {
     nlohmann::json result;
-    nlohmann::json result = rpc.call("getversion");
+    result = rpc.call("getversion");
     std::string version;
     if (result.is_string())
     {
