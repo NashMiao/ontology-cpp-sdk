@@ -42,11 +42,10 @@ public:
                                     const std::string &sData) override
   {
     std::string cut_sData;
-    cut_sData.assign(sData, 2, sData.size() - 2);
-    cout << "sData:\n"
-         << sData << endl;
-    cout << "cut_sData:\n"
-         << cut_sData << endl;
+    if (sData[0] == '0' && sData[1] == 'x')
+    {
+      cut_sData.assign(sData, 2, sData.size() - 2);
+    }
     nlohmann::json result;
     std::vector<boost::any> any_vec;
     nlohmann::json json_array = nlohmann::json::array();
