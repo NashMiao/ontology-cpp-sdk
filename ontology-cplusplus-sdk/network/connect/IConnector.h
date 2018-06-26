@@ -18,8 +18,6 @@ public:
   virtual nlohmann::json getBlockJson(int index) = 0;
   virtual nlohmann::json getBlockJson(const std::string &hash) = 0;
   virtual nlohmann::json getContractJson(const std::string &hash) = 0;
-
-
 };
 
 #endif
