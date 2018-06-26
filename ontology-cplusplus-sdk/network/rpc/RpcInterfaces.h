@@ -281,8 +281,14 @@ public:
     std::string response_body;
     response_body = curl_post_set_body(url, "", request, is_https);
     nlohmann::json ret_json;
-    //  ret_json = response_body, _json;
-    ret_json = nlohmann::json::parse(response_body);
+    try
+    {
+      ret_json = nlohmann::json::parse(response_body);
+    }
+    catch (nlohmann::json::exception err)
+    {
+      ret_json.push_back(response_body);
+    }
     return ret_json;
   }
 

@@ -59,7 +59,8 @@ public:
       }
       catch (const char *e)
       {
-        cerr << e << endl;
+        cerr << std::string("sendRawTransaction exepection: ") + std::string(e)
+             << endl;
       }
     }
     else
@@ -156,6 +157,78 @@ public:
     nlohmann::json result;
     result = rpc.call("getcontractstate", json_array);
     return result;
+  }
+
+  int getBlockHeightByTxHash(std::string hash)
+  {
+    nlohmann::json result;
+    result = rpc.call("getblockheightbytxhash", hash);
+    int height;
+    if (result.is_number())
+    {
+      height = result;
+    }
+    else
+    {
+      throw new "RuntimeException(e)";
+    }
+    return height;
+  }
+
+  std::string getStorage(std::string codehash, std::string key)
+  {
+    nlohmann::json result;
+    nlohmann::json json_array = nlohmann::json::array();
+    json_array.push_back(codehash);
+    json_array.push_back(key);
+    result = rpc.call("getstorage", json_array);
+    string storage;
+    if (result.is_string())
+    {
+      storage = result;
+    }
+    else
+    {
+      throw "new RuntimeException(e)";
+    }
+    return storage;
+  }
+
+  std::string getAllowance(std::string asset, std::string from,
+                           std::string to)
+  {
+    nlohmann::json result;
+    nlohmann::json json_array = nlohmann::json::array();
+    json_array.push_back(asset);
+    json_array.push_back(from);
+    json_array.push_back(to);
+    result = rpc.call("getallowance", json_array);
+    std::string allowance;
+    if (result.is_string())
+    {
+      allowance = result;
+    }
+    else
+    {
+      throw "new RuntimeException(e)";
+    }
+    return allowance;
+  }
+
+  std::string getVersion()
+  {
+    nlohmann::json result;
+    nlohmann::json result = rpc.call("getversion");
+    std::string version;
+    if (result.is_string())
+    {
+      version = result;
+    }
+    else
+    {
+      throw "new RuntimeException(e)";
+    }
+    return version;
   }
 
   // Transaction getRawTransaction(std::string txhash) {

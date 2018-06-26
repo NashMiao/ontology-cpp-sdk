@@ -19,6 +19,10 @@ public:
   virtual nlohmann::json getBlockJson(int index) = 0;
   virtual nlohmann::json getBlockJson(const std::string &hash) = 0;
   virtual nlohmann::json getContractJson(const std::string &hash) = 0;
+  virtual int getBlockHeightByTxHash(std::string hash) = 0;
+  virtual std::string getStorage(std::string codehash, std::string key) = 0;
+  virtual std::string getAllowance(std::string asset, std::string from, std::string to) = 0;
+  virtual std::string getVersion() = 0;
 };
 
 #endif
