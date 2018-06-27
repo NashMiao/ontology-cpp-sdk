@@ -51,6 +51,73 @@ public:
     return data3;
   }
 
+  static std::vector<unsigned char> hexStringToByte(const std::string &str) {
+    size_t str_sz = str.size();
+    if (str_sz % 2 != 0) {
+      throw "hexStringToByte error";
+    }
+    std::vector<unsigned char> byte_vec;
+    for (size_t i = 0; i < str_sz; i += 2) {
+      unsigned char uch;
+      if ('a' <= str[i] && str[i] <= 'z') {
+        uch = ((str[i] - 'a' + 10) << 4) & 0xF0;
+      } else if ('A' <= str[i] && str[i] <= 'Z') {
+        uch = ((str[i] - 'A' + 10) << 4) & 0xF0;
+      } else if ('0' <= str[i] && str[i] <= '9') {
+        uch = ((str[i] - '0') << 4) & 0xF0;
+      } else {
+        throw "unsigned char isn't hex!";
+      }
+      unsigned char ucl;
+      if ('a' <= str[i + 1] && str[i + 1] <= 'z') {
+        ucl = (str[i + 1] - 'a' + 10) & 0x0F;
+      } else if ('A' <= str[i + 1] && str[i + 1] <= 'Z') {
+        ucl = (str[i + 1] - 'A' + 10) & 0x0F;
+      } else if ('0' <= str[i + 1] && str[i + 1] <= '9') {
+        ucl = (str[i + 1] - '0') & 0x0F;
+      } else {
+        throw "unsigned char isn't hex!";
+      }
+      unsigned char uc = uch | ucl;
+      byte_vec.push_back(uc);
+    }
+    return byte_vec;
+  }
+
+  static std::vector<unsigned char>
+  hexVecToByte(const std::vector<unsigned char> &vec) {
+    size_t vec_sz = vec.size();
+    if (vec_sz % 2 != 0) {
+      throw "hexStringToByte error";
+    }
+    std::vector<unsigned char> byte_vec;
+    for (size_t i = 0; i < vec_sz; i += 2) {
+      unsigned char uch;
+      if ('a' <= vec[i] && vec[i] <= 'f') {
+        uch = ((vec[i] - 'a' + 10) << 4) & 0xF0;
+      } else if ('A' <= vec[i] && vec[i] <= 'F') {
+        uch = ((vec[i] - 'A' + 10) << 4) & 0xF0;
+      } else if ('0' <= vec[i] && vec[i] <= '9') {
+        uch = ((vec[i] - '0') << 4) & 0xF0;
+      } else {
+        throw "unsigned char isn't hex!";
+      }
+      unsigned char ucl;
+      if ('a' <= vec[i + 1] && vec[i + 1] <= 'f') {
+        ucl = (vec[i + 1] - 'a' + 10) & 0x0F;
+      } else if ('A' <= vec[i + 1] && vec[i + 1] <= 'F') {
+        ucl = (vec[i + 1] - 'A' + 10) & 0x0F;
+      } else if ('0' <= vec[i + 1] && vec[i + 1] <= '9') {
+        ucl = (vec[i + 1] - '0') & 0x0F;
+      } else {
+        throw "unsigned char isn't hex!";
+      }
+      unsigned char uc = uch | ucl;
+      byte_vec.push_back(uc);
+    }
+    return byte_vec;
+  }
+
   static std::string toHexString(const std::vector<unsigned char> &value) {
     std::string hex_str;
     std::vector<unsigned char>::const_iterator value_cit;
@@ -236,8 +303,7 @@ public:
       } else if (val.type() == typeid(std::string)) {
         std::string value = boost::any_cast<std::string>(val);
         json_any_map[any_map_it->first] = value;
-      }
-      else{
+      } else {
         throw "ToJSONString Unsupport Type";
       }
     }
