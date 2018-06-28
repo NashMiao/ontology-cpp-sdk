@@ -430,11 +430,17 @@ void test_sha256sha256() {
 }
 
 void test_rpc_get() {
-  std::string url = "http://localhost:20337";
+  std::string url = "http://polaris1.ont.io:20336";
   ConnectMgr connect_mgr(url, ConnectType::RPC);
   int obj;
   obj = connect_mgr.getNodeCount();
   cout << "getNodeCount(): " << obj << endl;
+  obj = connect_mgr.getBlockHeight();
+  cout << "getBlockHeight(): " << obj << endl;
+  std::string contract_hash = "fff49c809d302a2956e9dc0012619a452d4b846c";
+  nlohmann::json ret;
+  ret=connect_mgr.getContractJson(contract_hash);
+  cout << ret << endl;
 }
 
 void test_MakeTxWithoutWalletDemo() {

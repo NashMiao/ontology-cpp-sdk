@@ -56,7 +56,7 @@ public:
     return tx;
   }
 
-  static InvokeCodeTransaction
+  InvokeCodeTransaction
   makeInvokeCodeTransaction(const std::vector<unsigned char> &params,
                             std::string payer, long long gaslimit,
                             long long gasprice)
@@ -73,11 +73,11 @@ public:
     return tx;
   }
 
-  static InvokeCodeTransaction buildNativeParams(Address codeAddr,
-                                                 std::string initMethod,
-                                                 std::vector<unsigned char> args,
-                                                 std::string payer, long long gaslimit,
-                                                 long long gasprice)
+  Transaction *buildNativeParams(Address codeAddr,
+                                 std::string initMethod,
+                                 std::vector<unsigned char> args,
+                                 std::string payer, long long gaslimit,
+                                 long long gasprice)
   {
     ScriptBuilder builder;
     if (args.size() > 0)
@@ -94,8 +94,9 @@ public:
     builder.add(getByte(ScriptOp::OP_SYSCALL));
     builder.push(NATIVE_INVOKE_NAME);
     std::vector<unsigned char> builder_vec = builder.toArray();
-    InvokeCodeTransaction tx =
-        makeInvokeCodeTransaction(builder_vec, payer, gaslimit, gasprice);
+    InvokeCodeTransaction invoke_tx;
+    invoke_tx = makeInvokeCodeTransaction(builder_vec, payer, gaslimit, gasprice);
+    Transaction *tx = &invoke_tx;
     return tx;
   }
 };

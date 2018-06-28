@@ -15,7 +15,6 @@
 class Transaction : public Inventory, public Serializable
 {
 private:
-  unsigned int version;
   long long gasPrice;
   long long gasLimit;
   TransactionType txType;
@@ -23,38 +22,59 @@ private:
   std::vector<Attribute> attributes;
   std::vector<Sig> sigs;
   int nonce;
+  unsigned int version;
 
 public:
   Transaction() : Inventory(), Serializable() {}
 
-  Transaction(TransactionType _txType, Address _payer,
-              unsigned int _version = 0, long long _gasPrice = 0,
-              long long _gasLimit = 0)
-      : Inventory(), Serializable(), version(_version), gasPrice(_gasPrice),
-        gasLimit(_gasLimit), txType(_txType), payer(_payer)
+  Transaction(TransactionType _txType, unsigned int _version = 0)
+      : Inventory(), Serializable(), version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
   }
 
-  Transaction(TransactionType _txType, unsigned int _version = 0,
-              long long _gasPrice = 0, long long _gasLimit = 0)
-      : Inventory(), Serializable(), version(_version), gasPrice(_gasPrice),
-        gasLimit(_gasLimit)
+  Transaction(TransactionType _txType, Address _payer, long long _gasPrice,
+              long long _gasLimit, unsigned int _version = 0)
+      : Inventory(), Serializable(), gasPrice(_gasPrice),
+        gasLimit(_gasLimit), txType(_txType), payer(_payer), version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
   }
 
-  Transaction(TransactionType _txType, unsigned int _version, TransactionType _type, long long _gasPrice,
-              long long _gasLimit, const std::vector<Attribute> &_attributes,
-              const std::vector<Sig> &_sigs)
-      : Inventory(), Serializable(), version(_version), gasPrice(_gasPrice),
+  Transaction(TransactionType _txType, long long _gasPrice, long long _gasLimit,
+              unsigned int _version = 0)
+      : Inventory(), Serializable(), gasPrice(_gasPrice),
+        gasLimit(_gasLimit), version(_version)
+  {
+    srand((unsigned)time(NULL));
+    nonce = rand();
+  }
+
+  Transaction(TransactionType _txType, TransactionType _type,
+              long long _gasPrice, long long _gasLimit,
+              const std::vector<Attribute> &_attributes,
+              const std::vector<Sig> &_sigs, unsigned int _version)
+      : Inventory(), Serializable(), gasPrice(_gasPrice),
         gasLimit(_gasLimit), txType(_type), attributes(_attributes),
-        sigs(_sigs)
+        sigs(_sigs), version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
+  }
+
+  Transaction &operator=(Transaction &tx)
+  {
+    this->version = tx.version;
+    this->gasPrice = tx.gasPrice;
+    this->gasLimit = tx.gasLimit;
+    this->txType = tx.txType;
+    this->payer = tx.payer;
+    this->attributes = tx.attributes;
+    this->sigs = tx.sigs;
+    this->nonce = tx.nonce;
+    return *this;
   }
 
   void set_sigs(std::vector<Sig> &_sigs) { sigs = _sigs; }

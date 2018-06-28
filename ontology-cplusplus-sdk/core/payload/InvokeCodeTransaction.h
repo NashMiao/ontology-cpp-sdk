@@ -21,6 +21,13 @@ public:
                     _gasPrice = _gasPrice, _gasLimit = _gasLimit),
         code(_code) {}
 
+  InvokeCodeTransaction operator=(InvokeCodeTransaction tx)
+  {
+    this->code = tx.code;
+    this->Transaction::operator=(tx);
+    return *this;
+  }
+
   void serializeExclusiveData(BinaryWriter *writer)
   {
     writer->writeVarBytes(code);

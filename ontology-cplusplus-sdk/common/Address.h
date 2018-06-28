@@ -149,7 +149,7 @@ public:
     std::sort(publicKeys.begin(), publicKeys.end());
     for (size_t i = 0; i < publicKeys.size(); i++)
     {
-      builder.push(publicKeys[i]);
+      builder.pushHexStr(publicKeys[i]);
     }
     BN_set_word(bn, (unsigned long)publicKeys.size());
     builder.push(bn);

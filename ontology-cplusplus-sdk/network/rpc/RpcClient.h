@@ -159,7 +159,7 @@ public:
     return result;
   }
 
-  int getBlockHeightByTxHash(std::string hash)
+  int getBlockHeightByTxHash(const std::string &hash)
   {
     nlohmann::json result;
     result = rpc.call("getblockheightbytxhash", hash);
@@ -175,7 +175,7 @@ public:
     return height;
   }
 
-  std::string getStorage(std::string codehash, std::string key)
+  std::string getStorage(const std::string &codehash, const std::string &key)
   {
     nlohmann::json result;
     nlohmann::json json_array = nlohmann::json::array();
@@ -194,8 +194,8 @@ public:
     return storage;
   }
 
-  std::string getAllowance(std::string asset, std::string from,
-                           std::string to)
+  std::string getAllowance(const std::string &asset, const std::string &from,
+                           const std::string &to)
   {
     nlohmann::json result;
     nlohmann::json json_array = nlohmann::json::array();

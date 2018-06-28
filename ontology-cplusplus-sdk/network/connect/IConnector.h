@@ -10,8 +10,9 @@ class IConnector
 public:
   virtual std::string getUrl() = 0;
   virtual nlohmann::json getBalance(std::string address) = 0;
-  virtual nlohmann::json sendRawTransaction(bool preExec, const std::string &userid,
-                                        const std::string &sData) = 0;
+  virtual nlohmann::json sendRawTransaction(bool preExec,
+                                            const std::string &userid,
+                                            const std::string &sData) = 0;
   virtual std::string sendRawTransaction(const std::string &sData) = 0;
   virtual int getGenerateBlockTime() = 0;
   virtual int getNodeCount() = 0;
@@ -19,9 +20,12 @@ public:
   virtual nlohmann::json getBlockJson(int index) = 0;
   virtual nlohmann::json getBlockJson(const std::string &hash) = 0;
   virtual nlohmann::json getContractJson(const std::string &hash) = 0;
-  virtual int getBlockHeightByTxHash(std::string hash) = 0;
-  virtual std::string getStorage(std::string codehash, std::string key) = 0;
-  virtual std::string getAllowance(std::string asset, std::string from, std::string to) = 0;
+  virtual int getBlockHeightByTxHash(const std::string &hash) = 0;
+  virtual std::string getStorage(const std::string &codehash,
+                                 const std::string &key) = 0;
+  virtual std::string getAllowance(const std::string &asset,
+                                   const std::string &from,
+                                   const std::string &to) = 0;
   virtual std::string getVersion() = 0;
 };
 

@@ -311,6 +311,7 @@ public:
     }
     if (*it != 0)
     {
+      cout << "error: " << *it << endl;
       throw "RpcException(0, JSON.toJSONString(response))";
     }
     it = json_response.find("result");

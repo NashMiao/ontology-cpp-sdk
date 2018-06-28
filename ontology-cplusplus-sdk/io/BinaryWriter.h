@@ -117,7 +117,7 @@ public:
   }
 
   bool writeVarBytes(const unsigned char *v) {
-    long long len = (sizeof(v) / sizeof(unsigned char));
+    long long len = (strlen((char *)v) / sizeof(unsigned char));
 
     if (!writeVarInt(len)) {
       return false;
@@ -126,7 +126,6 @@ public:
     for (int i = 0; i < len; i++) {
       uc_vec.push_back(v[i]);
     }
-
     return true;
   }
 
@@ -153,8 +152,7 @@ public:
   }
 
   bool writeVarString(const std::string &str) {
-    int str_len = str.length();
-    std::string utf8_str(str);
+    int str_len = str.length();;
     if (!writeVarInt(str_len)) {
       return false;
     }

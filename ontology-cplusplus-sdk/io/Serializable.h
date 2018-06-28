@@ -7,23 +7,31 @@
 
 #include <vector>
 
-class Serializable {
+class Serializable
+{
 public:
+  Serializable() {}
+  
   virtual void serialize(BinaryWriter *writer) = 0;
   virtual void deserialize(BinaryReader *reader) = 0;
 
-  std::vector<unsigned char> toArray() {
+  std::vector<unsigned char> toArray()
+  {
     BinaryWriter writer;
-    try {
+    try
+    {
       serialize(&writer);
-    } catch (const char *ex) {
+    }
+    catch (const char *ex)
+    {
       cerr << ex << endl;
       throw "UnsupportedOperationException(ex)";
     }
     return writer.toByteArray();
   }
 
-  std::string toHexString() {
+  std::string toHexString()
+  {
     Helper helper;
     std::string str;
     str = helper.toHexString(toArray());
