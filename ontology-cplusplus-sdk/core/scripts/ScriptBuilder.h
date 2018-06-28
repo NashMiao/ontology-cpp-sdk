@@ -112,8 +112,12 @@ public:
     return *this;
   }
 
-  ScriptBuilder push(const char * bytes){
-    
+  ScriptBuilder push(const char *c_bytes)
+  {
+    unsigned char *uc_bytes = (unsigned char *)c_bytes;
+    std::vector<unsigned char> vec(uc_bytes, uc_bytes + strlen(c_bytes));
+    push(vec);
+    return *this;
   }
 
   ScriptBuilder push(const std::vector<unsigned char> &data)
