@@ -1,6 +1,5 @@
 # Ontology DApp tutorial
 
-- [Ontology DApp tutorial](#ontology-dapp-tutorial)
     - [使用Ontology CLI与链交互](#使用ontology-cli与链交互)
         - [启动Ontology CLI](#启动ontology-cli)
         - [获取帮助](#获取帮助)
