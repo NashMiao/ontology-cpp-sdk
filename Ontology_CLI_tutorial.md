@@ -1,41 +1,25 @@
 # Ontology DApp tutorial
 
 - [使用Ontology CLI与链交互](#使用ontology-cli与链交互)
-    - [启动Ontology CLI](#启动ontology-cli)
-    - [获取帮助](#获取帮助)
+    - [Ontology CLI概览](#ontology-cli概览)
     - [账户管理](#账户管理)
         - [命令概览](#命令概览)
         - [添加账户](#添加账户)
-            - [创建账户](#创建账户)
-            - [默认设置生成账户](#默认设置生成账户)
-            - [批量生成账户](#批量生成账户)
+        - [显示账户](#显示账户)
     - [信息获取](#信息获取)
         - [命令概览](#命令概览-1)
         - [区块信息获取](#区块信息获取)
             - [通过块高度查询区块信息](#通过块高度查询区块信息)
             - [通过块哈希查询区块信息](#通过块哈希查询区块信息)
         - [交易信息获取](#交易信息获取)
-        - [当前块高度获取](#当前块高度获取)
+        - [当前块高获取](#当前块高获取)
     - [资产处理](#资产处理)
         - [命令概览](#命令概览-2)
         - [提取ONG](#提取ong)
-            - [查询账户余额](#查询账户余额)
-            - [查询未提取ONG](#查询未提取ong)
-            - [提取ONG](#提取ong-1)
-            - [查询交易状态](#查询交易状态)
-            - [查询账户余额](#查询账户余额-1)
         - [转账示例](#转账示例)
             - [命令概览](#命令概览-3)
             - [ONT转账](#ont转账)
-                - [查询账户余额](#查询账户余额-2)
-                - [转账执行](#转账执行)
-                - [查询交易结果](#查询交易结果)
-                - [查询账户余额](#查询账户余额-3)
             - [ONG转账](#ong转账)
-                - [查询账户余额](#查询账户余额-4)
-                - [转账执行](#转账执行-1)
-                - [查询交易结果](#查询交易结果-1)
-                - [查询账户余额](#查询账户余额-5)
         - [授权转账](#授权转账)
     - [智能合约](#智能合约)
         - [命令概览](#命令概览-4)
@@ -58,13 +42,15 @@ VERSION:
   0.9
 ```
 
-### 启动Ontology CLI
+### Ontology CLI概览
+
+- **启动Ontology CLI**
 
 ```
 $./ontology
 ```
 
-### 获取帮助
+- **获取帮助**
 
 ```
 $./ontology --help
@@ -80,7 +66,41 @@ $ ./ontology
  [ERROR] GID 1, initWallet error:Cannot find wallet file:./wallet.dat. Please create wallet first
 ```
 
+一个钱包文件`.dat`的内容如下所示：
+
+```
+{
+    "name":"MyWallet",
+    "version":"1.1",
+    "scrypt":{
+        "p":8,
+        "n":16384,
+        "r":8,
+        "dkLen":64
+    },
+    "accounts":[
+        {
+            "address":"AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs",
+            "enc-alg":"aes-256-gcm",
+            "key":"94SPzRl5PHi8qJayofpGvpioS9zSDCnIZBfpyWI4GXedSgTFpFFAnpyqmPM38Q+z",
+            "algorithm":"ECDSA",
+            "salt":"HkBRKvpiONzICBFCFrUuHw==",
+            "parameters":{
+                "curve":"P-256"
+            },
+            "label":"",
+            "publicKey":"032cf2191a24c6bee28abbee0c4b5265dc841394f2794c1fb18e52ffb2c9d7c9c6",
+            "signatureScheme":"SHA256withECDSA",
+            "isDefault":true,
+            "lock":false
+        }
+    ]
+}
+```
+
 #### 命令概览
+
+如下所示，`ontology account`命令用于对账户进行添加、查看、修改、删除、导入等操作，以及多重签名地址的生成。
 
 ```
 $ ./ontology account --help
@@ -142,7 +162,7 @@ ACCOUNT OPTIONS:
 	  Use <filename> as the wallet (default: "./wallet.dat")
 ```
 
-##### 创建账户
+- **创建账户**
 
 ```
 $ ./ontology account add
@@ -195,7 +215,7 @@ Create account successfully.
 ```
 
 
-##### 默认设置生成账户
+- **使用默认设置生成账户**
 
 ```
 $ ./ontology account add -d
@@ -215,7 +235,7 @@ Signature scheme: SHA256withECDSA
 Create account successfully.
 ```
 
-##### 批量生成账户
+- **批量生成账户**
 
 ```
 $ ./ontology account add -n 3 -d -w wallet.dat
@@ -247,8 +267,18 @@ Signature scheme: SHA256withECDSA
 Create account successfully.
 ```
 
-### 信息获取
+#### 显示账户
 
+`./ontology account list`命令用于显示当前钱包文件中所存有的账户，其示例如下所示。
+
+```
+$ ./ontology account list
+Index:1    Address:AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs  Label: (default)
+Index:2    Address:AaG9jUSBTWXjeUzR3LBDiPBUPrGUbSKu3g  Label:
+```
+
+
+### 信息获取
 
 #### 命令概览
 
@@ -356,7 +386,7 @@ Transaction states:
 }
 ```
 
-#### 当前块高度获取
+#### 当前块高获取
 
 ```
 $ ./ontology info curblockheight
@@ -404,7 +434,7 @@ MISC OPTIONS:
 
 #### 提取ONG
 
-##### 查询账户余额
+- **查询账户余额**
 
 ```
 $ ./ontology asset balance AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -413,7 +443,7 @@ BalanceOf:AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
   ONG:0
 ```
 
-##### 查询未提取ONG
+- **查询未提取ONG**
 
 ```
 ./ontology asset unboundong AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -429,7 +459,7 @@ Unbound ONG:
   ONG:0
 ```
 
-##### 提取ONG
+- **提取ONG**
 
 ```
 $ ./ontology asset withdrawong AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -443,7 +473,7 @@ Tip:
   Using './ontology info status 0ca17f47ebb4127b26cafeadabd21d96353c5c00e0392f44a573d6b7d3c0fcdd' to query transaction status
 ```
 
-##### 查询交易状态
+- **查询交易状态**
 
 ```
 $ ./ontology info status 0ca17f47ebb4127b26cafeadabd21d96353c5c00e0392f44a573d6b7d3c0fcdd
@@ -466,7 +496,7 @@ Transaction states:
 }
 ```
 
-##### 查询账户余额
+- **查询账户余额**
 
 ```
 $ ./ontology asset balance AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -515,7 +545,7 @@ TRANSACTION OPTIONS:
 
 ##### ONT转账
 
-###### 查询账户余额
+- **查询账户余额**
 
 ```
 $ ./ontology asset balance AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -532,7 +562,7 @@ BalanceOf:AaG9jUSBTWXjeUzR3LBDiPBUPrGUbSKu3g
 ```
 
 
-###### 转账执行
+- **执行转账**
 
 ```
 $ ./ontology asset transfer --asset ONT --from AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs --to AaG9jUSBTWXjeUzR3LBDiPBUPrGUbSKu3g  --amount 10 --gaslimit 20000
@@ -547,7 +577,7 @@ Tip:
   Using './ontology info status 93768ba53a6e55fe9d228163e39d85f3b7992feab2346053e5012ebba48b48f9' to query transaction status
 ```
 
-###### 查询交易结果
+- **查询交易结果**
 
 ```
 $ ./ontology info status 93768ba53a6e55fe9d228163e39d85f3b7992feab2346053e5012ebba48b48f9
@@ -570,7 +600,7 @@ Transaction states:
 }
 ```
 
-###### 查询账户余额
+- **查询账户余额**
 
 ```
 $ ./ontology asset balance AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -588,7 +618,7 @@ BalanceOf:AaG9jUSBTWXjeUzR3LBDiPBUPrGUbSKu3g
 
 ##### ONG转账
 
-###### 查询账户余额
+- **查询账户余额**
 
 ```
 $ ./ontology asset balance AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
@@ -604,7 +634,7 @@ BalanceOf:AaG9jUSBTWXjeUzR3LBDiPBUPrGUbSKu3g
   ONG:0
 ```
 
-###### 转账执行
+- **转账执行**
 
 ```
 $ ./ontology asset transfer --asset ONG --from AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs --to AaG9jUSBTWXjeUzR3LBDiPBUPrGUbSKu3g  --amount 10 --gaslimit 20000
@@ -619,7 +649,7 @@ Tip:
   Using './ontology info status 84d7e8c98d224212f260e0034e36735ec935021818dca1b654522196be0eb624' to query transaction status
 ```
 
-###### 查询交易结果
+- **查询交易结果**
 
 ```
 $ ./ontology info status 84d7e8c98d224212f260e0034e36735ec935021818dca1b654522196be0eb624
@@ -642,7 +672,7 @@ Transaction states:
 }
 ```
 
-###### 查询账户余额
+- **查询账户余额**
 
 ```
 $ ./ontology asset balance AKFMnJT1u5pyPhzGRuauD1KkyUvqjQsmGs
