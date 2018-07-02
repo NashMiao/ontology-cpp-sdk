@@ -27,7 +27,7 @@ public:
   }
   std::string getContractAddress() { return ontContract; }
 
-  Transaction* makeTransfer(std::string sender_str,
+  InvokeCodeTransaction makeTransfer(std::string sender_str,
                                      std::string receiver_str, long long amount,
                                      std::string payer_str, long long gaslimit,
                                      long long gasprice)
@@ -55,7 +55,7 @@ public:
     args = native_build_params.createCodeParamsScript(structs_list);
     Address ContractAddress(Helper::hexToBytes(ontContract));
     std::string init_method = "transfer";
-    Transaction* tx;
+    InvokeCodeTransaction tx;
     Vm vm;
     tx = vm.buildNativeParams(ContractAddress, init_method, args, payer_str,
                                gaslimit, gasprice);

@@ -129,19 +129,6 @@ public:
     writer->writeSerializableArray(attributes);
   }
 
-  virtual void serializeUnsigned() override
-  {
-    BinaryWriter *writer = new BinaryWriter;
-    writer->writeByte(version);
-    writer->writeByte(getByte(txType));
-    writer->writeInt(nonce);
-    writer->writeLong(gasPrice);
-    writer->writeLong(gasLimit);
-    writer->writeSerializable(payer);
-    serializeExclusiveData(writer);
-    writer->writeSerializableArray(attributes);
-  }
-
   virtual void serializeExclusiveData(BinaryWriter *writer) = 0;
 
   void serialize(BinaryWriter *writer)
