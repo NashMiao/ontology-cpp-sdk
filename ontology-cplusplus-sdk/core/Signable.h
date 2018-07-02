@@ -2,6 +2,8 @@
 #define SIGNABLE_H
 
 #include "../account/Account.h"
+#include "../common/Address.h"
+#include "../common/UIntBase.h"
 #include "../crypto/Signature.h"
 #include "../io/BinaryReader.h"
 #include "../io/BinaryWriter.h"
@@ -15,7 +17,7 @@ public:
   Signable() {}
   virtual void deserializeUnsigned(BinaryReader *reader){};
   virtual void serializeUnsigned(BinaryWriter *writer){};
-  
+
   std::vector<unsigned char> getHashData()
   {
     BinaryWriter writer;
@@ -26,7 +28,9 @@ public:
   std::vector<unsigned char> sign(Account account, SignatureScheme scheme,
                                   CurveName curve)
   {
-    return account.generateSignature(getHashData(), scheme, curve);
+    std::vector<unsigned char> data;
+    data = getHashData();
+    return account.generateSignature(data, scheme, curve);
   }
 
   std::string sign_str(Account account, SignatureScheme scheme,

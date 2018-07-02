@@ -36,8 +36,8 @@ public:
 
   Transaction(TransactionType _txType, Address _payer, long long _gasPrice,
               long long _gasLimit, unsigned int _version = 0)
-      : Inventory(), Serializable(), gasPrice(_gasPrice),
-        gasLimit(_gasLimit), txType(_txType), payer(_payer), version(_version)
+      : Inventory(), Serializable(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+        txType(_txType), payer(_payer), version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
@@ -45,8 +45,8 @@ public:
 
   Transaction(TransactionType _txType, long long _gasPrice, long long _gasLimit,
               unsigned int _version = 0)
-      : Inventory(), Serializable(), gasPrice(_gasPrice),
-        gasLimit(_gasLimit), version(_version)
+      : Inventory(), Serializable(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+        version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
@@ -56,9 +56,8 @@ public:
               long long _gasPrice, long long _gasLimit,
               const std::vector<Attribute> &_attributes,
               const std::vector<Sig> &_sigs, unsigned int _version)
-      : Inventory(), Serializable(), gasPrice(_gasPrice),
-        gasLimit(_gasLimit), txType(_type), attributes(_attributes),
-        sigs(_sigs), version(_version)
+      : Inventory(), Serializable(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+        txType(_type), attributes(_attributes), sigs(_sigs), version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
@@ -183,5 +182,20 @@ public:
   }
 
   virtual void deserializeExclusiveData(BinaryReader *reader) = 0;
+
+  std::vector<unsigned char> getHashData()
+  {
+    BinaryWriter writer;
+    serializeUnsigned(&writer);
+    return writer.toByteArray();
+  }
+
+  std::vector<unsigned char> sign(Account account, SignatureScheme scheme,
+                                  CurveName curve)
+  {
+    std::vector<unsigned char> data;
+    data = getHashData();
+    return account.generateSignature(data, scheme, curve);
+  }
 };
 #endif // TRANSACTION_H
