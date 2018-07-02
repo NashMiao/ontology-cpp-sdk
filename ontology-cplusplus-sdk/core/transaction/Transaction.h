@@ -12,7 +12,7 @@
 #include <time.h>
 #include <vector>
 
-class Transaction : public Inventory, public Serializable
+class Transaction : public Inventory
 {
 private:
   long long gasPrice;
@@ -25,10 +25,10 @@ private:
   unsigned int version;
 
 public:
-  Transaction() : Inventory(), Serializable() {}
+  Transaction() : Inventory() {}
 
   Transaction(TransactionType _txType, unsigned int _version = 0)
-      : Inventory(), Serializable(), version(_version)
+      : Inventory(), version(_version)
   {
     srand((unsigned)time(NULL));
     nonce = rand();
@@ -36,7 +36,7 @@ public:
 
   Transaction(TransactionType _txType, Address _payer, long long _gasPrice,
               long long _gasLimit, unsigned int _version = 0)
-      : Inventory(), Serializable(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+      : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit),
         txType(_txType), payer(_payer), version(_version)
   {
     srand((unsigned)time(NULL));
@@ -45,7 +45,7 @@ public:
 
   Transaction(TransactionType _txType, long long _gasPrice, long long _gasLimit,
               unsigned int _version = 0)
-      : Inventory(), Serializable(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+      : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit),
         version(_version)
   {
     srand((unsigned)time(NULL));
@@ -56,7 +56,7 @@ public:
               long long _gasPrice, long long _gasLimit,
               const std::vector<Attribute> &_attributes,
               const std::vector<Sig> &_sigs, unsigned int _version)
-      : Inventory(), Serializable(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+      : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit),
         txType(_type), attributes(_attributes), sigs(_sigs), version(_version)
   {
     srand((unsigned)time(NULL));
@@ -74,6 +74,14 @@ public:
     this->sigs = tx.sigs;
     this->nonce = tx.nonce;
     return *this;
+  }
+
+  std::vector<unsigned char> getHashData()
+  {
+    BinaryWriter writer;
+    BinaryWriter *p_writer = &writer;
+    serializeUnsigned(p_writer);
+    return writer.toByteArray();
   }
 
   void set_sigs(std::vector<Sig> &_sigs) { sigs = _sigs; }
@@ -109,8 +117,21 @@ public:
     return Result;
   }
 
-  void serializeUnsigned(BinaryWriter *writer)
+  virtual void serializeUnsigned(BinaryWriter *writer) override
   {
+    writer->writeByte(version);
+    writer->writeByte(getByte(txType));
+    writer->writeInt(nonce);
+    writer->writeLong(gasPrice);
+    writer->writeLong(gasLimit);
+    writer->writeSerializable(payer);
+    serializeExclusiveData(writer);
+    writer->writeSerializableArray(attributes);
+  }
+
+  virtual void serializeUnsigned() override
+  {
+    BinaryWriter *writer = new BinaryWriter;
     writer->writeByte(version);
     writer->writeByte(getByte(txType));
     writer->writeInt(nonce);
@@ -153,7 +174,7 @@ public:
     }
   }
 
-  void deserializeUnsigned(BinaryReader *reader)
+  void deserializeUnsigned(BinaryReader *reader) override
   {
     version = reader->readByte();
     if (txType != getTransactionType(reader->readByte()))
@@ -182,20 +203,5 @@ public:
   }
 
   virtual void deserializeExclusiveData(BinaryReader *reader) = 0;
-
-  std::vector<unsigned char> getHashData()
-  {
-    BinaryWriter writer;
-    serializeUnsigned(&writer);
-    return writer.toByteArray();
-  }
-
-  std::vector<unsigned char> sign(Account account, SignatureScheme scheme,
-                                  CurveName curve)
-  {
-    std::vector<unsigned char> data;
-    data = getHashData();
-    return account.generateSignature(data, scheme, curve);
-  }
 };
 #endif // TRANSACTION_H

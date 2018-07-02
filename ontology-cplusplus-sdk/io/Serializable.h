@@ -9,9 +9,10 @@
 
 class Serializable
 {
-public:
+protected:
   Serializable() {}
-  
+
+public:
   virtual void serialize(BinaryWriter *writer) = 0;
   virtual void deserialize(BinaryReader *reader) = 0;
 

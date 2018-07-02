@@ -11,18 +11,24 @@
 
 #include <vector>
 
-class Signable
+class Signable : public Serializable
 {
+protected:
+  Signable() : Serializable() {}
+
 public:
-  Signable() {}
-  virtual void deserializeUnsigned(BinaryReader *reader){};
-  virtual void serializeUnsigned(BinaryWriter *writer){};
+  virtual void deserializeUnsigned(BinaryReader *reader) = 0;
+  virtual void serializeUnsigned(BinaryWriter *writer) = 0;
+  virtual void serializeUnsigned() = 0;
 
   std::vector<unsigned char> getHashData()
   {
-    BinaryWriter writer;
-    serializeUnsigned(&writer);
-    return writer.toByteArray();
+    // BinaryWriter writer;
+    // serializeUnsigned(&writer);
+    serializeUnsigned();
+    // writer.toByteArray();
+    std::vector<unsigned char> bytes;
+    return bytes;
   }
 
   std::vector<unsigned char> sign(Account account, SignatureScheme scheme,

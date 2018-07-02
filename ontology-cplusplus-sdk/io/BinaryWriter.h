@@ -24,7 +24,6 @@ std::string myhexStr(unsigned char *data, int len) {
 
 class BinaryWriter {
 private:
-  std::ofstream outfile;
   std::vector<unsigned char> uc_vec;
 
   void bytes_push_back(unsigned char *bytes, int len) {
@@ -40,9 +39,7 @@ private:
   }
 
 public:
-  BinaryWriter() { outfile.open("outfile", ios::out | ios::binary); }
-
-  void set_ofstream(std::ofstream &ofstrm) { outfile.copyfmt(ofstrm); }
+  BinaryWriter() {}
 
   std::vector<unsigned char> toByteArray() { return uc_vec; }
 
@@ -152,7 +149,8 @@ public:
   }
 
   bool writeVarString(const std::string &str) {
-    int str_len = str.length();;
+    int str_len = str.length();
+    ;
     if (!writeVarInt(str_len)) {
       return false;
     }
@@ -162,7 +160,7 @@ public:
     return true;
   }
 
-  template <class T> void writeSerializable (T &v) { v.serialize(this); }
+  template <class T> void writeSerializable(T &v) { v.serialize(this); }
 
   template <class T> bool writeSerializableArray(const std::vector<T> &t_vec) {
     if (!writeVarInt(t_vec.size())) {

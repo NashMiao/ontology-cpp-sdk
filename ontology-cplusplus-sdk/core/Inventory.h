@@ -4,14 +4,19 @@
 #include "../crypto/Digest.h"
 #include "Signable.h"
 
-class Inventory : public Signable {
+class Inventory : public Signable
+{
 private:
   std::vector<unsigned char> _hash;
 
-public:
+protected:
   Inventory() : Signable() {}
-  std::vector<unsigned char> hash() {
-    if (_hash.empty()) {
+
+public:
+  std::vector<unsigned char> hash()
+  {
+    if (_hash.empty())
+    {
       std::vector<unsigned char> hash_data;
       hash_data = getHashData();
       _hash = Digest::hash256(hash_data);
