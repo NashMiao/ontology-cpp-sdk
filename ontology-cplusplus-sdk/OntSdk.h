@@ -3,6 +3,8 @@
 
 #include "account/Account.h"
 #include "core/asset/Sig.h"
+#include "core/payload/InvokeCodeTransaction.h"
+#include "core/transaction/Transaction.h"
 #include "crypto/Signature.h"
 #include "sdk/manager/ConnectMgr.h"
 #include "sdk/manager/OntAssetTx.h"
@@ -10,7 +12,8 @@
 
 #include <vector>
 
-class OntSdk {
+class OntSdk
+{
 private:
   WalletMgr walletMgr;
   const SignatureScheme static defaultSignScheme =
@@ -38,61 +41,80 @@ public:
 
   void setDefaultConnect(ConnectMgr connect) { connectDefault = connect; }
 
-  ConnectMgr getConnect() {
-    if (&connectDefault != NULL) {
+  ConnectMgr getConnect()
+  {
+    if (&connectDefault != NULL)
+    {
       return connectDefault;
-    } else if (&connectRpc != NULL) {
+    }
+    else if (&connectRpc != NULL)
+    {
       return connectRpc;
-    } else if (&connectRestful != NULL) {
+    }
+    else if (&connectRestful != NULL)
+    {
       return connectRestful;
-    } else if (&connectWebSocket != NULL) {
+    }
+    else if (&connectWebSocket != NULL)
+    {
       return connectWebSocket;
-    } else {
+    }
+    else
+    {
       throw "getConnect(): connect uninint";
     }
   }
 
-  ConnectMgr getWebSocket() {
-    if (&connectWebSocket == NULL) {
+  ConnectMgr getWebSocket()
+  {
+    if (&connectWebSocket == NULL)
+    {
       throw "SDKException(ErrorCode.WebsocketNotInit)";
     }
     return connectWebSocket;
   }
 
-  static void signTx(Transaction* tx, const std::vector<Account> &accounts) {
+  static void signTx(InvokeCodeTransaction &tx,
+                     const std::vector<Account> &accounts)
+  {
     std::vector<Sig> sigs;
-    for (size_t i = 0; i < accounts.size(); i++) {
+    for (size_t i = 0; i < accounts.size(); i++)
+    {
       Sig sig_item;
-      for (size_t j = 0; j < accounts.size(); j++) {
+      for (size_t j = 0; j < accounts.size(); j++)
+      {
         std::vector<unsigned char> pub_key;
         std::vector<unsigned char> signature;
         pub_key = accounts[j].serializePublicKey();
-        signature = tx->sign(accounts[j], defaultSignScheme, defaultCurveName);
+        signature = tx.sign(accounts[j], defaultSignScheme, defaultCurveName);
         sig_item.add_M();
         sig_item.add_sigData(signature);
         sig_item.add_pubKeys(pub_key);
       }
       sigs.push_back(sig_item);
     }
-    tx->set_sigs(sigs);
+    tx.set_sigs(sigs);
   }
 
-  static void addMultiSign(Transaction *tx, int M,
-                           const std::vector<Account> &acct) {
+  static void addMultiSign(InvokeCodeTransaction &tx, int M,
+                           const std::vector<Account> &acct)
+  {
     std::vector<Sig> _sigs;
-    for (int i = 0; i < tx->sigs_length(); i++) {
-      _sigs.push_back(tx->get_sig(i));
+    for (int i = 0; i < tx.sigs_length(); i++)
+    {
+      _sigs.push_back(tx.get_sig(i));
     }
     std::vector<std::string> _pubKeys;
     std::vector<std::string> _sigData;
-    for (size_t i = 0; i < acct.size(); i++) {
+    for (size_t i = 0; i < acct.size(); i++)
+    {
       _pubKeys.push_back((acct[i].serializePublicKey_str()));
       _sigData.push_back(
-          (tx->sign_str(acct[i], defaultSignScheme, defaultCurveName)));
+          (tx.sign_str(acct[i], defaultSignScheme, defaultCurveName)));
       Sig sig_item(_pubKeys, M, _sigData);
       _sigs.push_back(sig_item);
     }
-    tx->set_sigs(_sigs);
+    tx.set_sigs(_sigs);
   }
 };
 #endif // !ONTSDK_H
