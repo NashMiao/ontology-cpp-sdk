@@ -88,8 +88,8 @@ public:
         pub_key = accounts[j].serializePublicKey();
         signature = tx.sign(accounts[j], defaultSignScheme, defaultCurveName);
         sig_item.add_M();
-        sig_item.add_sigData(signature);
         sig_item.add_pubKeys(pub_key);
+        sig_item.add_sigData(signature);
       }
       sigs.push_back(sig_item);
     }

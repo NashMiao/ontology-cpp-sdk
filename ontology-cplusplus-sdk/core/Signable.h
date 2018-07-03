@@ -32,10 +32,9 @@ public:
   std::vector<unsigned char> sign(Account account, SignatureScheme scheme,
                                   CurveName curve)
   {
-    std::vector<unsigned char> data;
-    data = getHashData();
-    data = Digest::hash256(data);
-    return account.generateSignature(data, scheme, curve);
+    std::vector<unsigned char> hash_data;
+    hash_data = Digest::hash256(getHashData());
+    return account.generateSignature(hash_data, scheme, curve);
   }
 
   std::string sign_str(Account account, SignatureScheme scheme,

@@ -608,7 +608,7 @@ bool Signature::EC_sign(const std::string &msg)
     }
   }
   std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
-  value = vec_sign_dgst;
+  sign_dgst = vec_sign_dgst;
   return true;
 }
 

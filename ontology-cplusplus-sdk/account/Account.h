@@ -274,7 +274,6 @@ public:
     signature.EC_sign(str_msg);
     std::vector<unsigned char> uc_vec = signature.toBytes();
     return uc_vec;
-    return uc_vec;
   }
 
   std::vector<unsigned char> serializePublicKey() const

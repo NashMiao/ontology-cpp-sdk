@@ -7,36 +7,26 @@
 #include <openssl/ecdsa.h> // for ECDSA_do_sign, ECDSA_do_verify
 #include <openssl/err.h>
 #include <openssl/evp.h>
-#include <openssl/obj_mac.h> // for NID_secp192k1
 #include <openssl/pem.h>
 
-#include <cstring>
 #include <iostream>
+#include <cstring>
 #include <stdio.h>
 #include <string>
 #include <vector>
 
+#include "Curve.h"
 #include "../io/BinaryReader.h"
 #include "SignatureScheme.h"
 
 using namespace std;
-
-enum class CurveName : int
-{
-  p224 = NID_secp224k1,
-  /* ANSI X9.62 Prime 256v1 curve */
-  p256 = NID_X9_62_prime256v1,
-  p384 = NID_secp384r1,
-  p521 = NID_secp521r1,
-  SM2P256V1 = NID_sm2
-};
 
 class Signature
 {
 private:
   SignatureScheme scheme;
   CurveName curve;
-  std::vector<unsigned char> value;
+  std::vector<unsigned char> sign_dgst;
   EVP_PKEY *key;
   EC_KEY *ec_key;
   bool md_ctx_sign_init(const SignatureScheme sign_scheme, EVP_MD_CTX *md_ctx);
@@ -63,9 +53,9 @@ public:
     // {
     //   EC_KEY_free(ec_key);
     // }
-    if (!value.empty())
+    if (!sign_dgst.empty())
     {
-      value.erase(value.begin(), value.end());
+      sign_dgst.erase(sign_dgst.begin(), sign_dgst.end());
     }
     EVP_cleanup();
   }
@@ -94,7 +84,7 @@ public:
     std::vector<unsigned char> ret_vec;
     ret_vec.push_back(static_cast<unsigned char>(scheme));
     ret_vec.push_back(static_cast<unsigned char>(curve));
-    ret_vec.insert(ret_vec.end(), value.begin(), value.end());
+    ret_vec.insert(ret_vec.end(), sign_dgst.begin(), sign_dgst.end());
     return ret_vec;
   }
 };
