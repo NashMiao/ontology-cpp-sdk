@@ -13,10 +13,10 @@ bool AES::set_iv(const unsigned char *v) {
 bool AES::set_mode(AEAD_mode mode) {
   /* Set the cipher type for encryption-decryption */
   switch (mode) {
-  case AES_CTR:
+  case AEAD_mode::AES_CTR:
     params->cipher_type = EVP_aes_256_ctr();
     break;
-  case AES_GCM:
+  case AEAD_mode::AES_GCM:
     params->cipher_type = EVP_aes_256_gcm();
     break;
   default:

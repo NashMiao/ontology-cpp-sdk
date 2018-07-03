@@ -17,7 +17,7 @@
 
 using namespace std;
 
-enum AEAD_mode { AES_CTR, AES_GCM };
+enum class AEAD_mode { AES_CTR, AES_GCM };
 
 typedef struct {
   /* Key to use for encrpytion and decryption */
@@ -37,11 +37,11 @@ private:
 public:
   AES() { params = (cipher_params_t *)malloc(sizeof(cipher_params_t)); }
   ~AES() { free(params); }
-  bool params_init(AEAD_mode mode = AES_CTR);
+  bool params_init(AEAD_mode mode = AEAD_mode::AES_CTR);
   unsigned char *get_key() { return params->key; }
   unsigned char *get_iv() { return params->iv; }
   bool set_params(const unsigned char *k, const unsigned char *v,
-                  const AEAD_mode mode = AES_CTR);
+                  const AEAD_mode mode = AEAD_mode::AES_CTR);
   bool auth_encry(const unsigned char *msg, unsigned char *enc_msg);
   bool auth_decry(std::string msg, std::string &dec_msg);
 };
