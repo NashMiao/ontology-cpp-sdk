@@ -132,7 +132,7 @@ class MakeTxWithoutWalletDemo
         cout << "------------------------------" << endl;
         cout << str_tx << endl;
         cout << "------------------------------" << endl;
-        std::string url = "http://localhost:20334/api/v1/transaction ";
+        std::string url = "http://polaris1.ont.io:20334/api/v1/transaction ";
         nlohmann::json obj;
         ConnectMgr connect_mgr(url, ConnectType::RPC);
         obj = connect_mgr.sendRawTransactionPreExec(str_tx);

@@ -6,6 +6,7 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key)
     : scheme(_scheme), curve(_curve)
 {
+  key = EVP_PKEY_new();
   if (scheme == SignatureScheme::SHA224withECDSA ||
       scheme == SignatureScheme::SHA256withECDSA ||
       scheme == SignatureScheme::SHA384withECDSA ||
@@ -16,7 +17,7 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
       scheme == SignatureScheme::SHA3_512withECDSA ||
       scheme == SignatureScheme::RIPEMD160withECDSA)
   {
-    ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve));
+   EC_init(curve);
     EC_set_private_key(private_key, _curve);
     std::string public_key = "";
     EC_get_pubkey_by_prikey(private_key, public_key, _curve);
@@ -36,6 +37,7 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key, std::string msg)
     : scheme(_scheme), curve(_curve)
 {
+  key = EVP_PKEY_new();
   if (scheme == SignatureScheme::SHA224withECDSA ||
       scheme == SignatureScheme::SHA256withECDSA ||
       scheme == SignatureScheme::SHA384withECDSA ||
@@ -46,18 +48,11 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
       scheme == SignatureScheme::SHA3_512withECDSA ||
       scheme == SignatureScheme::RIPEMD160withECDSA)
   {
-    ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve));
+    EC_init(curve);
     EC_set_private_key(private_key, curve);
-    std::string str_sign_dgst;
-    EC_sign(msg, str_sign_dgst, scheme);
-    std::string utf8_str(str_sign_dgst);
-    value.erase(value.begin(), value.end());
-    unsigned char *uc = (unsigned char *)str_sign_dgst.c_str();
-    for (size_t i = 0; i < str_sign_dgst.size(); i++)
-    {
-      value.push_back(*uc);
-      uc++;
-    }
+    // std::string public_key = "";
+    // ec_sign.EC_get_pubkey_by_prikey(private_key, public_key, curve);
+    // ec_sign.EC_set_key(public_key, private_key, curve);
   }
   else if (scheme == SignatureScheme::SM3withSM2)
   {
@@ -582,6 +577,38 @@ bool Signature::EC_sign(const std::string &msg, std::string &str_sign_dgst,
   }
 
   str_sign_dgst = std::string(reinterpret_cast<char *>(uc_sign_dgst));
+  return true;
+}
+
+bool Signature::EC_sign(const std::string &msg)
+{
+  EVP_MD_CTX *md_ctx;
+  md_ctx = EVP_MD_CTX_new();
+  if (md_ctx == NULL)
+  {
+    return false;
+  }
+
+  if (md_ctx_sign_init(scheme, md_ctx) != 1)
+  {
+    return false;
+  }
+
+  if (EVP_SignUpdate(md_ctx, (unsigned char *)msg.c_str(), msg.length()) != 1)
+  {
+    return false;
+  }
+  unsigned int slen = 0;
+  char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
+  while (slen != strlen(uc_sign_dgst))
+  {
+    if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen, key) != 1)
+    {
+      return false;
+    }
+  }
+  std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
+  value = vec_sign_dgst;
   return true;
 }
 

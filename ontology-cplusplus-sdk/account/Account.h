@@ -251,8 +251,8 @@ public:
     {
       throw "ErrorCode.WithoutPrivate";
     }
-
-    Signature signature(signatureScheme, curve, PrivateKey, msg);
+    Signature signature(signatureScheme, curve, PrivateKey);
+    signature.EC_sign(msg);
     std::vector<unsigned char> uc_vec = signature.toBytes();
     return uc_vec;
   }
@@ -270,8 +270,10 @@ public:
       throw "ErrorCode.WithoutPrivate";
     }
     std::string str_msg(msg.begin(), msg.end());
-    Signature signature(signatureScheme, curve, PrivateKey, str_msg);
+    Signature signature(signatureScheme, curve, PrivateKey);
+    signature.EC_sign(str_msg);
     std::vector<unsigned char> uc_vec = signature.toBytes();
+    return uc_vec;
     return uc_vec;
   }
 

@@ -155,8 +155,6 @@ public:
     builder.push(bn);
     BN_clear(bn);
     builder.add(ScriptOp::OP_CHECKMULTISIG);
-    std::vector<unsigned char> builder_vec;
-    builder_vec = builder.toArray();
     std::vector<unsigned char> hash160_vec;
     hash160_vec = Digest::hash160(builder.toArray());
     Address u160_addr(hash160_vec);

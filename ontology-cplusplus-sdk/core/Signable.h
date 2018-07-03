@@ -34,8 +34,7 @@ public:
   {
     std::vector<unsigned char> data;
     data = getHashData();
-    data = Digest::sha256(data);
-    data = Digest::sha256(data);
+    data = Digest::hash256(data);
     return account.generateSignature(data, scheme, curve);
   }
 

@@ -83,6 +83,7 @@ public:
                                string &str_public_key, CurveName curve_name);
   bool EC_sign(const std::string &msg, std::string &str_sign_dgst,
                SignatureScheme sign_scheme = SignatureScheme::SHA256withECDSA);
+  bool EC_sign(const std::string &msg);
   bool EC_veri(const std::string &msg, std::string &str_sign_dgst,
                SignatureScheme sign_scheme = SignatureScheme::SHA256withECDSA);
   // bool SM_sign(const std::string &msg, std::string str_sign_dgst,
