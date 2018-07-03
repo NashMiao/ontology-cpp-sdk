@@ -16,27 +16,27 @@ enum class CurveName : int
     ED25519 = NID_ED25519
 };
 
-int getLabel(CurveName curve)
+static int getLabel(CurveName curve)
 {
     int label;
     switch (curve)
     {
-    case p224:
+    case CurveName::p224:
         label = 1;
         break;
-    case p256:
+    case CurveName::p256:
         label = 2;
         break;
-    case p384:
+    case CurveName::p384:
         label = 3;
         break;
-    case p521:
+    case CurveName::p521:
         label = 4;
         break;
-    case SM2P256V1:
+    case CurveName::SM2P256V1:
         label = 20;
         break;
-    case ED25519:
+    case CurveName::ED25519:
         label = 25;
         break;
     default:
@@ -45,27 +45,27 @@ int getLabel(CurveName curve)
     return label;
 }
 
-std::string toString()
+static std::string toString(CurveName curve)
 {
     std::string name;
     switch (curve)
     {
-    case p224:
+    case CurveName::p224:
         name = "P-224";
         break;
-    case p256:
+    case CurveName::p256:
         name = "P-256";
         break;
-    case p384:
-        label = "P-384";
+    case CurveName::p384:
+        name = "P-384";
         break;
-    case p521:
+    case CurveName::p521:
         name = "P-521";
         break;
-    case SM2P256V1:
+    case CurveName::SM2P256V1:
         name = "sm2p256v1";
         break;
-    case ED25519:
+    case CurveName::ED25519:
         name = "ED25519";
         break;
     default:
