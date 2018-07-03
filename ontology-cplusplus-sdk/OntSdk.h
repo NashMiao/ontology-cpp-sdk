@@ -19,6 +19,8 @@ private:
   const SignatureScheme static defaultSignScheme =
       SignatureScheme::SHA256withECDSA;
   const CurveName static defaultCurveName = CurveName::p256;
+  long long DEFAULT_GAS_LIMIT = 30000;
+  static constexpr const int MULTI_SIG_MAX_PUBKEY_SIZE = 16;
   ConnectMgr connectRpc;
   ConnectMgr connectRestful;
   ConnectMgr connectWebSocket;
@@ -77,7 +79,13 @@ public:
   static void signTx(InvokeCodeTransaction &tx,
                      const std::vector<Account> &accounts)
   {
+    if (accounts.length > Common::TX_MAX_SIG_SIZE)
+    {
+      throw "SDKException(ErrorCode.ParamErr(\"the number of transaction "
+            "signatures should not be over 16\"))";
+    }
     std::vector<Sig> sigs;
+    sigs.reserve(accounts.size());
     for (size_t i = 0; i < accounts.size(); i++)
     {
       Sig sig_item;
@@ -99,6 +107,12 @@ public:
   static void addMultiSign(InvokeCodeTransaction &tx, int M,
                            const std::vector<Account> &acct)
   {
+    if (tx.sigs_length() >= MULTI_SIG_MAX_PUBKEY_SIZE ||
+        tx.sigs_length() + acct.size() > MULTI_SIG_MAX_PUBKEY_SIZE)
+    {
+      throw "the number of transaction signatures should not be over 16";
+    }
+
     std::vector<Sig> _sigs;
     for (int i = 0; i < tx.sigs_length(); i++)
     {
