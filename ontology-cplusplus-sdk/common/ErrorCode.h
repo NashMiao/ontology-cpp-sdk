@@ -7,7 +7,7 @@
 class ErrorCode
 {
   public:
-    std::string getError(int code, std::string msg)
+    static std::string getError(int code, std::string msg)
     {
         nlohmann::json json_map = {{"Error", code}, {"Desc", msg}};
         return json_map.dump();
