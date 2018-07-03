@@ -1,6 +1,8 @@
 #ifndef SIGNATURESCHEME_H
 #define SIGNATURESCHEME_H
 
+#include <string>
+
 enum class SignatureScheme
 {
   SHA224withECDSA,
@@ -55,6 +57,90 @@ static int ordinal(SignatureScheme scheme)
     break;
   }
   return ret;
+}
+
+std::string toString()
+{
+  std::string name;
+  switch (scheme)
+  {
+  case SignatureScheme::SHA224withECDSA:
+    name = "SHA224withECDSA";
+    break;
+  case SignatureScheme::SHA256withECDSA:
+    name = "SHA256withECDSA";
+    break;
+  case SignatureScheme::SHA384withECDSA:
+    name = "SHA384withECDSA";
+    break;
+  case SignatureScheme::SHA512withECDSA:
+    name = "SHA5112withECDSA";
+    break;
+  case SignatureScheme::SHA3_224withECDSA:
+    name = "SHA3_224withECDSA";
+    break;
+  case SignatureScheme::SHA3_256withECDSA:
+    name = "SHA3_256withECDS";
+    break;
+  case SignatureScheme::SHA3_384withECDSA:
+    name = "SHA3_384withECDSA";
+    break;
+  case SignatureScheme::SHA3_512withECDSA:
+    name = "SHA3_512withECDS";
+    break;
+  case SignatureScheme::RIPEMD160withECDSA:
+    name = "RIPEMD160withECDSA";
+    break;
+  case SignatureScheme::SM3withSM2:
+    name = "SM3withSM2";
+    break;
+  default:
+    throw "SignatureScheme Error!";
+    break;
+  }
+  return name;
+}
+
+static SignatureScheme fromScheme(std::string name)
+{
+  SignatureScheme scheme;
+  switch (name)
+  {
+  case "SHA224withECDSA":
+    scheme = SignatureScheme::SHA224withECDSA;
+    break;
+  case "SHA256withECDSA":
+    scheme = SignatureScheme::SHA256withECDSA;
+    break;
+  case "SHA384withECDSA":
+    scheme = SignatureScheme::SHA384withECDSA;
+    break;
+  case "SHA5112withECDSA":
+    scheme = SignatureScheme::SHA512withECDSA;
+    break;
+  case "SHA3_224withECDSA":
+    scheme = SignatureScheme::SHA3_224withECDSA;
+    break;
+  case "SHA3_256withECDS":
+    scheme = SignatureScheme::SHA3_256withECDSA;
+    break;
+  case "SHA3_384withECDSA":
+    scheme = SignatureScheme::SHA3_384withECDSA;
+    break;
+  case "SHA3_512withECDS":
+    scheme = SignatureScheme::SHA3_512withECDSA;
+    break;
+  case "RIPEMD160withECDSA":
+    scheme = SignatureScheme::RIPEMD160withECDSA;
+    break;
+  case "SM3withSM2":
+    scheme = SignatureScheme::SM3withSM2;
+    break;
+  default:
+    throw "SignatureScheme Error!";
+    break;
+  }
+  return scheme;
 }
 
 #endif // !SIGNATURESCHEME_H
