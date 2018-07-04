@@ -136,30 +136,30 @@ public:
   //   return address;
   // }
 
-  Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys)
-  {
-    if (m <= 0 || m > int(publicKeys.size()) || int(publicKeys.size()) > 24)
-    {
-      throw "SDKException(ErrorCode.ParamError)";
-    }
-    ScriptBuilder builder;
-    BIGNUM *bn = BN_new();
-    BN_set_word(bn, m);
-    builder.push(bn);
-    std::sort(publicKeys.begin(), publicKeys.end());
-    for (size_t i = 0; i < publicKeys.size(); i++)
-    {
-      builder.pushHexStr(publicKeys[i]);
-    }
-    BN_set_word(bn, (unsigned long)publicKeys.size());
-    builder.push(bn);
-    BN_clear(bn);
-    builder.add(ScriptOp::OP_CHECKMULTISIG);
-    std::vector<unsigned char> hash160_vec;
-    hash160_vec = Digest::hash160(builder.toArray());
-    Address u160_addr(hash160_vec);
-    return u160_addr;
-  }
+  // Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys)
+  // {
+  //   if (m <= 0 || m > int(publicKeys.size()) || int(publicKeys.size()) > 24)
+  //   {
+  //     throw "SDKException(ErrorCode.ParamError)";
+  //   }
+  //   ScriptBuilder builder;
+  //   BIGNUM *bn = BN_new();
+  //   BN_set_word(bn, m);
+  //   builder.push(bn);
+  //   std::sort(publicKeys.begin(), publicKeys.end());
+  //   for (size_t i = 0; i < publicKeys.size(); i++)
+  //   {
+  //     builder.pushHexStr(publicKeys[i]);
+  //   }
+  //   BN_set_word(bn, (unsigned long)publicKeys.size());
+  //   builder.push(bn);
+  //   BN_clear(bn);
+  //   builder.add(ScriptOp::OP_CHECKMULTISIG);
+  //   std::vector<unsigned char> hash160_vec;
+  //   hash160_vec = Digest::hash160(builder.toArray());
+  //   Address u160_addr(hash160_vec);
+  //   return u160_addr;
+  // }
 
   // Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys)
   // {
@@ -188,6 +188,16 @@ public:
   //   Address u160_addr(hash160_vec);
   //   return u160_addr;
   // }
+
+  static Address toScriptHash(std::vector<unsigned char> script)
+  {
+    Address u160_addr(Digest::hash160(script));
+    return u160_addr;
+  }
+
+  Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys){
+    return toScriptHash(Program::ProgramFromMultiPubKey(m, publicKeys));
+  }
 
   Address decodeBase58(std::string address)
   {
