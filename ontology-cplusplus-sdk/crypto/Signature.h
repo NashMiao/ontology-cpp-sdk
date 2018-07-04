@@ -1,8 +1,12 @@
 #ifndef SIGNATURE_H
 #define SIGNATURE_H
 
-class Signature{
-    
+#include <string>
+#include <openssl/ec.h>
+
+class Signature
+{
+  public:
 };
 
 #endif

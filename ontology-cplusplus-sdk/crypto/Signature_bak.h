@@ -9,14 +9,14 @@
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <stdio.h>
 #include <string>
 #include <vector>
 
-#include "Curve.h"
 #include "../io/BinaryReader.h"
+#include "Curve.h"
 #include "SignatureScheme.h"
 
 using namespace std;

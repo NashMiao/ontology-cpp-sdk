@@ -16,6 +16,8 @@ enum class CurveName : int
     ED25519 = NID_ED25519
 };
 
+static int get_curve_nid(CurveName curve_name) { return static_cast<int>(curve_name); }
+
 static int getLabel(CurveName curve)
 {
     int label;

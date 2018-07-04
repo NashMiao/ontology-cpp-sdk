@@ -1,18 +1,22 @@
 #ifndef ECC_H
 #define ECC_H
 
+#include <exception>
+#include <string>
+#include <vector>
+
+#include <openssl/asn1.h>
+#include <openssl/bn.h>
 #include <openssl/ec.h>
 
-class ECC {
+#include "Curve.h"
+#include "ECDomainParameters.h"
+
+class ECC
+{
 public:
-  static int compare(EC_POINT *a, EC_POINT *b) {
-    if (a == b) {
-      return 0;
-    }
-    int result = 0;
-    // TODO
-    return result;
-  }
+  static ECDomainParameters secp256r1(CurveName::p256);
+  static ECDomainParameters sm2p256v1(CurveName::SM2P256V1);
 };
 
 #endif

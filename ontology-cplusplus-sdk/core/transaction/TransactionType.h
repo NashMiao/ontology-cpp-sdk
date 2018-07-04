@@ -7,7 +7,8 @@
 /**
  * list transaction types
  */
-enum class TransactionType {
+enum class TransactionType : int
+{
   Bookkeeping = 0x00,
   Bookkeeper = 0x02,
   Claim = 0x03,
@@ -17,9 +18,11 @@ enum class TransactionType {
   InvokeCode = 0xd1,
 };
 
-unsigned char getByte(TransactionType type) {
+unsigned char getByte(TransactionType type)
+{
   unsigned char ret;
-  switch (type) {
+  switch (type)
+  {
   case TransactionType::Bookkeeping:
     ret = 0x00;
     break;
@@ -47,30 +50,48 @@ unsigned char getByte(TransactionType type) {
   return ret;
 }
 
-TransactionType getTransactionType(int type) {
-  if (type == 0x00) {
+TransactionType getTransactionType(int type)
+{
+  if (type == 0x00)
+  {
     return TransactionType::Bookkeeping;
-  } else if (type == 0x02) {
+  }
+  else if (type == 0x02)
+  {
     return TransactionType::Bookkeeper;
-  } else if (type == 0x03) {
+  }
+  else if (type == 0x03)
+  {
     return TransactionType::Claim;
-  } else if (type == 0x04) {
+  }
+  else if (type == 0x04)
+  {
     return TransactionType::Enrollment;
-  } else if (type == 0x05) {
+  }
+  else if (type == 0x05)
+  {
     return TransactionType::Vote;
-  } else if (type == 0xd0) {
+  }
+  else if (type == 0xd0)
+  {
     return TransactionType::DeployCode;
-  } else if (type == 0xd1) {
+  }
+  else if (type == 0xd1)
+  {
     return TransactionType::InvokeCode;
-  } else {
+  }
+  else
+  {
     throw "TransactionType error";
   }
 }
 
-TransactionType TxTypeDeserialize(BinaryReader &reader) {
+TransactionType TxTypeDeserialize(BinaryReader &reader)
+{
   TransactionType TxType;
   int val = reader.readByte();
-  switch (val) {
+  switch (val)
+  {
   case 0x00:
     TxType = TransactionType::Bookkeeping;
     break;
