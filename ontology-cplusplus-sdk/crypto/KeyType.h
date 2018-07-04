@@ -63,24 +63,28 @@ static KeyType keyTypeFromPubkey(const std::vector<unsigned char> &pubkey)
     return type;
 }
 
-static KeyType keyTypeFromPubkey(const std::string &pubkey){
+static KeyType keyTypeFromPubkey(const std::string &pubkey)
+{
     std::vector<unsigned char> vec_pubkey(pubkey.begin(), pubkey.end());
     return keyTypeFromPubkey(vec_pubkey);
 }
 
-    static int getLabel(KeyType type)
+static int getLabel(KeyType type)
 {
     int label;
     switch (type)
     {
     case KeyType::ECDSA:
         label = 0x12;
+        break;
     case KeyType::SM2:
         label = 0x13;
+        break;
     case KeyType::EDDSA:
         label = 0x14;
         break;
     default:
+        throw runtime_error("getLabel Unsupport type");
         break;
     }
 }
