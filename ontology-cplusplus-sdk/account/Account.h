@@ -259,16 +259,24 @@ public:
 
   std::vector<unsigned char> generateSignature(std::vector<unsigned char> msg,
                                                SignatureScheme scheme,
-                                               CurveName curve)
+                                               CurveName curve, std::string sm2_param = "")
   {
     if (msg.empty())
     {
-      throw "ErrorCode.InvalidMessage";
+      throw new Exception(ErrorCode.InvalidMessage);
     }
     if (PrivateKey.empty())
     {
-      throw "ErrorCode.WithoutPrivate";
+      throw new Exception(ErrorCode.WithoutPrivate);
     }
+    if (scheme == SignatureScheme::SM3withSM2)
+    {
+      if (sm2_param.empty())
+      {
+        sm2_param = "1234567812345678";
+      }
+    }
+
     std::string str_msg(msg.begin(), msg.end());
     Signature signature(signatureScheme, curve, PrivateKey);
     signature.EC_sign(str_msg);

@@ -59,7 +59,7 @@ static int ordinal(SignatureScheme scheme)
   return ret;
 }
 
-std::string toString()
+std::string toString(SignatureScheme scheme)
 {
   std::string name;
   switch (scheme)
