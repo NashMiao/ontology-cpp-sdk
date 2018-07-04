@@ -15,7 +15,7 @@ enum class KeyType
 };
 
 // get the crypto.KeyType according to the input label
-static KeyType fromLabel(int label)
+static KeyType keyTypeFromLabel(int label)
 {
     KeyType type;
     switch (label)
@@ -36,9 +36,9 @@ static KeyType fromLabel(int label)
 }
 
 // get the crypto.KeyType according to the input label
-static KeyType fromLabel(unsigned char label)
+static KeyType keyTypeFromLabel(unsigned char label)
 {
-    return fromLabel((int)label);
+    return keyTypeFromLabel((int)label);
 }
 
 static KeyType fromPubkey(std::vector<unsigned char> pubkey)
@@ -52,7 +52,7 @@ static KeyType fromPubkey(std::vector<unsigned char> pubkey)
     {
         try
         {
-            type = fromLabel(pubkey[0]);
+            type = keyTypeFromLabel(pubkey[0]);
         }
         catch(std::invalid_argument &ia){
             type = NULL;
