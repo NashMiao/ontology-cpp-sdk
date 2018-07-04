@@ -21,6 +21,12 @@ class Program
     static std::vector<unsigned char>
     sortPublicKeys(const std::vector<std::string> &publicKeys)
     {
+        int o1_label = getLabel(keyTypeFromPubkey(o1));
+        int o2_label = getLabel(keyTypeFromPubkey(o2));
+        if (o1_label != o2_label)
+        {
+            return (o1_label > o2_label ? 1 : -1);
+        }
         std::sort(publicKeys.begin(), publicKeys.end(),
                   [](std::string o1, std::string o2) -> int {
                       int result;
