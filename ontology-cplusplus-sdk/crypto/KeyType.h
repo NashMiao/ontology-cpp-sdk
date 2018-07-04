@@ -7,7 +7,7 @@
 #include <ostream>
 #include <vector>
 
-enum class KeyType
+enum class KeyType : int
 {
     ECDSA = 0x12,
     SM2 = 0x13,
@@ -41,7 +41,7 @@ static KeyType keyTypeFromLabel(unsigned char label)
     return keyTypeFromLabel((int)label);
 }
 
-static KeyType fromPubkey(std::vector<unsigned char> pubkey)
+static KeyType keyTypeFromPubkey(const std::vector<unsigned char> &pubkey)
 {
     KeyType type;
     if (pubkey.size() == 33)
@@ -54,12 +54,35 @@ static KeyType fromPubkey(std::vector<unsigned char> pubkey)
         {
             type = keyTypeFromLabel(pubkey[0]);
         }
-        catch(std::invalid_argument &ia){
+        catch (std::invalid_argument &ia)
+        {
             type = NULL;
             std::cerr << ia.what() << std::endl;
         }
     }
     return type;
+}
+
+static KeyType keyTypeFromPubkey(const std::string &pubkey){
+    std::vector<unsigned char> vec_pubkey(pubkey.begin(), pubkey.end());
+    return keyTypeFromPubkey(vec_pubkey);
+}
+
+    static int getLabel(KeyType type)
+{
+    int label;
+    switch (type)
+    {
+    case KeyType::ECDSA:
+        label = 0x12;
+    case KeyType::SM2:
+        label = 0x13;
+    case KeyType::EDDSA:
+        label = 0x14;
+        break;
+    default:
+        break;
+    }
 }
 
 #endif
