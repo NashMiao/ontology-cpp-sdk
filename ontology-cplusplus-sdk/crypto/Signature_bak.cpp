@@ -1,8 +1,8 @@
-#include "Signature.h"
+#include "Signature_bak.h"
 
 int get_curve_nid(CurveName curve_name) { return static_cast<int>(curve_name); }
 
-Signature::Signature(SignatureScheme _scheme, CurveName _curve,
+SignatureBak::Signature(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key)
     : scheme(_scheme), curve(_curve)
 {
@@ -33,7 +33,7 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
   }
 }
 
-Signature::Signature(SignatureScheme _scheme, CurveName _curve,
+SignatureBak::Signature(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key, std::string msg)
     : scheme(_scheme), curve(_curve)
 {
@@ -64,13 +64,13 @@ Signature::Signature(SignatureScheme _scheme, CurveName _curve,
   }
 }
 
-bool Signature::EC_init(CurveName curve_name)
+bool SignatureBak::EC_init(CurveName curve_name)
 {
   ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve_name));
   return true;
 }
 
-bool Signature::md_ctx_sign_init(const SignatureScheme sign_scheme,
+bool SignatureBak::md_ctx_sign_init(const SignatureScheme sign_scheme,
                                  EVP_MD_CTX *md_ctx)
 {
   EVP_MD_CTX_init(md_ctx);
@@ -136,7 +136,7 @@ bool Signature::md_ctx_sign_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Signature::md_ctx_digest_init(const SignatureScheme sign_scheme,
+bool SignatureBak::md_ctx_digest_init(const SignatureScheme sign_scheme,
                                    EVP_MD_CTX *md_ctx)
 {
   EVP_MD_CTX_init(md_ctx);
@@ -202,7 +202,7 @@ bool Signature::md_ctx_digest_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Signature::md_ctx_veri_init(const SignatureScheme sign_scheme,
+bool SignatureBak::md_ctx_veri_init(const SignatureScheme sign_scheme,
                                  EVP_MD_CTX *md_ctx)
 {
   EVP_MD_CTX_init(md_ctx);
@@ -268,7 +268,7 @@ bool Signature::md_ctx_veri_init(const SignatureScheme sign_scheme,
   return true;
 }
 
-bool Signature::ECDSA_key_generate(CurveName curve_name)
+bool SignatureBak::ECDSA_key_generate(CurveName curve_name)
 {
 
   EVP_PKEY_CTX *pctx, *kctx;
@@ -318,7 +318,7 @@ bool Signature::ECDSA_key_generate(CurveName curve_name)
   return true;
 }
 
-bool Signature::EC_get_public_key(string &public_key)
+bool SignatureBak::EC_get_public_key(string &public_key)
 {
   EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(key);
   if (ec_key == NULL)
@@ -347,7 +347,7 @@ bool Signature::EC_get_public_key(string &public_key)
   return true;
 }
 
-std::vector<unsigned char> Signature::EVP_PKEY_2_EC_Q(EVP_PKEY *evp_key)
+std::vector<unsigned char> SignatureBak::EVP_PKEY_2_EC_Q(EVP_PKEY *evp_key)
 {
   EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(evp_key);
   if (ec_key == NULL)
@@ -381,7 +381,7 @@ std::vector<unsigned char> Signature::EVP_PKEY_2_EC_Q(EVP_PKEY *evp_key)
   return vec_pub;
 }
 
-std::vector<unsigned char> Signature::EC_KEY_2_EC_Q(EC_KEY *ec_key)
+std::vector<unsigned char> SignatureBak::EC_KEY_2_EC_Q(EC_KEY *ec_key)
 {
   if (ec_key == NULL)
   {
@@ -419,7 +419,7 @@ std::vector<unsigned char> Signature::EC_KEY_2_EC_Q(EC_KEY *ec_key)
   return vec_pub;
 }
 
-bool Signature::EC_get_private_key(string &str_private_key)
+bool SignatureBak::EC_get_private_key(string &str_private_key)
 {
   EC_KEY *tmp_ec_key = EVP_PKEY_get0_EC_KEY(key);
   if (tmp_ec_key == NULL)
@@ -440,7 +440,7 @@ bool Signature::EC_get_private_key(string &str_private_key)
   return true;
 }
 
-bool Signature::EC_set_public_key(const string &str_public_key,
+bool SignatureBak::EC_set_public_key(const string &str_public_key,
                                   CurveName curve_name)
 {
   EC_GROUP *group;
@@ -468,7 +468,7 @@ bool Signature::EC_set_public_key(const string &str_public_key,
   return true;
 }
 
-bool Signature::EC_set_private_key(const string &str_private_key,
+bool SignatureBak::EC_set_private_key(const string &str_private_key,
                                    CurveName curve_name)
 {
   EC_GROUP *group;
@@ -494,7 +494,7 @@ bool Signature::EC_set_private_key(const string &str_private_key,
   return true;
 }
 
-bool Signature::EC_set_key(const string &str_public_key,
+bool SignatureBak::EC_set_key(const string &str_public_key,
                            const string &str_private_key,
                            CurveName curve_name)
 {
@@ -505,9 +505,9 @@ bool Signature::EC_set_key(const string &str_public_key,
   return ret;
 }
 
-EC_KEY *Signature::get_EC_key() { return ec_key; }
+EC_KEY *SignatureBak::get_EC_key() { return ec_key; }
 
-bool Signature::EC_get_pubkey_by_prikey(const string &str_private_key,
+bool SignatureBak::EC_get_pubkey_by_prikey(const string &str_private_key,
                                         string &str_public_key,
                                         CurveName curve_name)
 {
@@ -546,7 +546,7 @@ bool Signature::EC_get_pubkey_by_prikey(const string &str_private_key,
   return true;
 }
 
-bool Signature::EC_sign(const std::string &msg, std::string &str_sign_dgst,
+bool SignatureBak::EC_sign(const std::string &msg, std::string &str_sign_dgst,
                         SignatureScheme sign_scheme)
 {
 
@@ -580,7 +580,7 @@ bool Signature::EC_sign(const std::string &msg, std::string &str_sign_dgst,
   return true;
 }
 
-bool Signature::EC_sign(const std::string &msg)
+bool SignatureBak::EC_sign(const std::string &msg)
 {
   EVP_MD_CTX *md_ctx;
   md_ctx = EVP_MD_CTX_new();
@@ -612,7 +612,7 @@ bool Signature::EC_sign(const std::string &msg)
   return true;
 }
 
-bool Signature::EC_veri(const std::string &msg, std::string &str_sign_dgst,
+bool SignatureBak::EC_veri(const std::string &msg, std::string &str_sign_dgst,
                         SignatureScheme sign_scheme)
 {
   EVP_MD_CTX *md_ctx;

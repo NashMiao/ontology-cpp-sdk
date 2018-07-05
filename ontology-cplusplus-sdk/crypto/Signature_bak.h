@@ -21,7 +21,7 @@
 
 using namespace std;
 
-class Signature
+class SignatureBak
 {
 private:
   SignatureScheme scheme;
