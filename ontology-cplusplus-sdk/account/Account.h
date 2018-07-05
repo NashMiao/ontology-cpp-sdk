@@ -259,15 +259,16 @@ public:
 
   std::vector<unsigned char> generateSignature(std::vector<unsigned char> msg,
                                                SignatureScheme scheme,
-                                               CurveName curve, std::string sm2_param = "")
+                                               CurveName curve,
+                                               std::string sm2_param = "")
   {
     if (msg.empty())
     {
-      throw new Exception(ErrorCode.InvalidMessage);
+      throw new runtime_error(ErrorCode::StrInvalidMessage);
     }
     if (PrivateKey.empty())
     {
-      throw new Exception(ErrorCode.WithoutPrivate);
+      throw new runtime_error(ErrorCode::StrWithoutPrivate);
     }
     if (scheme == SignatureScheme::SM3withSM2)
     {
@@ -303,7 +304,7 @@ public:
       }
       default:
       {
-        throw "Exception(ErrorCode.UnknownKeyType)";
+        throw runtime_error(ErrorCode::UnknownKeyType.dump());
       }
       }
     }
@@ -314,10 +315,7 @@ public:
     return act_uc_vec;
   }
 
-  std::string serializePublicKey_str() const
-  {
-    return PublicKey;
-  }
+  std::string serializePublicKey_str() const { return PublicKey; }
 
   bool verifySignature(std::vector<unsigned char> msg,
                        std::vector<Signature> signature)

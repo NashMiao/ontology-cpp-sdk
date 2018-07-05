@@ -4,12 +4,14 @@
 #include <exception>
 #include <string>
 
+#include <nlohmann/json.hpp>
+
 #include "../../common/ErrorCode.h"
 
 class SDKException : virtual public std::exception
 {
   public:
-    SDKException(ErrorCode error)
+    SDKException(nlohmann::json)
     {
         int id = error["Error"];
         std::string what_arg = error["Desc"];

@@ -2,6 +2,7 @@
 #define ONTSDK_H
 
 #include "account/Account.h"
+#include "common/Common.h"
 #include "core/asset/Sig.h"
 #include "core/payload/InvokeCodeTransaction.h"
 #include "core/transaction/Transaction.h"
@@ -79,10 +80,10 @@ public:
   static void signTx(InvokeCodeTransaction &tx,
                      const std::vector<Account> &accounts)
   {
-    if (accounts.length > Common::TX_MAX_SIG_SIZE)
+    if (accounts.size() > Common::TX_MAX_SIG_SIZE)
     {
-      throw "SDKException(ErrorCode.ParamErr(\"the number of transaction "
-            "signatures should not be over 16\"))";
+      throw SDKException(ErrorCode::StrParamErr(
+          "the number of transaction signatures should not be over 16"));
     }
     std::vector<Sig> sigs;
     sigs.reserve(accounts.size());

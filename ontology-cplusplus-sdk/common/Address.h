@@ -1,6 +1,7 @@
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
+#include "../core/program/Program.h"
 #include "../core/scripts/ScriptBuilder.h"
 #include "../crypto/Digest.h"
 #include "../io/BinaryReader.h"
@@ -195,7 +196,8 @@ public:
     return u160_addr;
   }
 
-  Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys){
+  Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys)
+  {
     return toScriptHash(Program::ProgramFromMultiPubKey(m, publicKeys));
   }
 
