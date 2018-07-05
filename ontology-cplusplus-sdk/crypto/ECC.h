@@ -15,8 +15,13 @@
 class ECC
 {
 public:
-  static ECDomainParameters secp256r1(CurveName::p256);
-  static ECDomainParameters sm2p256v1(CurveName::SM2P256V1);
+  ECDomainParameters secp256r1;
+  ECDomainParameters sm2p256v1;
+
+  ECC(){
+    secp256r1 = ECDomainParameters(CurveName::p256);
+    sm2p256v1 = ECDomainParameters(CurveName::SM2P256V1);
+  }
 };
 
 #endif

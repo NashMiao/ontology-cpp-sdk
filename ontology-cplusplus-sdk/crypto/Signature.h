@@ -19,7 +19,7 @@ private:
 public:
   Signature(SignatureScheme _scheme, const std::string &_sm2_param,
             const std::vector<unsigned char> &_value)
-      : _scheme(scheme), _sm2_param(sm2_param), _value(value) {}
+      : scheme(_scheme, sm2_param(_sm2_param)), value(_value) {}
 
   // parse a serialized bytes to signature structure
   Signature(const std::vector<unsigned char> &data)

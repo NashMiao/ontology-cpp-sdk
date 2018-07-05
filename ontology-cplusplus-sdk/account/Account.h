@@ -1,24 +1,58 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
+#include <exception>
+#include <string>
+#include <vector>
+
 #include "../common/Address.h"
 #include "../crypto/KeyType.h"
 #include "../crypto/Signature.h"
+#include "../crypto/SignatureHandler.h"
 #include "../crypto/SignatureScheme.h"
-#include <string>
-#include <vector>
 
 class Account
 {
 private:
   // EVP_PKEY *evp_key;
   // EC_KEY *ec_key;
+  std::vector<std::string> curveParams;
   std::string PrivateKey;
   std::string PublicKey;
   KeyType keyType;
   Address addressU160;
   SignatureScheme signatureScheme;
   CurveName curve_name;
+
+private:
+  void parsePublicKey(const std::vector<unsigned char> &data)
+  {
+    if (data.size() == 0)
+    {
+      throw runtime_error(ErrorCode::StrNullInput);
+    }
+    if (data.size() < 2)
+    {
+      throw runtime_error(ErrorCode::InvalidData);
+    }
+    if (data.size() == 33)
+    {
+      keyType = KeyType::ECDSA;
+    }
+    else if (data.size() == 35)
+    {
+      keyType = keyTypeFromLabel(data[0]);
+    }
+    switch (keyType)
+    {
+    case KeyType::ECDSA:
+      /* code */
+      break;
+
+    default:
+      break;
+    }
+  }
 
 public:
   Account()
@@ -277,6 +311,8 @@ public:
         sm2_param = "1234567812345678";
       }
     }
+    SignatureHandler sign_handler(KeyType, scheme);
+    sign_handler.generateSignature();
 
     std::string str_msg(msg.begin(), msg.end());
     Signature signature(signatureScheme, curve, PrivateKey);

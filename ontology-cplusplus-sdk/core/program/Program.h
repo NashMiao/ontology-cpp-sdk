@@ -25,6 +25,7 @@ class Program
     {
         std::sort(publicKeys.begin(), publicKeys.end(),
                   [](std::string o1, std::string o2) -> int {
+                      ECC ecc;
                       int o1_label = getLabel(keyTypeFromPubkey(o1));
                       int o2_label = getLabel(keyTypeFromPubkey(o2));
                       if (o1_label != o2_label)
@@ -40,10 +41,10 @@ class Program
                           break;
                       case KeyType::ECDSA:
                           EC_POINT *o1_ec_point;
-                          o1_ec_point = ECC::secp256r1.get_EC_Point(o1);
+                          o1_ec_point = ecc.secp256r1.get_EC_Point(o1);
                           EC_POINT *o2_ec_point;
-                          o2_ec_point = ECC::secp256r1.get_EC_Point(o2);
-                          result = ECC::secp256r1.compare(o1, o2);
+                          o2_ec_point = ecc.secp256r1.get_EC_Point(o2);
+                          result = ecc.secp256r1.compare(o1, o2);
                           break;
                       case KeyType::EDDSA:
                           // TODO
@@ -57,10 +58,10 @@ class Program
     }
 
     static std::vector<unsigned char>
-    ProgramFromMultiPubKey(int m, const std::vector<unsigned char> &publicKeys)
+    ProgramFromMultiPubKey(int m, const std::vector<std::string> &publicKeys)
     {
         int n = publicKeys.size();
-        if (m <= 0 || m > n || n > Common::AddressMULTI_SIG_MAX_PUBKEY_SIZE)
+        if (m <= 0 || m > n || n > Common::MULTI_SIG_MAX_PUBKEY_SIZE)
         {
             throw new SDKException(ErrorCode::ParamError);
         }

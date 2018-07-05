@@ -16,9 +16,10 @@ class ECDomainParameters
     EC_GROUP *group;
 
   public:
+    ECDomainParameters() {}
     ECDomainParameters(CurveName curve)
     {
-        group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
+        group = EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
         ec_point = EC_POINT_new(group);
     }
 
@@ -26,6 +27,14 @@ class ECDomainParameters
     {
         EC_POINT_free(ec_point);
         EC_GROUP_free(group);
+    }
+
+    ECDomainParameters &operator=(const ECDomainParameters &param)
+    {
+        this->curve_name = param.curve_name;
+        this->ec_point = param.ec_point;
+        this->group = param.group;
+        return *this;
     }
 
     void set_EC_Point(const std::string &pubkey)

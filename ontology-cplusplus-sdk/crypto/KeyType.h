@@ -56,7 +56,6 @@ static KeyType keyTypeFromPubkey(const std::vector<unsigned char> &pubkey)
         }
         catch (std::invalid_argument &ia)
         {
-            type = NULL;
             std::cerr << ia.what() << std::endl;
         }
     }

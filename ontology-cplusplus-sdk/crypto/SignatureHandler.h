@@ -186,8 +186,8 @@ public:
 
   ~SignatureHandler() { EVP_MD_CTX_free(md_ctx); }
 
-  std::vector<unsigned char> generateSignature(EVP_PKEY * evp_pkey,
-                                               std::vector<unsigned char> msg)
+  std::vector<unsigned char> generateSignature(EVP_PKEY *evp_pkey,
+                                               std::vector<unsigned char> msg, std::string sm2_param)
   {
     try
     {
@@ -218,7 +218,7 @@ public:
     return vec_sign_dgsts;
   }
 
-  bool verifySignature(EVP_PKEY * evp_pkey, std::vector<unsigned char> msg,
+  bool verifySignature(EVP_PKEY *evp_pkey, std::vector<unsigned char> msg,
                        std::vector<unsigned char> sig)
   {
     try

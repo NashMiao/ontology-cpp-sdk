@@ -10,12 +10,24 @@
 
 class SDKException : virtual public std::exception
 {
+  protected:
+    int id;
+    std::string what_arg;
+
   public:
-    SDKException(nlohmann::json)
+    SDKException(nlohmann::json error)
     {
-        int id = error["Error"];
-        std::string what_arg = error["Desc"];
-        exception(id, what_arg.c_str());
+        id = error["Error"];
+        what_arg = error["Desc"];
+    }
+
+    virtual ~SDKException() throw() {}
+
+    virtual int getErrorNumber() const throw() { return id; }
+
+    virtual const char *what() const throw()
+    {
+        return what_arg.c_str();
     }
 };
 
