@@ -16,7 +16,7 @@ class Account
 private:
   // EVP_PKEY *evp_key;
   // EC_KEY *ec_key;
-  std::vector<std::string> curveParams;
+  std::string curveParams;
   std::string PrivateKey;
   std::string PublicKey;
   KeyType keyType;
@@ -46,7 +46,7 @@ private:
     switch (keyType)
     {
     case KeyType::ECDSA:
-      /* code */
+      curveParams = CurveNameMethod::toString(CurveName::p256);
       break;
 
     default:
@@ -312,7 +312,7 @@ public:
       }
     }
     SignatureHandler sign_handler(KeyType, scheme);
-    sign_handler.generateSignature();
+    sign_handler.generateSignature(evp_pkey, msg, sm2_param);
 
     std::string str_msg(msg.begin(), msg.end());
     Signature signature(signatureScheme, curve, PrivateKey);

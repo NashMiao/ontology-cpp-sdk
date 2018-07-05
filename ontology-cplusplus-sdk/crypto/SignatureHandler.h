@@ -187,7 +187,8 @@ public:
   ~SignatureHandler() { EVP_MD_CTX_free(md_ctx); }
 
   std::vector<unsigned char> generateSignature(EVP_PKEY *evp_pkey,
-                                               std::vector<unsigned char> msg, std::string sm2_param)
+                                               std::vector<unsigned char> msg,
+                                               std::string sm2_param)
   {
     try
     {
@@ -207,8 +208,8 @@ public:
     char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
     while (slen != strlen(uc_sign_dgst))
     {
-      if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen, evp_pkey) !=
-          1)
+      if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen,
+                        evp_pkey) != 1)
       {
         throw "EVP_SignFinal() error!";
       }
@@ -216,6 +217,44 @@ public:
     std::vector<unsigned char> vec_sign_dgst(
         uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
     return vec_sign_dgsts;
+  }
+
+  std::vector<unsigned char> generateSignature(std::string privateKey,
+                                               std::vector<unsigned char> msg,
+                                               CurveName curve_name,
+                                               std::string sm2_param)
+  {
+    BIGNUM *prv = BN_new();
+    BN_hex2bn(&prv, privateKey.c_str());
+
+    EC_KEY *ec_key;
+    ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve_name));
+    if (ec_key == NULL)
+    {
+      throw runtime_error(ErrorCode::StrResultIsNull);
+    }
+
+    EC_KEY_set_private_key(ec_key, prv);
+    EC_POINT *pub;
+
+    const EC_GROUP *group;
+    group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
+    pub = EC_POINT_new(group);
+
+    BN_CTX *bn_ctx;
+    bn_ctx = BN_CTX_new();
+    if (EC_POINT_mul(group, pub, prv, NULL, NULL, bn_ctx) != 1)
+    {
+      throw runtime_error(ErrorCode::StrDataSignatureErr);
+    }
+    if (EC_KEY_set_public_key(ec_key, pub) != 1)
+    {
+      EC_KEY_free(ec_key);
+      throw runtime_error(ErrorCode::StrDataSignatureErr);
+    }
+    
+
+    return true;
   }
 
   bool verifySignature(EVP_PKEY *evp_pkey, std::vector<unsigned char> msg,
