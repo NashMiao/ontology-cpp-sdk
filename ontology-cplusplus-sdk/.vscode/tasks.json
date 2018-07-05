@@ -9,7 +9,7 @@
         "args": [
             "-g",
             "${workspaceRoot}/main.cpp",
-            "${workspaceRoot}/crypto/Signature.cpp",
+            "${workspaceRoot}/crypto/Signature_bak.cpp",
             "${workspaceRoot}/crypto/AES.cpp",
             "-I/usr/local/include",
             "-L/usr/local/lib",
