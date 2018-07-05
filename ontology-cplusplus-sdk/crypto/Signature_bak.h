@@ -1,5 +1,5 @@
-#ifndef SIGNATURE_H
-#define SIGNATURE_H
+#ifndef SIGNATUREBAK_H
+#define SIGNATUREBAK_H
 
 #include <openssl/bio.h>
 #include <openssl/conf.h>
@@ -39,11 +39,11 @@ protected:
   bool EC_set_private_key(const string &str_private_key, CurveName curve_name);
 
 public:
-  Signature() { key = EVP_PKEY_new(); }
-  Signature(SignatureScheme _scheme, CurveName _curve, std::string private_key);
-  Signature(SignatureScheme _scheme, CurveName _curve, std::string private_key,
+  SignatureBak() { key = EVP_PKEY_new(); }
+  SignatureBak(SignatureScheme _scheme, CurveName _curve, std::string private_key);
+  SignatureBak(SignatureScheme _scheme, CurveName _curve, std::string private_key,
             std::string msg);
-  ~Signature()
+  ~SignatureBak()
   {
     if (key != NULL)
     {

@@ -30,7 +30,7 @@ static KeyType keyTypeFromLabel(int label)
         type = KeyType::EDDSA;
         break;
     default:
-        throw new std::invalid_argument(ErrorCode.UnknownAsymmetricKeyType.dump());
+        throw new std::invalid_argument(ErrorCode::StrUnknownAsymmetricKeyType);
     }
     return type;
 }
@@ -87,6 +87,7 @@ static int getLabel(KeyType type)
         throw runtime_error("getLabel Unsupport type");
         break;
     }
+    return label;
 }
 
 #endif

@@ -26,11 +26,11 @@ public:
   {
     if (data.empty())
     {
-      throw new SDKException(ErrorCode.ParamError);
+      throw new SDKException(ErrorCode::ParamError);
     }
     if (data.size() < 2)
     {
-      throw new Exception(ErrorCode.InvalidSignatureDataLen);
+      throw new runtime_error(ErrorCode::StrInvalidSignatureDataLen);
     }
     scheme = toSignatureScheme(data[0]);
     if (scheme == SignatureScheme::SM3withSM2)
@@ -43,7 +43,7 @@ public:
       }
       if (i >= data_sz)
       {
-        throw new Exception(ErrorCode.InvalidSignatureData);
+        throw new runtime_error(ErrorCode::StrInvalidSignatureData);
       }
       sm2_param = new std::string(data.begin(), data.begin() + i);
       value.assign(data.begin() + i + 1, data.end());
@@ -63,7 +63,7 @@ public:
   {
     std::vector<unsigned char> bytes;
     bytes.reserve(value.size() + 1);
-    bytes.push_back((unsigned char)ordinal(scheme));
+    bytes.push_back((unsigned char)SignatureSchemeMethod::ordinal(scheme));
     if (scheme == SignatureScheme::SM3withSM2)
     {
       // adding the ID

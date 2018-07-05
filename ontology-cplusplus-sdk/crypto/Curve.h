@@ -16,64 +16,68 @@ enum class CurveName : int
     ED25519 = NID_ED25519
 };
 
-static int get_curve_nid(CurveName curve_name) { return static_cast<int>(curve_name); }
-
-static int getLabel(CurveName curve)
+class CurveNameMethod
 {
-    int label;
-    switch (curve)
-    {
-    case CurveName::p224:
-        label = 1;
-        break;
-    case CurveName::p256:
-        label = 2;
-        break;
-    case CurveName::p384:
-        label = 3;
-        break;
-    case CurveName::p521:
-        label = 4;
-        break;
-    case CurveName::SM2P256V1:
-        label = 20;
-        break;
-    case CurveName::ED25519:
-        label = 25;
-        break;
-    default:
-        throw "getLabel: unknown type";
-    }
-    return label;
-}
+  public:
+    static int get_curve_nid(CurveName curve_name) { return static_cast<int>(curve_name); }
 
-static std::string toString(CurveName curve)
-{
-    std::string name;
-    switch (curve)
+    static int getLabel(CurveName curve)
     {
-    case CurveName::p224:
-        name = "P-224";
-        break;
-    case CurveName::p256:
-        name = "P-256";
-        break;
-    case CurveName::p384:
-        name = "P-384";
-        break;
-    case CurveName::p521:
-        name = "P-521";
-        break;
-    case CurveName::SM2P256V1:
-        name = "sm2p256v1";
-        break;
-    case CurveName::ED25519:
-        name = "ED25519";
-        break;
-    default:
-        throw "getLabel: unknown type";
+        int label;
+        switch (curve)
+        {
+        case CurveName::p224:
+            label = 1;
+            break;
+        case CurveName::p256:
+            label = 2;
+            break;
+        case CurveName::p384:
+            label = 3;
+            break;
+        case CurveName::p521:
+            label = 4;
+            break;
+        case CurveName::SM2P256V1:
+            label = 20;
+            break;
+        case CurveName::ED25519:
+            label = 25;
+            break;
+        default:
+            throw "getLabel: unknown type";
+        }
+        return label;
     }
-    return name;
-}
+
+    static std::string toString(CurveName curve)
+    {
+        std::string name;
+        switch (curve)
+        {
+        case CurveName::p224:
+            name = "P-224";
+            break;
+        case CurveName::p256:
+            name = "P-256";
+            break;
+        case CurveName::p384:
+            name = "P-384";
+            break;
+        case CurveName::p521:
+            name = "P-521";
+            break;
+        case CurveName::SM2P256V1:
+            name = "sm2p256v1";
+            break;
+        case CurveName::ED25519:
+            name = "ED25519";
+            break;
+        default:
+            throw "getLabel: unknown type";
+        }
+        return name;
+    }
+};
 
 #endif

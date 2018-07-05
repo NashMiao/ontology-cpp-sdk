@@ -2,7 +2,7 @@
 
 int get_curve_nid(CurveName curve_name) { return static_cast<int>(curve_name); }
 
-SignatureBak::Signature(SignatureScheme _scheme, CurveName _curve,
+SignatureBak::SignatureBak(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key)
     : scheme(_scheme), curve(_curve)
 {
@@ -33,7 +33,7 @@ SignatureBak::Signature(SignatureScheme _scheme, CurveName _curve,
   }
 }
 
-SignatureBak::Signature(SignatureScheme _scheme, CurveName _curve,
+SignatureBak::SignatureBak(SignatureScheme _scheme, CurveName _curve,
                      std::string private_key, std::string msg)
     : scheme(_scheme), curve(_curve)
 {
