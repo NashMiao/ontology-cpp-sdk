@@ -143,4 +143,46 @@ static SignatureScheme fromScheme(std::string name)
   return scheme;
 }
 
+static SignatureScheme toSignatureScheme(unsigned char value)
+{
+  SignatureScheme scheme;
+  switch (value)
+  {
+  case 0x00:
+    SignatureScheme::SHA224withECDSA;
+    break;
+  case 0x01:
+    scheme = SignatureScheme::SHA256withECDSA;
+    break;
+  case 0x02:
+    scheme = SignatureScheme::SHA384withECDSA;
+    break;
+  case 0x03:
+    scheme = SignatureScheme::SHA512withECDSA;
+    break;
+  case 0x04:
+    scheme = SignatureScheme::SHA3_224withECDSA;
+    break;
+  case 0x05:
+    scheme = SignatureScheme::SHA3_256withECDSA;
+    break;
+  case 0x06:
+    scheme = SignatureScheme::SHA3_384withECDSA;
+    break;
+  case 0x07:
+    scheme = SignatureScheme::SHA3_512withECDSA;
+    break;
+  case 0x08:
+    scheme = SignatureScheme::RIPEMD160withECDSA;
+    break;
+  case 0x09:
+    scheme = SignatureScheme::SM3withSM2;
+    break;
+  default:
+    throw runtime_error("toSignatureScheme() Error: Unsupport SignatureScheme");
+    break;
+  }
+  return scheme;
+}
+
 #endif // !SIGNATURESCHEME_H
