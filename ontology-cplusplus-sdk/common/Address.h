@@ -72,13 +72,6 @@ public:
     }
   }
 
-  Address toScriptHash(std::vector<unsigned char> script)
-  {
-    Digest digest;
-    Address address(digest.hash160(script));
-    return address;
-  }
-
   Address AddressFromVmCode(std::string codeHexStr)
   {
     std::vector<unsigned char> codeUcVec;
@@ -190,7 +183,7 @@ public:
   //   return u160_addr;
   // }
 
-  static Address toScriptHash(std::vector<unsigned char> script)
+  static Address toScriptHash(const std::vector<unsigned char> &script)
   {
     Address u160_addr(Digest::hash160(script));
     return u160_addr;

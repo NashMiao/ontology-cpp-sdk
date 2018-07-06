@@ -274,7 +274,7 @@ public:
 
     unsigned char uc = *uc_vec_iter;
     bool ret_bool = uc != 0;
-    return ret_bbol;
+    return ret_bool;
   }
 
   unsigned int readInt()

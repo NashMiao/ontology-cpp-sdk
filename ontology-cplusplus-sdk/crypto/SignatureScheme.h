@@ -3,7 +3,7 @@
 
 #include <string>
 
-enum class SignatureScheme
+enum class SignatureScheme : int
 {
   SHA224withECDSA,
   SHA256withECDSA,
