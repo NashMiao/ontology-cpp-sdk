@@ -110,7 +110,7 @@ public:
   {
     if (sizeof(bool) != 1)
     {
-      throw "writeBool Error!";
+      throw std::runtime_error("IOException");
     }
     unsigned char v_uc = v ? 1 : 0;
     uc_vec.push_back(v_uc);
@@ -159,7 +159,7 @@ public:
   {
     if (sizeof(short) != 2)
     {
-      throw "IOException";
+      throw std::runtime_error("IOException");
     }
     std::vector<unsigned char> bytes;
     bytes = short2bytes(v);
@@ -170,7 +170,7 @@ public:
   {
     if (sizeof(int) != 4)
     {
-      throw "IOException";
+      throw std::runtime_error("IOException");
     }
     std::vector<unsigned char> bytes;
     bytes = int2bytes(v);
@@ -181,7 +181,7 @@ public:
   {
     if (sizeof(long long) != 8)
     {
-      throw "IOException";
+      throw std::runtime_error("IOException");
     }
     std::vector<unsigned char> bytes;
     bytes = long2bytes(v);
