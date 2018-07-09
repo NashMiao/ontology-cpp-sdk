@@ -286,7 +286,7 @@ public:
     return vec_sign_dgsts;
   }
 
-  std::vector<unsigned char> generateSignature(std::string privateKey,
+  std::vector<unsigned char> generateSignature(const std::string &privateKey,
                                                std::vector<unsigned char> msg,
                                                CurveName curve_name,
                                                std::string sm2_param)
