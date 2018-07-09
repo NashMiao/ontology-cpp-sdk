@@ -34,7 +34,7 @@ public:
   {
     std::vector<unsigned char> hash_data;
     hash_data = Digest::hash256(getHashData());
-    return account.generateSignature(hash_data, scheme, curve);
+    return account.generateSignature(hash_data);
   }
 
   std::string sign_str(Account account, SignatureScheme scheme,
