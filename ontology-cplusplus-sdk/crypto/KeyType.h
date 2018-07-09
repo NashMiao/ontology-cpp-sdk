@@ -47,7 +47,7 @@ class KeyTypeMethod
     static KeyType fromPubkey(const std::vector<unsigned char> &pubkey)
     {
         KeyType type;
-        if (pubkey.size() == 33)
+        if (pubkey.size() == 66)
         {
             type = KeyType::ECDSA;
         }

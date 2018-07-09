@@ -28,6 +28,13 @@ public:
     return *this;
   }
 
+  nlohmann::json json()
+  {
+    nlohmann::json Result = Transaction::json();
+    Result["Payload"] = {"Code", Helper::toHexString(code)};
+    return Result;
+  }
+
   void serializeExclusiveData(BinaryWriter *writer)
   {
     writer->writeVarBytes(code);

@@ -91,26 +91,15 @@ class MakeTxWithoutWalletDemo
         multiPubKey.push_back(acct1.serializePublicKey_str());
         multiPubKey.push_back(acct2.serializePublicKey_str());
         recvAddr = recvAddr.addressFromMultiPubKeys(2, multiPubKey);
+        std::cout << "sender: " << sender.toBase58() << std::endl;
+        std::cout << "recvAddr: " << recvAddr.toBase58() << std::endl;
 
         long long amount = 100000;
         Ont ont;
-
         InvokeCodeTransaction tx;
-
-        std::string test_addr;
-        test_addr = sender.toBase58();
-        sender.decodeBase58(test_addr);
-
-        // std::string str_sender = "ANH5bHrrt111XwNEnuPZj6u95Dd6u7G4D6";
-        // std::string str_recvAddr = "AKJS7q95Wx7FThAtwqHyCqhfK7tQz5KCUt";
-
-        // tx = ont.makeTransfer(str_sender, str_recvAddr, amount, str_sender,
-        // 30000,
-        //                       0);
-
         tx = ont.makeTransfer(sender.toBase58(), recvAddr.toBase58(), amount,
                               sender.toBase58(), 30000, 0);
-        cout << tx.json_out() << endl;
+        cout << tx.json() << endl;
 
         std::vector<Account> vec_accounts;
         vec_accounts.push_back(acct0);

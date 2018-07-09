@@ -17,7 +17,7 @@ class ECDomainParameters
 
   public:
     ECDomainParameters() {}
-    ECDomainParameters(CurveName curve)
+    ECDomainParameters(CurveName curve) : curve_name(curve)
     {
         group =
             EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
@@ -43,9 +43,10 @@ class ECDomainParameters
         ec_point = EC_POINT_hex2point(group, pubkey.c_str(), NULL, NULL);
     }
 
-    EC_POINT *get_EC_Point(const std::string &pubkey)
+    EC_POINT *convert_EC_Point(const std::string &pubkey)
     {
-        EC_POINT *point = EC_POINT_new(group);
+        EC_POINT *point;
+        point = EC_POINT_new(group);
         point = EC_POINT_hex2point(group, pubkey.c_str(), NULL, NULL);
         return point;
     }
