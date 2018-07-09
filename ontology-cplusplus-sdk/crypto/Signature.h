@@ -83,13 +83,15 @@ public:
     BIGNUM *prv = BN_new();
     BN_hex2bn(&prv, str_private_key.c_str());
     EC_KEY *ec_key;
-    ec_key = EC_KEY_new_by_curve_name(get_curve_nid(curve_name));
+    ec_key =
+        EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
     if (ec_key == NULL)
     {
       throw runtime_error("EC_KEY_new_by_curve_name() failed!");
     }
     const EC_GROUP *group;
-    group = EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
+    group =
+        EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
     EC_KEY_set_private_key(ec_key, prv);
 
     EC_POINT *pub;

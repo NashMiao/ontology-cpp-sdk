@@ -183,8 +183,30 @@ protected:
     }
   }
 
-  std::string Signature::EC_set_public_key(const std::string &str_public_key,
-                                           EC_KEY *ec_key)
+  void EC_gen_pubkey_by_prikey(EC_KEY *ec_key)
+  {
+    const EC_GROUP *group =
+        EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
+    EC_POINT *pub;
+    pub = EC_POINT_new(group);
+    const BIGNUM *pri = EC_KEY_get0_private_key(ec_key);
+
+    BN_CTX *bn_ctx;
+    bn_ctx = BN_CTX_new();
+    if (EC_POINT_mul(group, pub, pri, NULL, NULL, bn_ctx) != 1)
+    {
+      throw runtime_error(ErrorCode::StrDataSignatureErr);
+    }
+    if (EC_KEY_set_public_key(ec_key, pub) != 1)
+    {
+      EC_KEY_free(ec_key);
+      throw runtime_error(ErrorCode::StrDataSignatureErr);
+    }
+    EC_POINT_free(pub);
+    BN_free((BIGNUM *)pri);
+  }
+
+  bool EC_set_public_key(const std::string &str_public_key, EC_KEY *ec_key)
   {
     if (ec_key == NULL)
     {
@@ -192,7 +214,8 @@ protected:
     }
 
     EC_GROUP *group;
-    group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
+    group =
+        EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
     if (group == NULL)
     {
       throw std::runtime_error("EC_GROUP_new_by_curve_name() failed.");
@@ -204,23 +227,24 @@ protected:
 
     if (EC_KEY_set_public_key(ec_key, pub) != 1)
     {
-      EC_KEY_free(ec_key);
       EC_GROUP_free(group);
       return false;
     }
     return true;
   }
 
-  std::string
-  Signature::EC_set_private_key(const std::string &str_private_key)
+  bool EC_set_private_key(const std::string &str_private_key, EC_KEY *ec_key)
   {
     EC_GROUP *group;
-    group = EC_GROUP_new_by_curve_name(get_curve_nid(curve_name));
+    group =
+        EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
     if (group == NULL)
     {
       return false;
     }
 
+    ec_key =
+        EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
     if (ec_key == NULL)
     {
       EC_GROUP_free(group);
@@ -262,6 +286,19 @@ public:
     {
       std::cerr << err.what() << std::endl;
     }
+
+    BIGNUM *prv = BN_new();
+    BN_hex2bn(&prv, privateKey.c_str());
+
+    EC_KEY *ec_key;
+    ec_key =
+        EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
+    if (ec_key == NULL)
+    {
+      throw std::runtime_error("EC_KEY is NULL.");
+    }
+    EC_KEY_set_private_key(ec_key, prv);
+
     std::string str_msg(msg.begin(), msg.end());
     if (EVP_SignUpdate(md_ctx, (unsigned char *)str_msg.c_str(),
                        str_msg.length()) != 1)
@@ -271,19 +308,19 @@ public:
     unsigned int slen = 0;
     char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
 
-    EVP_PKEY *evp_pkey;
-
+    EVP_PKEY *evp_pkey = EVP_PKEY_new();
+    EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
     while (slen != strlen(uc_sign_dgst))
     {
       if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen,
                         evp_pkey) != 1)
       {
-        throw runtime_error("EVP_SignFinal() failed.");
+        throw std::runtime_error("EVP_SignFinal() failed.");
       }
     }
     std::vector<unsigned char> vec_sign_dgst(
         uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
-    return vec_sign_dgsts;
+    return vec_sign_dgst;
   }
 
   std::vector<unsigned char> generateSignature(const std::string &privateKey,
@@ -299,33 +336,47 @@ public:
         EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
     if (ec_key == NULL)
     {
-      throw runtime_error(ErrorCode::StrResultIsNull);
+      throw std::runtime_error("EC_KEY is NULL.");
     }
 
     EC_KEY_set_private_key(ec_key, prv);
-    EC_POINT *pub;
-
-    const EC_GROUP *group;
-    group =
-        EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
-    pub = EC_POINT_new(group);
-
-    BN_CTX *bn_ctx;
-    bn_ctx = BN_CTX_new();
-    if (EC_POINT_mul(group, pub, prv, NULL, NULL, bn_ctx) != 1)
+    try
     {
-      throw runtime_error(ErrorCode::StrDataSignatureErr);
+      md_ctx_sign_init();
     }
-    if (EC_KEY_set_public_key(ec_key, pub) != 1)
+    catch (const std::runtime_error &err)
     {
-      EC_KEY_free(ec_key);
-      throw runtime_error(ErrorCode::StrDataSignatureErr);
+      std::cerr << err.what() << std::endl;
     }
-    return true;
+
+    std::string str_msg(msg.begin(), msg.end());
+    if (EVP_SignUpdate(md_ctx, (unsigned char *)str_msg.c_str(),
+                       str_msg.length()) != 1)
+    {
+      throw std::runtime_error("EVP_SignUpdate() != 1");
+    }
+    unsigned int slen = 0;
+    char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
+
+    EVP_PKEY *evp_pkey = EVP_PKEY_new();
+    EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
+    while (slen != strlen(uc_sign_dgst))
+    {
+      if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen,
+                        evp_pkey) != 1)
+      {
+        throw std::runtime_error("EVP_SignFinal() != 1");
+      }
+    }
+    EVP_PKEY_free(evp_pkey);
+    std::vector<unsigned char> sign_dgst_vec(
+        uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
+    return sign_dgst_vec;
   }
 
-  bool verifySignature(EVP_PKEY *evp_pkey, std::vector<unsigned char> msg,
-                       std::vector<unsigned char> sig)
+  bool verifySignature(const std::string &publicKey,
+                       std::vector<unsigned char> msg,
+                       std::vector<unsigned char> sign_dgst_vec)
   {
     try
     {
@@ -340,12 +391,34 @@ public:
     if (EVP_VerifyUpdate(md_ctx, (unsigned char *)str_msg.c_str(),
                          str_msg.length()) != 1)
     {
-      return false;
+      throw std::runtime_error("EVP_VerifyUpdate() != 1");
     }
-    int ret;
-    ret = EVP_VerifyFinal(md_ctx, (unsigned char *)str_sign_dgst.c_str(),
-                          str_sign_dgst.length(), evp_pkey);
+    EC_GROUP *group;
+    group =
+        EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
+    if (group == NULL)
+    {
+      throw std::runtime_error("EC_GROUP_new_by_curve_name() failed.");
+    }
+    EC_POINT *pub;
+    pub = EC_POINT_new(group);
+    pub = EC_POINT_hex2point(group, publicKey.c_str(), NULL, NULL);
 
+    EC_KEY *ec_key;
+    ec_key =
+        EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
+    if (ec_key == NULL)
+    {
+      throw std::runtime_error("EC_KEY is NULL.");
+    }
+    EC_KEY_set_public_key(ec_key, pub);
+
+    EVP_PKEY *evp_pkey = EVP_PKEY_new();
+    EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
+    std::string sign_dgst_str(sign_dgst_vec.begin(), sign_dgst_vec.end());
+    int ret;
+    ret = EVP_VerifyFinal(md_ctx, (unsigned char *)sign_dgst_str.c_str(),
+                          sign_dgst_str.length(), evp_pkey);
     if (ret != 1)
     {
       return false;

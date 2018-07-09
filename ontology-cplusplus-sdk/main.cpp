@@ -259,7 +259,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
 
   AES aes;
 
-  aes.set_params(uc_key, uc_iv, AES_CTR);
+  aes.set_params(uc_key, uc_iv, AEAD_mode::AES_CTR);
 
   unsigned char uc_private_key[] = {
       0xc1, 0x9f, 0x16, 0x78, 0x5b, 0x8f, 0x35, 0x43, 0xbb, 0xaf, 0x5e,

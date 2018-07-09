@@ -1,3 +1,4 @@
+
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
@@ -20,7 +21,7 @@ private:
   KeyType keyType;
   Address addressU160;
   SignatureScheme signatureScheme;
-  CurveName curve_name;
+  CurveName curveName;
   std::string sm2Param;
 
 private:
@@ -40,7 +41,7 @@ private:
     }
     else if (data.size() == 35)
     {
-      keyType = keyTypeFromLabel(data[0]);
+      keyType = KeyTypeMethod::fromLabel(data[0]);
     }
     switch (keyType)
     {
@@ -69,7 +70,7 @@ public:
                    CurveName _curve_name = CurveName::p256,
                    std::string sm2_param = "")
       : privateKey(private_key), signatureScheme(scheme),
-        curve_name(_curve_name), sm2Param(sm2_param)
+        curveName(_curve_name), sm2Param(sm2_param)
   {
     signatureScheme = scheme;
     if (signatureScheme == SignatureScheme::SM3withSM2)
@@ -89,7 +90,7 @@ public:
     case SignatureScheme::SHA256withECDSA:
     {
       privateKey = private_key;
-      publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curve_name);
+      publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curveName);
       // ec_key = ec_sign.get_EC_key();
       std::vector<unsigned char> uc_pub_key;
       uc_pub_key = serializePublicKey();
@@ -171,7 +172,7 @@ public:
     this->keyType = acct.keyType;
     this->addressU160 = acct.addressU160;
     this->signatureScheme = acct.signatureScheme;
-    this->curve_name = acct.curve_name;
+    this->curveName = acct.curveName;
     this->sm2Param = acct.sm2Param;
     return *this;
   }
@@ -184,14 +185,14 @@ public:
     this->keyType = acct->keyType;
     this->addressU160 = acct->addressU160;
     this->signatureScheme = acct->signatureScheme;
-    this->curve_name = acct->curve_name;
+    this->curveName = acct->curveName;
     this->sm2Param = acct->sm2Param;
     return this;
   }
 
   void setAccount(std::string private_key,
                   SignatureScheme scheme = SignatureScheme::SHA256withECDSA,
-                  CurveName curve_name = CurveName::p256)
+                  CurveName curveName = CurveName::p256)
   {
     signatureScheme = scheme;
     if (signatureScheme == SignatureScheme::SM3withSM2)
@@ -211,7 +212,7 @@ public:
     case SignatureScheme::SHA256withECDSA:
     {
       privateKey = private_key;
-      publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curve_name);
+      publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curveName);
       std::vector<unsigned char> uc_pub_key;
       uc_pub_key = serializePublicKey();
       addressU160 = Address::addressFromPubKey(uc_pub_key);
@@ -288,12 +289,10 @@ public:
         sm2Param = "1234567812345678";
       }
     }
-    SignatureHandler sign_handler(KeyType, signatureScheme);
-    sign_handler.generateSignature(privateKey, msg, sm2Param);
-
-    std::string str_msg(msg.begin(), msg.end());
-    Signature signature(signatureScheme, curve_name, privateKey);
-    signature.EC_sign(str_msg);
+    std::vector<unsigned char> sign_data;
+    SignatureHandler sign_handler(keyType, signatureScheme, curveName);
+    sign_data = sign_handler.generateSignature(privateKey, msg, sm2Param);
+    Signature signature(signatureScheme, sign_data, sm2Param);
     std::vector<unsigned char> uc_vec = signature.toBytes();
     return uc_vec;
   }

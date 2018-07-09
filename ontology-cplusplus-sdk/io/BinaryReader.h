@@ -368,10 +368,9 @@ public:
 
   std::string readVarString()
   {
-    std::vector<unsigned char> bytes;
+    std::string bytes;
     bytes = readVarBytes();
-    std::string str(bytes.begin(), bytes.end());
-    return str;
+    return bytes;
   }
 
   template <class T>
