@@ -20,6 +20,18 @@ public:
       std::vector<unsigned char> hash_data;
       hash_data = getHashData();
       _hash = Digest::hash256(hash_data);
+      int n = 1;
+      // little endian if true
+      if (*(char *)&n == 1)
+      {
+        std::vector<unsigned char> inver_hash;
+        size_t vec_sz = _hash.size();
+        for (int i = (int)vec_sz - 1; i > -1; i--)
+        {
+          inver_hash.push_back(_hash[i]);
+        }
+        _hash = inver_hash;
+      }
     }
     return _hash;
   }
