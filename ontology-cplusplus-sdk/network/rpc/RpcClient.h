@@ -12,6 +12,8 @@ class RpcClient : public IConnector
 {
 private:
   RpcInterfaces rpc;
+  std::string version = "v1.0.0";
+  std::string action = "sendRawTransaction";
 
 public:
   RpcClient() {}

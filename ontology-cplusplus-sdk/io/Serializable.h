@@ -33,9 +33,8 @@ public:
 
   std::string toHexString()
   {
-    Helper helper;
     std::string str;
-    str = helper.toHexString(toArray());
+    str = Helper::toHexString(toArray());
     return str;
   };
 };

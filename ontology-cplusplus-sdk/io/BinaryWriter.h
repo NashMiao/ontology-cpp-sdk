@@ -255,13 +255,13 @@ public:
     size_t sz = t_vec.size();
     if (!writeVarInt((int)sz))
     {
-      for (size_t i = 0; i < sz; i++)
-      {
-        T t_item;
-        t_item = t_vec[i];
-        t_item.serialize(this);
-      }
       return false;
+    }
+    for (size_t i = 0; i < sz; i++)
+    {
+      T t_item;
+      t_item = t_vec[i];
+      t_item.serialize(this);
     }
     return true;
   }

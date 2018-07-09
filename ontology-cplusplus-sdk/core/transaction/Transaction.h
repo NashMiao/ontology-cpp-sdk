@@ -29,7 +29,8 @@ public:
   Transaction(TransactionType _txType, unsigned int _version = 0)
       : Inventory(), version(_version) {
     srand((unsigned)time(NULL));
-    nonce = rand();
+    // nonce = rand();
+    nonce = 1000;
   }
 
   Transaction(TransactionType _txType, Address _payer, long long _gasPrice,
@@ -37,7 +38,8 @@ public:
       : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit), txType(_txType),
         payer(_payer), version(_version) {
     srand((unsigned)time(NULL));
-    nonce = rand();
+    // nonce = rand();
+    nonce = 1000;
   }
 
   Transaction(TransactionType _txType, long long _gasPrice, long long _gasLimit,
@@ -45,7 +47,8 @@ public:
       : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit),
         version(_version) {
     srand((unsigned)time(NULL));
-    nonce = rand();
+    // nonce = rand();
+    nonce = 1000;
   }
 
   Transaction(TransactionType _txType, TransactionType _type,
@@ -55,7 +58,8 @@ public:
       : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit), txType(_type),
         attributes(_attributes), sigs(_sigs), version(_version) {
     srand((unsigned)time(NULL));
-    nonce = rand();
+    // nonce = rand();
+    nonce = 1000;
   }
 
   Transaction &operator=(Transaction &tx) {

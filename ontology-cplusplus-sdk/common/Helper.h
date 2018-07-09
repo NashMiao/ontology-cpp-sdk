@@ -127,7 +127,22 @@ public:
       stream << std::setfill('0') << std::setw(sizeof(unsigned char) * 2)
              << std::hex << (unsigned int)*value_cit;
     }
-    return stream.str();
+    int n = 1;
+    std::string str = stream.str();
+    // little endian if true
+    if (*(char *)&n == 1) {
+      std::string hex_str;
+      hex_str.push_back('0');
+      hex_str.push_back('x');
+      size_t str_sz = str.size();
+      for (int i = (int)str_sz - 1; i > 2; i -= 2) {
+        hex_str.push_back(str[i-1]);
+        hex_str.push_back(str[i]);
+      }
+      return hex_str;
+    }
+    stream.clear();
+    return str;
   }
 
   static std::vector<unsigned char> hexToBytes(std::string value) {
