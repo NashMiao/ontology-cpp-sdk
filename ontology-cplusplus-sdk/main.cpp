@@ -42,7 +42,8 @@
 //   std::string msg = "Hello world!";
 //   std::string str_sign_dgst;
 //   ec_sign.EC_sign(msg, str_sign_dgst);
-//   cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst << endl;
+//   cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst <<
+//   endl;
 //   ret = ec_sign.EC_veri(msg, str_sign_dgst);
 //   cout << "ret: " << ret << endl;
 // }
@@ -63,11 +64,33 @@
 //   std::string msg = "Hello world!";
 //   std::string str_sign_dgst;
 //   ec_sign.EC_sign(msg, str_sign_dgst);
-//   cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst << endl;
+//   cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst <<
+//   endl;
 //   bool ret;
 //   ret = ec_sign.EC_veri(msg, str_sign_dgst);
 //   cout << "ret: " << ret << endl;
 // }
+
+void sign_by_pri_key() {
+  CurveName curve_name = CurveName::p256;
+  SignatureScheme signature_scheme = SignatureScheme::SHA256withECDSA;
+  KeyType key_type = KeyType::ECDSA;
+  std::string private_key =
+      "70789d4ac31576c61c5d12e38a66de605b18faf2c8d60a2c1952a6286b67318f";
+  std::string public_key =
+      Signature::EC_get_pubkey_by_prikey(private_key, curve_name);
+  cout << "private key: " << private_key << endl;
+  cout << "public key: " << public_key << endl;
+  std::string msg = "Hello World!";
+  std::vector<unsigned char> uc_msg(msg.begin(), msg.end());
+  SignatureHandler handler(key_type, signature_scheme, curve_name);
+  std::vector<unsigned char> vc_signature;
+  vc_signature = handler.generateSignature(private_key, uc_msg, "");
+  cout << (handler.verifySignature(public_key, uc_msg, vc_signature)
+               ? std::string("True")
+               : std::string("False"))
+       << endl;
+}
 
 // void sign_by_pri_key() {
 //   SignatureBak ec_sign;
@@ -95,7 +118,8 @@
 //   std::string msg = "Hello world!";
 //   std::string str_sign_dgst;
 //   ec_sign.EC_sign(msg, str_sign_dgst);
-//   cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst << endl;
+//   cout << "msg:\n" << msg << endl << "str_sig_dgst:\n" << str_sign_dgst <<
+//   endl;
 //   ret = ec_sign.EC_veri(msg, str_sign_dgst);
 //   cout << "ret: " << ret << endl;
 // }
@@ -439,7 +463,7 @@ void test_rpc_get() {
   cout << "getBlockHeight(): " << obj << endl;
   std::string contract_hash = "fff49c809d302a2956e9dc0012619a452d4b846c";
   nlohmann::json ret;
-  ret=connect_mgr.getContractJson(contract_hash);
+  ret = connect_mgr.getContractJson(contract_hash);
   cout << ret << endl;
 }
 
@@ -480,7 +504,7 @@ void try_map2json() {
 }
 
 int main() {
-  // sign_by_pri_key();
+  sign_by_pri_key();
   // sign_by_set_pub_pri();
   // sign_by_gen_key();
   // aes_enc_dec();

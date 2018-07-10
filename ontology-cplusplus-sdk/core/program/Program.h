@@ -10,7 +10,6 @@
 #include "../../common/Address.h"
 #include "../../common/Common.h"
 #include "../../common/Helper.h"
-#include "../../core/program/Program.h"
 #include "../../core/scripts/ScriptBuilder.h"
 #include "../../crypto/Curve.h"
 #include "../../crypto/ECC.h"
@@ -21,7 +20,33 @@
 class Program
 {
   public:
-    static void sortPublicKeys(std::vector<std::string> &publicKeys)
+    static std::vector<unsigned char>
+    ProgramFromParams(std::vector<std::string> &sigData)
+    {
+        ScriptBuilder builder;
+        std::sort(
+            sigData.begin(), sigData.end(),
+            [](std::string &o1, std::string &o2) -> int { return o1.compare(o2); });
+        size_t sz = sigData.size();
+        for (size_t i = 0; i < sz; i++)
+        {
+            std::vector<unsigned char> vec_data(sigData[i].begin(), sigData[i].end());
+            builder.push(vec_data);
+        }
+        return builder.toArray();
+    }
+
+    static std::vector<unsigned char> ProgramFromPubKey(const std::string &publicKey)
+    {
+        std::vector<unsigned char> vec_pubkey(publicKey.begin(), publicKey.end());
+        ScriptBuilder builder;
+        builder.push(vec_pubkey);
+        builder.add(ScriptOp::OP_CHECKSIG);
+        return builder.toArray();
+    }
+
+    static void
+    sortPublicKeys(std::vector<std::string> &publicKeys)
     {
         std::sort(publicKeys.begin(), publicKeys.end(), [](std::string &o1, std::string &o2) -> int {
             int o1_label = KeyTypeMethod::getLabel(KeyTypeMethod::fromPubkey(o1));

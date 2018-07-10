@@ -108,7 +108,19 @@ public:
   addressFromPubKey(const std::vector<unsigned char> &publicKey)
   {
     ScriptBuilder builder;
-    builder.push(Helper::hexVecToByte(publicKey));
+    if (publicKey.size() == 33)
+    {
+      builder.push(publicKey);
+    }
+    else if (publicKey.size() == 66)
+    {
+      builder.push(Helper::hexVecToByte(publicKey));
+    }
+    else
+    {
+      throw std::runtime_error(
+          "addressFromPubKey() Error, public key size error.");
+    }
     builder.add(ScriptOp::OP_CHECKSIG);
     std::vector<unsigned char> builder_vec;
     builder_vec = builder.toArray();

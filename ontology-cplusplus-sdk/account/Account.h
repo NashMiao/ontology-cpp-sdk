@@ -304,12 +304,12 @@ public:
     {
     case KeyType::ECDSA:
     {
-      act_uc_vec.insert(act_uc_vec.end(), publicKey.begin(), publicKey.end());
+      act_uc_vec = Helper::hexStringToByte(publicKey);
       break;
     }
     case KeyType::SM2:
     {
-      throw "Exception(KeyType::SM2)";
+      throw std::runtime_error("Exception(KeyType::SM2)");
       break;
     }
     default:

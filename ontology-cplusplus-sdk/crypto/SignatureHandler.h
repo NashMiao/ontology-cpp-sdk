@@ -1,6 +1,7 @@
 #ifndef SIGNATUREHANDLER_H
 #define SIGNATUREHANDLER_H
 
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <vector>
@@ -36,71 +37,80 @@ protected:
       case SignatureScheme::SHA224withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha224(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA256withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha256(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA384withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha384(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA512withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha512(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA3_224withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_224(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA3_256withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_256(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA3_384withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_384(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::SHA3_512withECDSA:
         if (!(EVP_SignInit_ex(md_ctx, EVP_sha3_512(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       case SignatureScheme::RIPEMD160withECDSA:
         if (!(EVP_DigestInit_ex(md_ctx, EVP_ripemd160(), NULL)))
         {
-          throw runtime_error("EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
+          throw std::runtime_error(
+              "EVP_MD_CTX_init Error! EVP_DigestInit_ex fail!");
         }
         break;
       default:
-        throw runtime_error("EVP_MD_CTX_init Error! Unsupport type");
+        throw std::runtime_error("EVP_MD_CTX_init Error! Unsupport type");
       }
       break;
     case KeyType::SM2:
-      throw runtime_error(
+      throw std::runtime_error(
           "EVP_MD_CTX_init Error! Unsupport type: KeyType::SM2");
       break;
     case KeyType::EDDSA:
-      throw runtime_error(
+      throw std::runtime_error(
           "EVP_MD_CTX_init Error! Unsupport type: KeyType::EDDSA");
       break;
     default:
-      throw runtime_error("EVP_MD_CTX_init Error! Unsupport type");
+      throw std::runtime_error("EVP_MD_CTX_init Error! Unsupport type");
     }
   }
 
@@ -115,70 +125,70 @@ protected:
       case SignatureScheme::SHA224withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha224(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA256withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha256(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA384withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha384(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA512withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha512(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA3_224withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_224(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA3_256withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_256(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA3_384withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_384(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::SHA3_512withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_sha3_512(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       case SignatureScheme::RIPEMD160withECDSA:
         if (!(EVP_VerifyInit_ex(md_ctx, EVP_ripemd160(), NULL)))
         {
-          throw runtime_error("EVP_VerifyInit_ex() failed.");
+          throw std::runtime_error("EVP_VerifyInit_ex() failed.");
         }
         break;
       default:
-        throw runtime_error("EVP_MD_CTX_init Error! Unsupport type");
+        throw std::runtime_error("EVP_MD_CTX_init Error! Unsupport type");
       }
     case KeyType::SM2:
-      throw runtime_error(
+      throw std::runtime_error(
           "EVP_MD_CTX_init Error! Unsupport type: KeyType::SM2");
       break;
     case KeyType::EDDSA:
-      throw runtime_error(
+      throw std::runtime_error(
           "EVP_MD_CTX_init Error! Unsupport type: KeyType::EDDSA");
       break;
     default:
-      throw runtime_error("EVP_MD_CTX_init Error! Unsupport type");
+      throw std::runtime_error("EVP_MD_CTX_init Error! Unsupport type");
     }
     }
   }
@@ -195,12 +205,12 @@ protected:
     bn_ctx = BN_CTX_new();
     if (EC_POINT_mul(group, pub, pri, NULL, NULL, bn_ctx) != 1)
     {
-      throw runtime_error(ErrorCode::StrDataSignatureErr);
+      throw std::runtime_error(ErrorCode::StrDataSignatureErr);
     }
     if (EC_KEY_set_public_key(ec_key, pub) != 1)
     {
       EC_KEY_free(ec_key);
-      throw runtime_error(ErrorCode::StrDataSignatureErr);
+      throw std::runtime_error(ErrorCode::StrDataSignatureErr);
     }
     EC_POINT_free(pub);
     BN_free((BIGNUM *)pri);
@@ -268,15 +278,15 @@ public:
     md_ctx = EVP_MD_CTX_new();
     if (md_ctx == NULL)
     {
-      throw runtime_error("EVP_MD_CTX_new() failed.");
+      throw std::runtime_error("EVP_MD_CTX_new() failed.");
     }
   }
 
   ~SignatureHandler() { EVP_MD_CTX_free(md_ctx); }
 
   std::vector<unsigned char> generateSignature(const std::string &privateKey,
-                                               std::vector<unsigned char> msg,
-                                               std::string sm2_param)
+                                               const std::vector<unsigned char> &msg,
+                                               const std::string &sm2_param)
   {
     try
     {
@@ -299,34 +309,44 @@ public:
     }
     EC_KEY_set_private_key(ec_key, prv);
 
-    std::string str_msg(msg.begin(), msg.end());
-    if (EVP_SignUpdate(md_ctx, (unsigned char *)str_msg.c_str(),
-                       str_msg.length()) != 1)
+    if (EVP_SignUpdate(md_ctx, msg.data(), msg.size()) != 1)
     {
-      throw runtime_error("EVP_SignUpdate() failed.");
+      throw std::runtime_error("EVP_SignUpdate() failed.");
     }
-    unsigned int slen = 0;
-    char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
 
     EVP_PKEY *evp_pkey = EVP_PKEY_new();
     EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
-    while (slen != strlen(uc_sign_dgst))
+
+    // unsigned int slen = 0;
+    // char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
+    // while (slen != strlen(uc_sign_dgst))
+    // {
+    //   if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen,
+    //                     evp_pkey) != 1)
+    //   {
+    //     throw std::runtime_error("EVP_SignFinal() failed.");
+    //   }
+    // }
+
+    unsigned int slen = 0;
+    std::unique_ptr<unsigned char[]> uc_sign_dgst(
+        new unsigned char[EVP_PKEY_size(evp_pkey)]);
+    if (EVP_SignFinal(md_ctx, uc_sign_dgst.get(), &slen, evp_pkey) != 1)
     {
-      if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen,
-                        evp_pkey) != 1)
-      {
-        throw std::runtime_error("EVP_SignFinal() failed.");
-      }
+      throw std::runtime_error("EVP_SignFinal() != 1");
     }
-    std::vector<unsigned char> vec_sign_dgst(
-        uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
+    cout << "slen: " << slen << endl;
+    cout << "EVP_PKEY_size(evp_pkey): " << EVP_PKEY_size(evp_pkey) << endl;
+
+    std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst.get(),
+                                             uc_sign_dgst.get() + slen);
     return vec_sign_dgst;
   }
 
   std::vector<unsigned char> generateSignature(const std::string &privateKey,
-                                               std::vector<unsigned char> msg,
+                                               const std::vector<unsigned char> &msg,
                                                CurveName curve_name,
-                                               std::string sm2_param)
+                                               const std::string &sm2_param)
   {
     BIGNUM *prv = BN_new();
     BN_hex2bn(&prv, privateKey.c_str());
@@ -350,33 +370,32 @@ public:
     }
 
     std::string str_msg(msg.begin(), msg.end());
-    if (EVP_SignUpdate(md_ctx, (unsigned char *)str_msg.c_str(),
-                       str_msg.length()) != 1)
+    if (EVP_SignUpdate(md_ctx, msg.data(), str_msg.length()) != 1)
     {
       throw std::runtime_error("EVP_SignUpdate() != 1");
     }
-    unsigned int slen = 0;
-    char *uc_sign_dgst = (char *)malloc(EVP_MAX_MD_SIZE);
 
     EVP_PKEY *evp_pkey = EVP_PKEY_new();
     EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
-    while (slen != strlen(uc_sign_dgst))
+
+    unsigned int slen = 0;
+    std::unique_ptr<unsigned char[]> uc_sign_dgst(
+        new unsigned char[EVP_PKEY_size(evp_pkey)]);
+    if (EVP_SignFinal(md_ctx, uc_sign_dgst.get(), &slen, evp_pkey) != 1)
     {
-      if (EVP_SignFinal(md_ctx, (unsigned char *)uc_sign_dgst, &slen,
-                        evp_pkey) != 1)
-      {
-        throw std::runtime_error("EVP_SignFinal() != 1");
-      }
+      throw std::runtime_error("EVP_SignFinal() != 1");
     }
-    EVP_PKEY_free(evp_pkey);
-    std::vector<unsigned char> sign_dgst_vec(
-        uc_sign_dgst, uc_sign_dgst + strlen(uc_sign_dgst));
-    return sign_dgst_vec;
+    cout << "slen: " << slen << endl;
+    cout << "EVP_PKEY_size(evp_pkey): " << EVP_PKEY_size(evp_pkey) << endl;
+
+    std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst.get(),
+                                             uc_sign_dgst.get() + slen);
+    return vec_sign_dgst;
   }
 
   bool verifySignature(const std::string &publicKey,
-                       std::vector<unsigned char> msg,
-                       std::vector<unsigned char> sign_dgst_vec)
+                       const std::vector<unsigned char> &msg,
+                       const std::vector<unsigned char> &sign_dgst_vec)
   {
     try
     {
@@ -386,10 +405,8 @@ public:
     {
       std::cerr << err.what() << std::endl;
     }
-    std::string str_msg(msg.begin(), msg.end());
 
-    if (EVP_VerifyUpdate(md_ctx, (unsigned char *)str_msg.c_str(),
-                         str_msg.length()) != 1)
+    if (EVP_VerifyUpdate(md_ctx, msg.data(), msg.size()) != 1)
     {
       throw std::runtime_error("EVP_VerifyUpdate() != 1");
     }
@@ -415,10 +432,10 @@ public:
 
     EVP_PKEY *evp_pkey = EVP_PKEY_new();
     EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
-    std::string sign_dgst_str(sign_dgst_vec.begin(), sign_dgst_vec.end());
+
     int ret;
-    ret = EVP_VerifyFinal(md_ctx, (unsigned char *)sign_dgst_str.c_str(),
-                          sign_dgst_str.length(), evp_pkey);
+    ret = EVP_VerifyFinal(md_ctx, sign_dgst_vec.data(), sign_dgst_vec.size(),
+                          evp_pkey);
     if (ret != 1)
     {
       return false;

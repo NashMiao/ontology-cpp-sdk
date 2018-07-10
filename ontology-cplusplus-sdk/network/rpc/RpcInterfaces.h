@@ -303,6 +303,7 @@ public:
       throw "RpcException(0,ErrorCode.ConnectUrlErr(  " + url +
           "response is null. maybe is connect error)";
     }
+    std::cout << json_response << std::endl;
     nlohmann::json::iterator it;
     it = json_response.find("error");
     if (it == json_response.end())

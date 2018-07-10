@@ -54,7 +54,7 @@ public:
   static std::vector<unsigned char> hexStringToByte(const std::string &str) {
     size_t str_sz = str.size();
     if (str_sz % 2 != 0) {
-      throw "hexStringToByte error";
+      throw std::runtime_error("hexStringToByte error");
     }
     std::vector<unsigned char> byte_vec;
     for (size_t i = 0; i < str_sz; i += 2) {

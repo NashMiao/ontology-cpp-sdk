@@ -1,10 +1,11 @@
 #ifndef INVOKECODE_H
 #define INVOKECODE_H
 
+#include <vector>
+
 #include "../../core/transaction/Transaction.h"
 #include "../../core/transaction/TransactionType.h"
-
-#include <vector>
+#include "../program/Program.h"
 
 class InvokeCodeTransaction : public Transaction
 {
