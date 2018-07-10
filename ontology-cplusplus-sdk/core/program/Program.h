@@ -84,7 +84,7 @@ class Program
     static std::vector<unsigned char>
     ProgramFromMultiPubKey(int m, std::vector<std::string> &publicKeys)
     {
-        int n = publicKeys.size();
+        int n = (int)publicKeys.size();
         if (m <= 0 || m > n || n > Common::MULTI_SIG_MAX_PUBKEY_SIZE)
         {
             throw new SDKException(ErrorCode::ParamError);
@@ -92,12 +92,12 @@ class Program
         ScriptBuilder builder;
         builder.push(m);
         sortPublicKeys(publicKeys);
-        for (size_t i = 0; i < publicKeys.size(); i++)
+        for (int i = 0; i < n; i++)
         {
             builder.pushHexStr(publicKeys[i]);
         }
         BIGNUM *bn = BN_new();
-        BN_set_word(bn, (unsigned long)publicKeys.size());
+        BN_set_word(bn, (unsigned long)n);
         builder.push(bn);
         BN_clear(bn);
         builder.add(ScriptOp::OP_CHECKMULTISIG);

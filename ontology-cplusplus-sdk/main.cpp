@@ -504,7 +504,7 @@ void try_map2json() {
 }
 
 int main() {
-  sign_by_pri_key();
+  // sign_by_pri_key();
   // sign_by_set_pub_pri();
   // sign_by_gen_key();
   // aes_enc_dec();
