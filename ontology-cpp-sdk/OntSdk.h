@@ -109,7 +109,7 @@ public:
   {
     if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE)
     {
-      throw new SDKException(ErrorCode.ParamErr("the number of transaction signatures should not be over 16"));
+      throw new SDKException(ErrorCode::ParamErr("the number of transaction signatures should not be over 16"));
     }
     int m = 1;
     std::string pub_key = acct.serializePublicKey_str();

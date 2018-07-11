@@ -62,15 +62,13 @@ public:
     return result;
   }
 
-  std::string sendRawTransaction(const std::string &sData) override {
+  nlohmann::json sendRawTransaction(const std::string &sData) override {
     nlohmann::json val;
     val = rpc.call("sendrawtransaction", sData);
     if (!val.is_string()) {
       throw "sendRawTransaction: return type error!";
     }
-    std::string value;
-    value = val;
-    return value;
+    return val;
   }
 
   int getGenerateBlockTime() override {

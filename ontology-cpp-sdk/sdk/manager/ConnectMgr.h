@@ -44,11 +44,21 @@ public:
     return any_ret;
   }
 
-  nlohmann::json sendRawTransaction(const std::string &hexData)
+  bool sendRawTransaction(const std::string &hexData)
   {
-    nlohmann::json any_ret;
-    any_ret = connector->sendRawTransaction(false, "", hexData);
-    return any_ret;
+    nlohmann::json json_response;
+    json_response = connector->sendRawTransaction(false, "", hexData);
+    nlohmann::json::iterator it;
+    it = json_response.find("error");
+    if (it == json_response.end())
+    {
+      throw "json_response.find(\"error\")== json_response.end()";
+    }
+    if (*it != 0)
+    {
+      return false;
+    }
+    return true;
   }
 
   int getNodeCount()

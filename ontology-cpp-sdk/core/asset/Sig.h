@@ -26,6 +26,11 @@ public:
     pubKeys.insert(pubKeys.end(), _pubKeys.begin(), _pubKeys.end());
     sigData.insert(sigData.end(), _sigData.begin(), _sigData.end());
   }
+  Sig(const std::string &_pubKey, int _M, const std::string _sigData) : M(_M)
+  {
+    pubKeys.push_back(_pubKey);
+    sigData.push_back(_sigData);
+  }
 
   void add_sigData(std::vector<unsigned char> &_sig_data)
   {

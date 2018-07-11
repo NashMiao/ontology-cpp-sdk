@@ -93,11 +93,11 @@ public:
   {
     if (amount <= 0 || gasprice < 0 || gaslimit < 0)
     {
-      throw new SDKException(ErrorCode.ParamErr(
+      throw new SDKException(ErrorCode::ParamErr(
           "amount or gasprice or gaslimit should not be less than 0"));
     }
 
-    Transaction tx =
+    InvokeCodeTransaction tx =
         makeTransfer(sendAcct.getAddressU160().toBase58(), recvAddr, amount,
                      payerAcct.getAddressU160().toBase58(), gaslimit, gasprice);
     std::vector<Account> accounts = {sendAcct};
@@ -106,12 +106,12 @@ public:
     {
       OntSdk::addSign(tx, payerAcct);
     }
-    boolean b = sdk.getConnect().sendRawTransaction(tx.toHexString());
-    if (b)
+    std::string ret_str = "";
+    if (sdk.getConnect().sendRawTransaction(tx.toHexString()))
     {
-      return tx.hash().toString();
+      ret_str = Helper::toHexString(tx.hash());
     }
-    return null;
+    return ret_str;
   }
 
   InvokeCodeTransaction makeTransfer(std::string sender_str,
