@@ -44,6 +44,13 @@ public:
     return any_ret;
   }
 
+  nlohmann::json sendRawTransaction(const std::string &hexData)
+  {
+    nlohmann::json any_ret;
+    any_ret = connector->sendRawTransaction(false, "", hexData);
+    return any_ret;
+  }
+
   int getNodeCount()
   {
     int count;

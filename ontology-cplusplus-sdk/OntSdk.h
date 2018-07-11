@@ -102,7 +102,20 @@ public:
       }
       sigs.push_back(sig_item);
     }
-    tx.set_sigs(sigs);
+    tx.add_sigs(sigs);
+  }
+
+  static void addSign(InvokeCodeTransaction &tx, const Account &acct)
+  {
+    if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE)
+    {
+      throw new SDKException(ErrorCode.ParamErr("the number of transaction signatures should not be over 16"));
+    }
+    int m = 1;
+    std::string pub_key = acct.serializePublicKey_str();
+    std::string sig_data = tx.sign_str(acct, defaultSignScheme, defaultCurveName);
+    Sig sig_item(pub_key, m, sig_data);
+    tx.add_sig(sig_item);
   }
 
   static void addMultiSign(InvokeCodeTransaction &tx, int M,
@@ -129,7 +142,7 @@ public:
       Sig sig_item(_pubKeys, M, _sigData);
       _sigs.push_back(sig_item);
     }
-    tx.set_sigs(_sigs);
+    tx.add_sigs(_sigs);
   }
 };
 #endif // !ONTSDK_H

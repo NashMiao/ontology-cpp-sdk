@@ -353,6 +353,8 @@ public:
 
     std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst.get(),
                                              uc_sign_dgst.get() + slen);
+    cout << "Helper::toHexString(vec_sign_dgst):\n"
+         << Helper::toHexString(vec_sign_dgst) << endl;
     return vec_sign_dgst;
   }
 

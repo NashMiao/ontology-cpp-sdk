@@ -190,6 +190,11 @@ public:
     return this;
   }
 
+  bool equals(const Account &acct)
+  {
+    return this->addressU160.equals(acct.addressU160);
+  }
+
   void setAccount(std::string private_key,
                   SignatureScheme scheme = SignatureScheme::SHA256withECDSA,
                   CurveName curveName = CurveName::p256)

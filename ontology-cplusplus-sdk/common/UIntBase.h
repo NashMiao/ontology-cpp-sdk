@@ -76,6 +76,11 @@ public:
     std::reverse(str.begin(), str.end());
     return str;
   }
+
+  bool equals(const UIntBase &uintbase)
+  {
+    return data_bytes == uintbase.data_bytes;
+  }
 };
 
 #endif

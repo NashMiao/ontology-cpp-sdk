@@ -32,7 +32,7 @@ private:
 
   void privatekey_init() {
     privatekey0 =
-        "523c5fcf74823831756f0bcb3634234f10b3beb1c05595058534577752ad2d9f";
+        "15746f42ec429ce1c20647e92154599b644a00644649f03868a2a5962bd2f9de";
     privatekey1 =
         "49855b16636e70f100cc5f4f42bc20a6535d7414fb8845e7310f8dd065a97221";
     privatekey2 =
@@ -101,16 +101,16 @@ public:
     OntSdk::signTx(tx, vec_accounts);
 
     vec_accounts.push_back(acct1);
-    int m = 2;
-    OntSdk::addMultiSign(tx, m, vec_accounts);
+    // int m = 2;
+    // OntSdk::addMultiSign(tx, m, vec_accounts);
 
     std::vector<unsigned char> tx_hash = tx.hash();
     std::cout << "TxHash: " << Helper::toHexString(tx_hash) << std::endl;
-    std::string url = "http://polaris1.ont.io:20336";
+    std::string url = "http://localhost:20336";
     nlohmann::json obj;
     ConnectMgr connect_mgr(url, ConnectType::RPC);
     std::cout << "HexTx: " << tx.toHexString() << std::endl;
-    obj = connect_mgr.sendRawTransactionPreExec(tx.toHexString());
+    obj = connect_mgr.sendRawTransaction(tx.toHexString());
     std::cout << obj << std::endl;
   }
 };

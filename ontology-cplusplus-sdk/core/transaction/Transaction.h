@@ -12,7 +12,8 @@
 #include <time.h>
 #include <vector>
 
-class Transaction : public Inventory {
+class Transaction : public Inventory
+{
 private:
   long long gasPrice;
   long long gasLimit;
@@ -27,7 +28,8 @@ public:
   Transaction() : Inventory(), version(0) {}
 
   Transaction(TransactionType _txType, unsigned int _version = 0)
-      : Inventory(), version(_version) {
+      : Inventory(), version(_version)
+  {
     srand((unsigned)time(NULL));
     // nonce = rand();
     nonce = 1000;
@@ -36,7 +38,8 @@ public:
   Transaction(TransactionType _txType, Address _payer, long long _gasPrice,
               long long _gasLimit, unsigned int _version = 0)
       : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit), txType(_txType),
-        payer(_payer), version(_version) {
+        payer(_payer), version(_version)
+  {
     srand((unsigned)time(NULL));
     // nonce = rand();
     nonce = 1000;
@@ -45,7 +48,8 @@ public:
   Transaction(TransactionType _txType, long long _gasPrice, long long _gasLimit,
               unsigned int _version = 0)
       : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit),
-        version(_version) {
+        version(_version)
+  {
     srand((unsigned)time(NULL));
     // nonce = rand();
     nonce = 1000;
@@ -56,13 +60,15 @@ public:
               const std::vector<Attribute> &_attributes,
               const std::vector<Sig> &_sigs, unsigned int _version)
       : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit), txType(_type),
-        attributes(_attributes), sigs(_sigs), version(_version) {
+        attributes(_attributes), sigs(_sigs), version(_version)
+  {
     srand((unsigned)time(NULL));
     // nonce = rand();
     nonce = 1000;
   }
 
-  Transaction &operator=(Transaction &tx) {
+  Transaction &operator=(Transaction &tx)
+  {
     this->version = tx.version;
     this->gasPrice = tx.gasPrice;
     this->gasLimit = tx.gasLimit;
@@ -74,20 +80,33 @@ public:
     return *this;
   }
 
-  std::vector<unsigned char> getHashData() {
+  std::vector<unsigned char> getHashData()
+  {
     BinaryWriter writer;
     BinaryWriter *p_writer = &writer;
     serializeUnsigned(p_writer);
     return writer.toByteArray();
   }
 
-  void set_sigs(std::vector<Sig> &_sigs) { sigs = _sigs; }
+  void add_sig(const Sig &sig)
+  {
+    sigs.push_back(sig);
+  }
 
-  Sig get_sig(int i) {
+  void add_sigs(const std::vector<Sig> &_sigs)
+  {
+    sigs.insert(sigs.end(), _sigs.begin(), _sigs.end());
+  }
+
+  Sig get_sig(int i)
+  {
     Sig ret_sig;
-    try {
+    try
+    {
       ret_sig = sigs[i];
-    } catch (const std::out_of_range &oor) {
+    }
+    catch (const std::out_of_range &oor)
+    {
       std::cerr << "Out of Range error: " << oor.what() << '\n';
     }
     return ret_sig;
@@ -99,7 +118,8 @@ public:
 
   void set_payer(Address _payer) { payer = _payer; }
 
-  nlohmann::json json() {
+  nlohmann::json json()
+  {
     nlohmann::json Result;
     Result["Hash"] = Helper::toHexString(hash());
     Result["version"] = version;
@@ -110,14 +130,16 @@ public:
     Result["Payer"] = payer.toBase58();
     std::vector<Attribute>::iterator it;
     nlohmann::json attributes_json = nlohmann::json::array();
-    for (it = attributes.begin(); it != attributes.end(); it++) {
+    for (it = attributes.begin(); it != attributes.end(); it++)
+    {
       attributes_json.push_back(it->json());
     }
     Result["Attributes"] = attributes_json;
     return Result;
   }
 
-  virtual void serializeUnsigned(BinaryWriter *writer) override {
+  virtual void serializeUnsigned(BinaryWriter *writer) override
+  {
     writer->writeByte(version);
     writer->writeByte(TransactionTypeMethod::getByte(txType));
     writer->writeInt(nonce);
@@ -130,12 +152,14 @@ public:
 
   virtual void serializeExclusiveData(BinaryWriter *writer) = 0;
 
-  void serialize(BinaryWriter *writer) {
+  void serialize(BinaryWriter *writer)
+  {
     serializeUnsigned(writer);
     writer->writeSerializableArray(sigs);
   }
 
-  void deserialize(BinaryReader *reader) {
+  void deserialize(BinaryReader *reader)
+  {
     // std::string result =
     //     "00d1ee68fdec0000000000000000807d67000080b0cc71bda8653599c5666cae084bff"
     //     "587e2de10064231202032fac97c3c721c437fe310b5d8e075c6e925d2de59d0713078a"
@@ -148,17 +172,22 @@ public:
     // BinaryReader reader;
     // reader.set_uc_vec(result);
     deserializeUnsigned(reader);
-    try {
+    try
+    {
       reader->readSerializableArray(sigs);
-    } catch (const char *e) {
+    }
+    catch (const char *e)
+    {
       cerr << e << endl;
     }
   }
 
-  void deserializeUnsigned(BinaryReader *reader) override {
+  void deserializeUnsigned(BinaryReader *reader) override
+  {
     version = reader->readByte();
     if (txType !=
-        TransactionTypeMethod::getTransactionType(reader->readByte())) {
+        TransactionTypeMethod::getTransactionType(reader->readByte()))
+    {
       throw "IOException";
     }
     gasPrice = reader->readLong();
@@ -169,11 +198,15 @@ public:
     deserializeUnsignedWithoutType(reader);
   }
 
-  void deserializeUnsignedWithoutType(BinaryReader *reader) {
-    try {
+  void deserializeUnsignedWithoutType(BinaryReader *reader)
+  {
+    try
+    {
       deserializeExclusiveData(reader);
       reader->readSerializableArray(attributes);
-    } catch (const char *ex) {
+    }
+    catch (const char *ex)
+    {
       throw "IOException(ex)";
     }
   }

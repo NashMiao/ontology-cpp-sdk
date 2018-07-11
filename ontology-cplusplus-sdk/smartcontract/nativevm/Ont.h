@@ -1,6 +1,11 @@
 #ifndef ONT_H
 #define ONT_H
 
+#include <list>
+#include <string>
+
+#include <nlohmann/json.hpp>
+
 #include "../../OntSdk.h"
 #include "../../core/VmType.h"
 #include "../../core/asset/State.h"
@@ -9,23 +14,105 @@
 #include "../../smartcontract/nativevm/abi/NativeBuildParams.h"
 #include "../Vm.h"
 #include "abi/NativeBuildParams.h"
-#include <list>
-#include <string>
 
 class Ont
 {
 private:
   OntSdk sdk;
   std::string ontContract;
-  int precision;
+  nlohmann::json nativeAbi;
 
 public:
   Ont()
   {
     ontContract = "0000000000000000000000000000000000000001";
-    precision = 1;
+    nativeAbi = {
+        "hash",
+        "0000000000000000000000000000000000000001",
+        "functions",
+        {{"name", "init", "parameters", {}, "returntype", "Bool"},
+         {"name",
+          "transfer",
+          "parameters",
+          {{"name",
+            "transfers",
+            "type",
+            "Struct",
+            "subType",
+            {{"name", "from", "type", "Address"},
+             {"name", "to", "type", "Address"},
+             {"name", "value", "type", "Int"}}}},
+          "returntype",
+          "Bool"},
+         {"name",
+          "approve",
+          "parameters",
+          {{"name", "from", "type", "Address"},
+           {"name", "to", "type", "Address"},
+           {"name", "value", "type", "Int"}},
+          "returntype",
+          "Bool"},
+         {"name",
+          "transferFrom",
+          "parameters",
+          {{"name", "sender", "type", "Address"},
+           {"name", "from", "type", "Address"},
+           {"name", "to", "type", "Address"},
+           {"name", "value", "type", "Int"}},
+          "returntype",
+          "Bool"},
+         {"name", "name", "parameters", {}, "returntype", "String"},
+         {"name", "symbol", "parameters", {}, "returntype", "String"},
+         {"name", "decimals", "parameters", {}, "returntype", "Int"},
+         {"name", "totalSupply", "parameters", {}, "returntype", "Int"},
+         {"name",
+          "balanceOf",
+          "parameters",
+          {{"name", "account", "type", "Address"}},
+          "returntype",
+          "Int"},
+         {"name",
+          "allowance",
+          "parameters",
+          {{"name", "account", "type", "Address"}},
+          "returntype",
+          "Int"}},
+        "events",
+        {{"name",
+          "transfer",
+          "parameters",
+          {{"name", "from", "type", "Address"},
+           {"name", "to", "type", "Address"},
+           {"name", "value", "type", "Int"}}}}};
   }
   std::string getContractAddress() { return ontContract; }
+
+  std::string sendTransfer(Account sendAcct, std::string recvAddr,
+                           long long amount, Account payerAcct,
+                           long long gaslimit, long long gasprice)
+  {
+    if (amount <= 0 || gasprice < 0 || gaslimit < 0)
+    {
+      throw new SDKException(ErrorCode.ParamErr(
+          "amount or gasprice or gaslimit should not be less than 0"));
+    }
+
+    Transaction tx =
+        makeTransfer(sendAcct.getAddressU160().toBase58(), recvAddr, amount,
+                     payerAcct.getAddressU160().toBase58(), gaslimit, gasprice);
+    std::vector<Account> accounts = {sendAcct};
+    OntSdk::signTx(tx, accounts);
+    if (!sendAcct.equals(payerAcct))
+    {
+      OntSdk::addSign(tx, payerAcct);
+    }
+    boolean b = sdk.getConnect().sendRawTransaction(tx.toHexString());
+    if (b)
+    {
+      return tx.hash().toString();
+    }
+    return null;
+  }
 
   InvokeCodeTransaction makeTransfer(std::string sender_str,
                                      std::string receiver_str, long long amount,
@@ -41,7 +128,6 @@ public:
       throw "SDKException.ParamErr: amount or gasprice or gaslimit should not "
             "be less than 0";
     }
-    amount = amount * precision;
     Address sender_address;
     Address receiver_address;
     sender_address = sender_address.decodeBase58(sender_str);
@@ -58,7 +144,7 @@ public:
     InvokeCodeTransaction tx;
     Vm vm;
     tx = vm.buildNativeParams(ContractAddress, init_method, args, payer_str,
-                               gaslimit, gasprice);
+                              gaslimit, gasprice);
     return tx;
   }
 };

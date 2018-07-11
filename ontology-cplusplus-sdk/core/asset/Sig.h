@@ -45,11 +45,11 @@ public:
     size_t key_sz = pubKeys.size();
     if (key_sz == 1)
     {
-      Program::ProgramFromPubKey(pubKeys[0]);
+      writer->writeVarBytes(Program::ProgramFromPubKey(pubKeys[0]));
     }
     else if (key_sz > 1)
     {
-      Program::ProgramFromMultiPubKey(M, pubKeys);
+      writer->writeVarBytes(Program::ProgramFromMultiPubKey(M, pubKeys));
     }
     else
     {
