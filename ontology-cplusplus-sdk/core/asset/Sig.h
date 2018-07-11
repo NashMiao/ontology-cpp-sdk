@@ -41,7 +41,7 @@ public:
 
   void serialize(BinaryWriter *writer)
   {
-    // writer->writeVarBytes(Program::ProgramFromParams(sigData));
+    writer->writeVarBytes(Program::ProgramFromParams(sigData));
     size_t key_sz = pubKeys.size();
     if (key_sz == 1)
     {
