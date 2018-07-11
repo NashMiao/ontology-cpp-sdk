@@ -201,7 +201,7 @@ public:
     return u160_addr;
   }
 
-  Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys)
+  static Address addressFromMultiPubKeys(int m, std::vector<std::string> publicKeys)
   {
     return toScriptHash(Program::ProgramFromMultiPubKey(m, publicKeys));
   }

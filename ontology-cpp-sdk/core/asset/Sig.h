@@ -32,6 +32,8 @@ public:
     sigData.push_back(_sigData);
   }
 
+  int sigData_length() { return (int)sigData.size(); }
+
   void add_sigData(std::vector<unsigned char> &_sig_data)
   {
     std::string str(_sig_data.begin(), _sig_data.end());

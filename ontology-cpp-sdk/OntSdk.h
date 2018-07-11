@@ -109,11 +109,13 @@ public:
   {
     if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE)
     {
-      throw new SDKException(ErrorCode::ParamErr("the number of transaction signatures should not be over 16"));
+      throw new SDKException(ErrorCode::ParamErr(
+          "the number of transaction signatures should not be over 16"));
     }
     int m = 1;
     std::string pub_key = acct.serializePublicKey_str();
-    std::string sig_data = tx.sign_str(acct, defaultSignScheme, defaultCurveName);
+    std::string sig_data =
+        tx.sign_str(acct, defaultSignScheme, defaultCurveName);
     Sig sig_item(pub_key, m, sig_data);
     tx.add_sig(sig_item);
   }
@@ -143,6 +145,44 @@ public:
       _sigs.push_back(sig_item);
     }
     tx.add_sigs(_sigs);
+  }
+
+  static void addMultiSign(InvokeCodeTransaction &tx, int M,
+                           std::vector<std::string> pubKeys, Account acct)
+      throws(SDKException)
+  {
+    Program::sortPublicKeys(pubKeys);
+    if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE || M > pubKeys.size() ||
+        M <= 0)
+    {
+      throw new SDKException(ErrorCode::ParamError);
+    }
+    for (int i = 0; i < tx.sigs_length(); i++)
+    {
+      if (tx.sigs[i].pubKeys == pubKeys)
+      {
+        if (tx.sigs[i].sigData.length + 1 > pubKeys.length)
+        {
+          throw new SDKException(ErrorCode::ParamErr("too more sigData"));
+        }
+        sigData.push_back(tx.sign(acct, acct.getSignatureScheme(),acct.getCurveName()));
+        tx.sigs[i].sigData = sigData;
+        return tx;
+      }
+    }
+    Sig[] sigs = new Sig[tx.sigs_length() + 1];
+    for (int i = 0; i < tx.sigs_length(); i++)
+    {
+      sigs[i] = tx.sigs[i];
+    }
+    sigs[tx.sigs.length] = new Sig();
+    sigs[tx.sigs.length].M = M;
+    sigs[tx.sigs.length].pubKeys = pubKeys;
+    sigs[tx.sigs.length].sigData = new byte[1][];
+    sigs[tx.sigs.length].sigData[0] = tx.sign(acct, acct.getSignatureScheme());
+
+    tx.sigs = sigs;
+    return tx;
   }
 };
 #endif // !ONTSDK_H

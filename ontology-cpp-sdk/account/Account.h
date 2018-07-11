@@ -277,6 +277,10 @@ public:
 
   Address getAddressU160() { return addressU160; }
 
+  SignatureScheme getSignatureScheme() { return signatureScheme; }
+
+  CurveName getCurveName() { return curveName; }
+
   std::vector<unsigned char> generateSignature(std::vector<unsigned char> msg)
   {
     if (msg.empty())

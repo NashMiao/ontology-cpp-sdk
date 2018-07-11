@@ -85,7 +85,7 @@ public:
     std::vector<std::string> multiPubKey;
     multiPubKey.push_back(acct1.serializePublicKey_str());
     multiPubKey.push_back(acct2.serializePublicKey_str());
-    recvAddr = recvAddr.addressFromMultiPubKeys(2, multiPubKey);
+    recvAddr = Address::addressFromMultiPubKeys(2, multiPubKey);
     std::cout << "sender: " << sender.toBase58() << std::endl;
     std::cout << "recvAddr: " << recvAddr.toBase58() << std::endl;
 
@@ -102,7 +102,7 @@ public:
 
     vec_accounts.push_back(acct1);
     // int m = 2;
-    // OntSdk::addMultiSign(tx, m, vec_accounts);
+    // OntSdk::addMultiSign(tx, m, acct0);
 
     std::vector<unsigned char> tx_hash = tx.hash();
     std::cout << "TxHash: " << Helper::toHexString(tx_hash) << std::endl;
