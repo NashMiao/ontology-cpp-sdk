@@ -2,7 +2,7 @@
 #define PROGRAM_H
 
 #if __cplusplus < 201103L
-    #error "use --std=c++11 option for compile."
+#error "use --std=c++11 option for compile."
 #endif
 
 #include <algorithm>
@@ -21,16 +21,19 @@
 #include "../../crypto/KeyType.h"
 #include "../../sdk/exception/SDKException.h"
 
-class Program {
+class Program
+{
 public:
   static std::vector<unsigned char>
-  ProgramFromParams(std::vector<std::string> &sigData) {
+  ProgramFromParams(std::vector<std::string> &sigData)
+  {
     ScriptBuilder builder;
     std::sort(
         sigData.begin(), sigData.end(),
         [](std::string &o1, std::string &o2) -> int { return o1.compare(o2); });
     size_t sz = sigData.size();
-    for (size_t i = 0; i < sz; i++) {
+    for (size_t i = 0; i < sz; i++)
+    {
       std::vector<unsigned char> vec_data(sigData[i].begin(), sigData[i].end());
       builder.push(vec_data);
     }
@@ -38,27 +41,31 @@ public:
   }
 
   static std::vector<unsigned char>
-  ProgramFromPubKey(const std::string &publicKey) {
+  ProgramFromPubKey(const std::string &publicKey)
+  {
     std::vector<unsigned char> vec_pubkey(publicKey.begin(), publicKey.end());
     ScriptBuilder builder;
     builder.push(vec_pubkey);
     builder.add(ScriptOp::OP_CHECKSIG);
-    cout << "!!!!\n" << Helper::toHexString(builder.toArray()) << endl;
+    cout << "!!!!\n"
+         << Helper::toHexString(builder.toArray()) << endl;
 
     return builder.toArray();
   }
 
-  static void sortPublicKeys(std::vector<std::string> &publicKeys) {
-    std::sort(publicKeys.begin(), publicKeys.end(), [](std::string &o1,
-                                                       std::string &o2) -> int {
+  static void sortPublicKeys(std::vector<std::string> &publicKeys)
+  {
+    std::sort(publicKeys.begin(), publicKeys.end(), [](std::string &o1, std::string &o2) -> int {
       int o1_label = KeyTypeMethod::getLabel(KeyTypeMethod::fromPubkey(o1));
       int o2_label = KeyTypeMethod::getLabel(KeyTypeMethod::fromPubkey(o2));
-      if (o1_label != o2_label) {
+      if (o1_label != o2_label)
+      {
         return (o1_label > o2_label ? 1 : -1);
       }
       ECC ecc;
       int result;
-      switch (KeyTypeMethod::fromPubkey(o1)) {
+      switch (KeyTypeMethod::fromPubkey(o1))
+      {
       case KeyType::SM2:
         // TODO
         result = o1.compare(o2);
@@ -82,15 +89,18 @@ public:
   }
 
   static std::vector<unsigned char>
-  ProgramFromMultiPubKey(int m, std::vector<std::string> &publicKeys) {
+  ProgramFromMultiPubKey(int m, std::vector<std::string> &publicKeys)
+  {
     int n = (int)publicKeys.size();
-    if (m <= 0 || m > n || n > Common::MULTI_SIG_MAX_PUBKEY_SIZE) {
+    if (m <= 0 || m > n || n > Common::MULTI_SIG_MAX_PUBKEY_SIZE)
+    {
       throw new SDKException(ErrorCode::ParamError);
     }
     ScriptBuilder builder;
     builder.push(m);
     sortPublicKeys(publicKeys);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
       builder.pushHexStr(publicKeys[i]);
     }
     BIGNUM *bn = BN_new();
