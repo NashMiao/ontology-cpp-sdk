@@ -329,25 +329,31 @@ protected:
     }
     res.insert(res.begin(), r_vec.begin() + ri, r_vec.begin() + ri + rl);
     res.insert(res.begin() + rl, s_vec.begin() + si, s_vec.begin() + si + sl);
+    if (res.size() != res_sz)
+    {
+      throw runtime_error("DSADERtoPlain Error");
+    }
     return res;
   }
 
-  std::vector<unsigned char> DSAPlaintoDER(std::vector<unsigned char> sig) throws IOException
+  std::vector<unsigned char> DSAPlaintoDER(std::vector<unsigned char> sig)
   {
     BIGNUM *r = BN_new();
     BIGNUM *s = BN_new();
     std::vector<unsigned char> r_vec;
     r_vec.insert(r_vec.begin(), sig.begin(), sig.begin() + sig.size() / 2);
-    BigInteger r = new BigInteger(1, Arrays.copyOfRange(sig, 0, sig.length / 2));
     std::string r_str = Helper::toHexString(r_vec);
-    BN_hex2bn(r, r_str.c_str());
+    BN_hex2bn(&r, r_str.c_str());
     std::vector<unsigned char> s_vec;
     s_vec.insert(s_vec.begin(), sig.begin() + sig.size() / 2 + 1, sig.end());
-    BigInteger s = new BigInteger(1, Arrays.copyOfRange(sig, sig.length / 2, sig.length));
     std::string s_str = Helper::toHexString(s_vec);
-    BN_hex2bn(s, s_str.c_str());
+    BN_hex2bn(&s, s_str.c_str());
     ECDSA_SIG *ecdsa_sig = ECDSA_SIG_new();
-    ECDSA_SIG_set0(ecdsa_sig,r,s);
+    ECDSA_SIG_set0(ecdsa_sig, r, s);
+    unsigned char *der = new unsigned char[sig.size() * 2];
+    int len = i2d_ECDSA_SIG(ecdsa_sig, &der);
+    std::vector<unsigned char> der_vec(der, der + len);
+    return der_vec;
   }
 
 public:
