@@ -1,6 +1,10 @@
 #ifndef MAKETXWITHOUTWALLETDEMO_H
 #define MAKETXWITHOUTWALLETDEMO_H
 
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
+
 #include "../OntSdk.h"
 #include "../account/Account.h"
 #include "../common/Address.h"

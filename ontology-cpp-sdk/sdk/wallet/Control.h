@@ -1,5 +1,10 @@
 #ifndef CONTROL_H
 #define CONTROL_H
+
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
 #include <iostream>
 #include <unordered_map>

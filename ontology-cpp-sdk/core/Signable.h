@@ -1,6 +1,12 @@
 #ifndef SIGNABLE_H
 #define SIGNABLE_H
 
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
+
+#include <vector>
+
 #include "../account/Account.h"
 #include "../common/Address.h"
 #include "../common/UIntBase.h"
@@ -8,8 +14,6 @@
 #include "../io/BinaryReader.h"
 #include "../io/BinaryWriter.h"
 #include "../io/Serializable.h"
-
-#include <vector>
 
 class Signable : public Serializable
 {

@@ -1,12 +1,18 @@
 #ifndef SCRIPTBUILDER_H
 #define SCRIPTBUILDER_H
 
-#include "../../common/Helper.h"
-#include "ScriptOp.h"
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <algorithm>
 #include <limits>
-#include <openssl/bn.h>
 #include <vector>
+
+#include <openssl/bn.h>
+
+#include "../../common/Helper.h"
+#include "ScriptOp.h"
 
 class ScriptBuilder
 {

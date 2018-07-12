@@ -1,11 +1,15 @@
 #ifndef SERIALIZABLE_H
 #define SERIALIZABLE_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <vector>
+
 #include "../common/Helper.h"
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
-
-#include <vector>
 
 class Serializable
 {

@@ -1,6 +1,10 @@
 #ifndef ATTRIBUTEUSAGE_H
 #define ATTRIBUTEUSAGE_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 enum class AttributeUsage
 {
   Nonce = 0x00,

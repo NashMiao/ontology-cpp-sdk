@@ -1,16 +1,22 @@
 #ifndef NATIVEBUILDPARAMS_H
 #define NATIVEBUILDPARAMS_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <list>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include <boost/any.hpp>
+#include <openssl/bn.h>
+
 #include "../../../common/Address.h"
 #include "../../../core/scripts/ScriptOp.h"
 #include "../../../io/BinaryWriter.h"
 #include "Struct.h"
-#include <boost/any.hpp>
-#include <list>
-#include <openssl/bn.h>
-#include <string>
-#include <typeinfo>
-#include <vector>
 
 class NativeBuildParams
 {

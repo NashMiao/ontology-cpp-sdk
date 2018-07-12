@@ -1,13 +1,18 @@
 #ifndef VM_H
 #define VM_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <string.h>
+#include <vector>
+
 #include "../OntSdk.h"
 #include "../common/Address.h"
 #include "../common/Common.h"
 #include "../common/Helper.h"
 #include "../core/payload/InvokeCodeTransaction.h"
-#include <string.h>
-#include <vector>
 
 class Vm
 {

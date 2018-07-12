@@ -1,10 +1,14 @@
 #ifndef CURVE_H
 #define CURVE_H
 
-#include <openssl/evp.h>
-#include <openssl/obj_mac.h> // for NID_secp192k1
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
 
 #include <string>
+
+#include <openssl/evp.h>
+#include <openssl/obj_mac.h> // for NID_secp192k1
 
 enum class CurveName : int
 {

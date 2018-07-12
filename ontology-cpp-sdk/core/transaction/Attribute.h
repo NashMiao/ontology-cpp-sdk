@@ -1,6 +1,10 @@
 #ifndef ATTRIBUTE_H
 #define ATTRIBUTE_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
 #include <vector>
 

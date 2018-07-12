@@ -1,9 +1,14 @@
 #ifndef ICONNECTOR_H
 #define ICONNECTOR_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <string>
+
 #include "boost/any.hpp"
 #include "nlohmann/json.hpp"
-#include <string>
 
 class IConnector
 {

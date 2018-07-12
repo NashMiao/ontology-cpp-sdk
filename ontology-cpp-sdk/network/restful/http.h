@@ -1,11 +1,16 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
-#include <curl/curl.h>
 #include <iostream>
-#include <nlohmann/json.hpp>
 #include <unordered_map>
+
+#include <curl/curl.h>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 

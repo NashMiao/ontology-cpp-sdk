@@ -1,6 +1,10 @@
 #ifndef BINARYWRITER_H
 #define BINARYWRITER_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <codecvt>
 #include <fstream>
 #include <iostream>
@@ -8,8 +12,6 @@
 #include <string.h>
 #include <string>
 #include <vector>
-
-using namespace std;
 
 std::string myhexStr(unsigned char *data, int len)
 {

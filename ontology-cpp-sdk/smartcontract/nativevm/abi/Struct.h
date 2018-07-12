@@ -1,8 +1,13 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
-#include <boost/any.hpp>
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <list>
+
+#include <boost/any.hpp>
 
 class Struct {
 private:

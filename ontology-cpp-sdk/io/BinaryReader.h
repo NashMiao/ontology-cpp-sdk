@@ -1,12 +1,17 @@
 #ifndef BINARYREADER_H
 #define BINARYREADER_H
 
-#include <boost/algorithm/hex.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+
+#include <boost/algorithm/hex.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 
 #include "../common/ErrorCode.h"
 

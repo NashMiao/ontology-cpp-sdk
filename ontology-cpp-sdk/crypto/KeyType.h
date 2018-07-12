@@ -1,6 +1,10 @@
 #ifndef KEYTYPE_H
 #define KEYTYPE_H
 
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
+
 #include "../common/ErrorCode.h"
 
 #include <exception>

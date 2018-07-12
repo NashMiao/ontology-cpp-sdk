@@ -1,12 +1,16 @@
 #ifndef CONTRACT_H
 #define CONTRACT_H
 
-#include "../../common/Address.h"
-#include "../../io/BinaryReader.h"
-#include "../../io/BinaryWriter.h"
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
 
 #include <string>
 #include <vector>
+
+#include "../../common/Address.h"
+#include "../../io/BinaryReader.h"
+#include "../../io/BinaryWriter.h"
 
 class Contract : public BinaryReader, public BinaryWriter {
 private:

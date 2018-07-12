@@ -1,9 +1,14 @@
 #ifndef RESULT_H
 #define RESULT_H
 
-#include "boost/any.hpp"
-#include <nlohmann/json.hpp>
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
+
+#include <boost/any.hpp>
+#include <nlohmann/json.hpp>
 
 struct struct_result
 {

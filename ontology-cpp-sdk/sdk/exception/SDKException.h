@@ -1,6 +1,10 @@
 #ifndef SDKEXCEPTION_H
 #define SDKEXCEPTION_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <exception>
 #include <string>
 

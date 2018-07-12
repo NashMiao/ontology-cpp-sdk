@@ -1,9 +1,14 @@
 #ifndef STATE_H
 #define STATE_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <nlohmann/json.hpp>
+
 #include "../../common/Address.h"
 #include "../../io/Serializable.h"
-#include <nlohmann/json.hpp>
 
 class State : public Serializable {
 private:

@@ -1,6 +1,10 @@
 #ifndef SIGNATUREHANDLER_H
 #define SIGNATUREHANDLER_H
 
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
+
 #include <memory>
 #include <ostream>
 #include <stdexcept>

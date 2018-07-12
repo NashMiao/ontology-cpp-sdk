@@ -1,15 +1,23 @@
-#include "../../io/BinaryReader.h"
-#include "../../io/BinaryWriter.h"
-#include "../transaction/Transaction.h"
-#include <boost/multiprecision/cpp_int.hpp>
-#include <nlohmann/json.hpp>
+#ifndef BLOCK_H
+#define BLOCK_H
+
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
 #include <vector>
 
-// using namespace boost::multiprecision;
-using namespace std;
+#include <boost/multiprecision/cpp_int.hpp>
+#include <nlohmann/json.hpp>
 
-struct BlockStruct {
+
+#include "../../io/BinaryReader.h"
+#include "../../io/BinaryWriter.h"
+#include "../transaction/Transaction.h"
+
+struct BlockStruct
+{
   int version;
   boost::multiprecision::uint256_t prevBlockHash;
   boost::multiprecision::uint256_t transactionsRoot;
@@ -17,7 +25,7 @@ struct BlockStruct {
   int timestamp;
   int height;
   long long consensusData;
-  vector<unsigned char> consensusPayload;
+  std::vector<unsigned char> consensusPayload;
   // Address nextBookkeeper;
   std::vector<string> sigData;
   // std::vector<std::vector<uint8_t>> bookkeepers;
@@ -25,19 +33,23 @@ struct BlockStruct {
   uint256_t hash;
 };
 
-class Block {
+class Block
+{
 private:
   BlockStruct header;
 
 public:
-  bool isHeader() {
-    if (header.transactions.size() == 0) {
+  bool isHeader()
+  {
+    if (header.transactions.size() == 0)
+    {
       return true;
     }
     return false;
   }
 
-  void deserialize() {
+  void deserialize()
+  {
     std::string result = "00000000c23b936425c51041ac2f69a4950040559baee7aa07ca0"
                          "404863e3bd4b22c07ca"
                          "db08cf2f8ea6ff968dec5ce1c7d61ac0a858e775d30508a4432a1"
@@ -89,14 +101,16 @@ public:
     block["nextBookkeeper"] = nextBookkeeper;
     int len = BinRead.readVarInt();
     std::vector<std::string> bookkeepers;
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++)
+    {
       bookkeepers.push_back(BinRead.readVarBytes());
     }
     block["bookkeepers"] = bookkeepers;
 
     int sigDataLen = BinRead.readVarInt();
     std::vector<std::string> sigData;
-    for (int i = 0; i < sigDataLen; i++) {
+    for (int i = 0; i < sigDataLen; i++)
+    {
       sigData.push_back(BinRead.readVarBytes());
     }
     block["sigData"] = sigData;
@@ -173,3 +187,5 @@ public:
   //         }
   //     }
 };
+
+#endif

@@ -1,10 +1,15 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
-#include "UrlConsts.h"
-#include "http.h"
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
 #include <unordered_map>
+
+#include "UrlConsts.h"
+#include "http.h"
 
 class Interfaces : public UrlConsts, public Http
 {

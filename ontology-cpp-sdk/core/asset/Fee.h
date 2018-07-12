@@ -1,6 +1,10 @@
 #ifndef FEE_H
 #define FEE_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include "../../common/Address.h"
 #include "../../io/BinaryReader.h"
 #include "../../io/BinaryWriter.h"

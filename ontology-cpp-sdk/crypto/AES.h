@@ -1,6 +1,10 @@
 #ifndef AES_H
 #define AES_H
 
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
+
 /* 32 byte key (256 bit key) */
 #define AES_256_KEY_SIZE 32
 /* 16 byte block size (128 bits) */

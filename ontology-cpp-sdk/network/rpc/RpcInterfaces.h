@@ -1,12 +1,17 @@
 #ifndef RPCINTERFACES_H
 #define RPCINTERFACES_H
 
-#include "boost/any.hpp"
-#include <curl/curl.h>
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <map>
 #include <string>
 #include <typeinfo>
 #include <vector>
+
+#include <boost/any.hpp>
+#include <curl/curl.h>
 
 class RpcInterfaces
 {

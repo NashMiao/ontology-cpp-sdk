@@ -54,7 +54,8 @@
         "typeindex": "cpp",
         "list": "cpp",
         "vector": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "map": "cpp"
     },
     "code-runner.executorMap": {
         "c": "cd $dir && clang $fileName -o $fileNameWithoutExt -Wall -g -O2 -static-libgcc -fcolor-diagnostics --target=x86_64-w64-mingw -std=c11 && $dir$fileNameWithoutExt",

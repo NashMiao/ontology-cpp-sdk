@@ -1,12 +1,18 @@
 #ifndef RPCCLIENT_H
 #define RPCCLIENT_H
 
-#include "../../network/connect/IConnector.h"
-#include "RpcInterfaces.h"
-#include "boost/any.hpp"
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <iostream>
 #include <map>
 #include <vector>
+
+#include <boost/any.hpp>
+
+#include "../../network/connect/IConnector.h"
+#include "RpcInterfaces.h"
 
 class RpcClient : public IConnector {
 private:

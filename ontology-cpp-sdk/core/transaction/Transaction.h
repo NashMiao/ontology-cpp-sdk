@@ -1,16 +1,21 @@
 #ifndef TRANSACTION_H
 #define TRANSACTION_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <stdlib.h>
+#include <time.h>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+
 #include "../../core/transaction/Transaction.h"
 #include "../Inventory.h"
 #include "../asset/Sig.h"
 #include "Attribute.h"
 #include "TransactionType.h"
-#include <nlohmann/json.hpp>
-
-#include <stdlib.h>
-#include <time.h>
-#include <vector>
 
 class Transaction : public Inventory
 {
@@ -88,10 +93,7 @@ public:
     return writer.toByteArray();
   }
 
-  void add_sig(const Sig &sig)
-  {
-    sigs.push_back(sig);
-  }
+  void add_sig(const Sig &sig) { sigs.push_back(sig); }
 
   void add_sigs(const std::vector<Sig> &_sigs)
   {

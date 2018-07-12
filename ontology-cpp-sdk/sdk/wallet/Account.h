@@ -1,5 +1,10 @@
 #ifndef WALLET_ACCOUNT_H
 #define WALLET_ACCOUNT_H
+
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <string>
 #include <unordered_map>
 

@@ -1,12 +1,17 @@
 #ifndef CONNECTMGR_H
 #define CONNECTMGR_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
+#include <typeinfo>
+
+#include <boost/any.hpp>
+
 #include "../../network/connect/IConnector.h"
 #include "../../network/rpc/RpcClient.h"
 #include "ConnectType.h"
-#include "boost/any.hpp"
-
-#include <typeinfo>
 
 class ConnectMgr
 {

@@ -1,9 +1,14 @@
 #ifndef DIGEST_H
 #define DIGEST_H
 
+#if __cplusplus < 201103L
+    #error "use --std=c++11 option for compile."
+#endif
+
+#include <vector>
+
 #include <openssl/ripemd.h>
 #include <openssl/sha.h>
-#include <vector>
 
 class Digest
 {

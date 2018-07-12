@@ -1,6 +1,10 @@
 #ifndef INVOKECODE_H
 #define INVOKECODE_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <vector>
 
 #include "../../core/transaction/Transaction.h"
