@@ -275,7 +275,7 @@ public:
     }
   }
 
-  Address getAddressU160() { return addressU160; }
+  Address getAddressU160() const { return addressU160; }
 
   SignatureScheme getSignatureScheme() { return signatureScheme; }
 

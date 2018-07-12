@@ -119,7 +119,7 @@ public:
       std::string recvAddr, long long amount, const Account &payerAcct,
       long long gaslimit, long long gasprice) throw(SDKException)
   {
-    if (sendAccts == null || sendAccts.length <= 1 || payerAcct == null)
+    if (sendAccts.size() <= 1)
     {
       throw new SDKException(
           ErrorCode::ParamErr("parameters should not be null"));
@@ -137,7 +137,7 @@ public:
                      payerAcct.getAddressU160().toBase58(), gaslimit, gasprice);
     for (size_t i = 0; i < sendAccts.size(); i++)
     {
-      sdk.addMultiSign(tx, M, pubKeys, sendAccts[i]);
+      // sdk.addMultiSign(tx, M, pubKeys, sendAccts[i]); TODO
     }
     sdk.addSign(tx, payerAcct);
     std::string ret_str = "";
@@ -148,9 +148,9 @@ public:
     return ret_str;
   }
 
-  InvokeCodeTransaction makeTransfer(std::string sender_str,
-                                     std::string receiver_str, long long amount,
-                                     std::string payer_str, long long gaslimit,
+  InvokeCodeTransaction makeTransfer(const std::string &sender_str,
+                                     const std::string &receiver_str, long long amount,
+                                     const std::string &payer_str, long long gaslimit,
                                      long long gasprice)
   {
     if (sender_str.empty() || receiver_str.empty() || payer_str.empty())

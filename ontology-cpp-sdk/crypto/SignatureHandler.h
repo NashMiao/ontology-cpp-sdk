@@ -8,8 +8,8 @@
 
 #include <openssl/bio.h>
 #include <openssl/conf.h>
-#include <openssl/ec.h>    // for EC_GROUP_new_by_curve_name, EC_GROUP_free, EC_KEY_new, EC_KEY_set_group, EC_KEY_generate_key, EC_KEY_free
-#include <openssl/ecdsa.h> // for ECDSA_do_sign, ECDSA_do_verify
+#include <openssl/ec.h>
+#include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -294,6 +294,40 @@ protected:
     return true;
   }
 
+  std::vector<unsigned char>
+  DSADERtoPlain(const unsigned char *cst_uc_sign_dgst, int slen)
+  {
+    ECDSA_SIG *ecdsa_sig = ECDSA_SIG_new();
+    d2i_ECDSA_SIG(&ecdsa_sig, &cst_uc_sign_dgst, slen);
+    const BIGNUM *pr = BN_new();
+    const BIGNUM *ps = BN_new();
+    ECDSA_SIG_get0(ecdsa_sig, &pr, &ps);
+    std::vector<unsigned char> r_vec;
+    std::vector<unsigned char> s_vec;
+    char *number_str;
+    number_str = BN_bn2hex(pr);
+    r_vec = Helper::hexStringToByte(number_str);
+    size_t ri = (r_vec[0] == 0) ? 1 : 0;
+    size_t rl = r_vec.size() - ri;
+    number_str = BN_bn2hex(ps);
+    s_vec = Helper::hexStringToByte(number_str);
+    size_t si = (s_vec[0] == 0) ? 1 : 0;
+    size_t sl = s_vec.size() - si;
+    std::vector<unsigned char> res;
+    size_t res_sz;
+    if (rl > sl)
+    {
+      res_sz = rl * 2;
+    }
+    else
+    {
+      res_sz = sl * 2;
+    }
+    res.insert(res.begin(), r_vec.begin() + ri, r_vec.begin() + ri + rl);
+    res.insert(res.begin() + rl, s_vec.begin() + si, s_vec.begin() + si + sl);
+    return res;
+  }
+
 public:
   SignatureHandler(KeyType _type, SignatureScheme _scheme, CurveName _curve)
       : keyType(_type), signScheme(_scheme), curveName(_curve)
@@ -320,7 +354,6 @@ public:
     {
       std::cerr << err.what() << std::endl;
     }
-
     BIGNUM *prv = BN_new();
     BN_hex2bn(&prv, privateKey.c_str());
 
@@ -348,11 +381,8 @@ public:
     {
       throw std::runtime_error("EVP_SignFinal() != 1");
     }
-    cout << "slen: " << slen << endl;
-    cout << "EVP_PKEY_size(evp_pkey): " << EVP_PKEY_size(evp_pkey) << endl;
-
-    std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst.get(),
-                                             uc_sign_dgst.get() + slen);
+    std::vector<unsigned char> vec_sign_dgst;
+    vec_sign_dgst = DSADERtoPlain(uc_sign_dgst.get(), slen);
     cout << "Helper::toHexString(vec_sign_dgst):\n"
          << Helper::toHexString(vec_sign_dgst) << endl;
     return vec_sign_dgst;

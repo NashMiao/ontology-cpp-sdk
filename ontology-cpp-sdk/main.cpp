@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 #include <openssl/asn1.h>
 #include <openssl/bio.h>
+#include <openssl/ec.h>
 #include <openssl/kdf.h>
 
 #include "common/Helper.h"
@@ -119,19 +120,6 @@ void sign_by_pri_key()
   SignatureHandler handler(key_type, signature_scheme, curve_name);
   std::vector<unsigned char> vc_signature;
   vc_signature = handler.generateSignature(private_key, uc_msg, "");
-  ASN1_STRING *asn1str = ASN1_STRING_new();
-  ASN1_STRING_set(asn1str, vc_signature.data(), vc_signature.size());
-  BIO *bio;
-  int len;
-  bio = BIO_new(BIO_s_mem());
-  len = ASN1_STRING_print_ex(bio, asn1str, ASN1_STRFLGS_DUMP_DER);
-
-  unique_ptr<unsigned char[]> ptr(new unsigned char[len]);
-  BIO_read(bio, ptr.get(), len);
-  BIO_free(bio);
-  std::vector<unsigned char> plain_sign(ptr.get(), ptr.get() + len);
-  cout << "plain sign:\n"
-       << Helper::toHexString(plain_sign) << endl;
   cout << (handler.verifySignature(public_key, uc_msg, vc_signature)
                ? std::string("True")
                : std::string("False"))

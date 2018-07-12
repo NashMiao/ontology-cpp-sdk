@@ -147,42 +147,28 @@ public:
     tx.add_sigs(_sigs);
   }
 
-  static void addMultiSign(InvokeCodeTransaction &tx, int M,
-                           std::vector<std::string> pubKeys, Account acct)
-      throws(SDKException)
-  {
-    Program::sortPublicKeys(pubKeys);
-    if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE || M > pubKeys.size() ||
-        M <= 0)
-    {
-      throw new SDKException(ErrorCode::ParamError);
-    }
-    for (int i = 0; i < tx.sigs_length(); i++)
-    {
-      if (tx.sigs[i].pubKeys == pubKeys)
-      {
-        if (tx.sigs[i].sigData.length + 1 > pubKeys.length)
-        {
-          throw new SDKException(ErrorCode::ParamErr("too more sigData"));
-        }
-        sigData.push_back(tx.sign(acct, acct.getSignatureScheme(),acct.getCurveName()));
-        tx.sigs[i].sigData = sigData;
-        return tx;
-      }
-    }
-    Sig[] sigs = new Sig[tx.sigs_length() + 1];
-    for (int i = 0; i < tx.sigs_length(); i++)
-    {
-      sigs[i] = tx.sigs[i];
-    }
-    sigs[tx.sigs.length] = new Sig();
-    sigs[tx.sigs.length].M = M;
-    sigs[tx.sigs.length].pubKeys = pubKeys;
-    sigs[tx.sigs.length].sigData = new byte[1][];
-    sigs[tx.sigs.length].sigData[0] = tx.sign(acct, acct.getSignatureScheme());
-
-    tx.sigs = sigs;
-    return tx;
-  }
+  // static void addMultiSign(InvokeCodeTransaction &tx, int M,
+  //                          std::vector<std::string> pubKeys, Account acct)
+  //     throws(SDKException)
+  // {
+  //   Program::sortPublicKeys(pubKeys);
+  //   if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE || M > pubKeys.size() ||
+  //       M <= 0)
+  //   {
+  //     throw new SDKException(ErrorCode::ParamError);
+  //   }
+  //   for (int i = 0; i < tx.sigs_length(); i++)
+  //   {
+  //     if (tx.sigs[i].pubKeys == pubKeys)
+  //     {
+  //       if (tx.sigs[i].sigData_length() + 1 > pubKeys.size())
+  //       {
+  //         throw new SDKException(ErrorCode::ParamErr("too more sigData"));
+  //       }
+  //       sigData.push_back(tx.sign(acct, acct.getSignatureScheme(),acct.getCurveName()));
+  //       tx.add_sig(sigData);
+  //     }
+  //   }
+  // }
 };
 #endif // !ONTSDK_H
