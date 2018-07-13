@@ -60,7 +60,7 @@ public:
       ret = 9;
       break;
     default:
-      throw "SignatureScheme Error!";
+      throw std::runtime_error("SignatureScheme Error!");
       break;
     }
     return ret;

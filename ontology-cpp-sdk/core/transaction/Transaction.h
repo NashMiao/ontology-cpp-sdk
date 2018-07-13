@@ -33,7 +33,7 @@ public:
   Transaction() : Inventory(), version(0) {}
 
   Transaction(TransactionType _txType, unsigned int _version = 0)
-      : Inventory(), version(_version)
+      : Inventory(), txType(_txType), version(_version)
   {
     srand((unsigned)time(NULL));
     // nonce = rand();
@@ -52,7 +52,7 @@ public:
 
   Transaction(TransactionType _txType, long long _gasPrice, long long _gasLimit,
               unsigned int _version = 0)
-      : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit),
+      : Inventory(), gasPrice(_gasPrice), gasLimit(_gasLimit), txType(_txType),
         version(_version)
   {
     srand((unsigned)time(NULL));
@@ -129,7 +129,7 @@ public:
     Result["TxType"] = (int)TransactionTypeMethod::getByte(txType);
     Result["GasPrice"] = gasPrice;
     Result["gasLimit"] = gasLimit;
-    Result["Payer"] = payer.toBase58();
+    // Result["Payer"] = payer.toBase58();
     std::vector<Attribute>::iterator it;
     nlohmann::json attributes_json = nlohmann::json::array();
     for (it = attributes.begin(); it != attributes.end(); it++)

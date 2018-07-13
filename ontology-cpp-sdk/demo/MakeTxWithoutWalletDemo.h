@@ -5,6 +5,8 @@
 #error "use --std=c++11 option for compile."
 #endif
 
+#include <string>
+
 #include "../OntSdk.h"
 #include "../account/Account.h"
 #include "../common/Address.h"
@@ -13,7 +15,6 @@
 #include "../sdk/manager/ConnectMgr.h"
 #include "../smartcontract/nativevm/Ont.h"
 #include "../smartcontract/nativevm/abi/Struct.h"
-#include <string>
 
 class MakeTxWithoutWalletDemo
 {
@@ -120,6 +121,28 @@ class MakeTxWithoutWalletDemo
         try
         {
             obj = connect_mgr.sendRawTransaction(tx.toHexString());
+            std::cout << obj << std::endl;
+        }
+        catch (std::runtime_error &err)
+        {
+            std::cerr << err.what() << std::endl;
+        }
+    }
+
+    void queryBalanceOf()
+    {
+        Address sender;
+        sender = acct0.getAddressU160();
+        Ont ont;
+        InvokeCodeTransaction tx = ont.queryBalanceOf(sender.toBase58());
+        cout << tx.json() << endl;
+        std::string url = "http://localhost:20336";
+        nlohmann::json obj;
+        ConnectMgr connect_mgr(url, ConnectType::RPC);
+        std::cout << "HexTx: " << tx.toHexString() << std::endl;
+        try
+        {
+            obj = connect_mgr.sendRawTransactionPreExec(tx.toHexString());
             std::cout << obj << std::endl;
         }
         catch (std::runtime_error &err)

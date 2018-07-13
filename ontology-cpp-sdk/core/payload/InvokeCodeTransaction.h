@@ -26,6 +26,12 @@ public:
                     _gasPrice = _gasPrice, _gasLimit = _gasLimit),
         code(_code) {}
 
+  InvokeCodeTransaction(const std::vector<unsigned char> &_code,
+                        long long _gasPrice, long long _gasLimit)
+      : Transaction(TransactionType::InvokeCode, _gasPrice = _gasPrice,
+                    _gasLimit = _gasLimit),
+        code(_code) {}
+
   InvokeCodeTransaction operator=(InvokeCodeTransaction tx)
   {
     this->code = tx.code;

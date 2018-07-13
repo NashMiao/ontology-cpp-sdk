@@ -18,13 +18,13 @@ class Address : public UIntBase
 private:
   static constexpr std::size_t zero_size = 20;
   std::vector<unsigned char> ZERO;
-  unsigned char COIN_VERSION;
+  static constexpr unsigned char COIN_VERSION = 0x17;
 
 public:
-  Address() : COIN_VERSION(0x17) { ZERO.reserve(zero_size); }
+  Address() { ZERO.reserve(zero_size); }
 
   Address(const std::vector<unsigned char> &value)
-      : UIntBase(20, value), COIN_VERSION(0x17) {}
+      : UIntBase(20, value) {}
 
   void set_zero(std::string str_zero) { memcpy(&ZERO[0], &str_zero[0], 20); }
 
@@ -34,7 +34,6 @@ public:
     b_data_bytes = b.get_data_bytes();
     this->set_data_bytes(b_data_bytes);
     this->ZERO = b.ZERO;
-    this->COIN_VERSION = b.COIN_VERSION;
     return *this;
   }
 
@@ -206,7 +205,7 @@ public:
     return toScriptHash(Program::ProgramFromMultiPubKey(m, publicKeys));
   }
 
-  Address decodeBase58(std::string address)
+  static Address decodeBase58(std::string address)
   {
     std::vector<unsigned char> data;
     Helper::DecodeBase58(address, data);

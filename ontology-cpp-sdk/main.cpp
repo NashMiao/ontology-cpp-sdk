@@ -108,8 +108,24 @@
 //   xprint(ptr - ret, ret);
 // }
 
-void sign_by_pri_key()
-{
+// serialize to byte array
+std::vector<unsigned char> Account_toBytes(std::vector<unsigned char> value) {
+  std::vector<unsigned char> bytes;
+  bytes.reserve(value.size() + 1);
+  SignatureScheme scheme = SignatureScheme::SHA256withECDSA;
+  bytes.push_back((unsigned char)SignatureSchemeMethod::ordinal(scheme));
+  // if (scheme == SignatureScheme::SM3withSM2)
+  // {
+  //   // adding the ID
+  //   bytes.insert(bytes.end(), sm2_param.begin(), sm2_param.end());
+  //   // padding a 0 as the terminator
+  //   bytes.push_back((unsigned char)0);
+  // }
+  bytes.insert(bytes.end(), value.begin(), value.end());
+  return bytes;
+}
+
+void sign_by_pri_key() {
   CurveName curve_name = CurveName::p256;
   SignatureScheme signature_scheme = SignatureScheme::SHA256withECDSA;
   KeyType key_type = KeyType::ECDSA;
@@ -121,9 +137,20 @@ void sign_by_pri_key()
   cout << "public key: " << public_key << endl;
   std::string msg = "Hello World!";
   std::vector<unsigned char> uc_msg(msg.begin(), msg.end());
+  uc_msg = Digest::sha256(uc_msg);
   SignatureHandler handler(key_type, signature_scheme, curve_name);
   std::vector<unsigned char> vc_signature;
   vc_signature = handler.generateSignature(private_key, uc_msg, "");
+  cout << "Account_toBytes:\n"
+       << Helper::toHexString(Account_toBytes(vc_signature)) << endl;
+  cout << "vc_signature:\n"
+       << Helper::toHexString(vc_signature) << endl;
+  cout << (handler.verifySignature(public_key, uc_msg, vc_signature)
+               ? std::string("True")
+               : std::string("False"))
+       << endl;
+  unsigned char t = '5';
+  uc_msg[5] = t;
   cout << (handler.verifySignature(public_key, uc_msg, vc_signature)
                ? std::string("True")
                : std::string("False"))
@@ -171,13 +198,11 @@ void sign_by_pri_key()
 //   cout << "ret: " << ret << endl;
 // }
 
-std::string hexStr(unsigned char *data, int len)
-{
+std::string hexStr(unsigned char *data, int len) {
   char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
   std::string s(len * 2, ' ');
-  for (int i = 0; i < len; ++i)
-  {
+  for (int i = 0; i < len; ++i) {
     s[2 * i] = hexmap[(data[i] & 0xF0) >> 4];
     s[2 * i + 1] = hexmap[data[i] & 0x0F];
   }
@@ -198,15 +223,13 @@ std::string hexStr(unsigned char *data, int len)
 //   cout << "dec_msg:\n" << dec_msg << endl;
 // }
 
-char *Base64Encode(const char *input, int length, bool with_new_line)
-{
+char *Base64Encode(const char *input, int length, bool with_new_line) {
   BIO *bmem = NULL;
   BIO *b64 = NULL;
   BUF_MEM *bptr = NULL;
 
   b64 = BIO_new(BIO_f_base64());
-  if (!with_new_line)
-  {
+  if (!with_new_line) {
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
   }
   bmem = BIO_new(BIO_s_mem());
@@ -224,16 +247,14 @@ char *Base64Encode(const char *input, int length, bool with_new_line)
   return buff;
 }
 
-char *Base64Decode(char *input, int length, bool with_new_line)
-{
+char *Base64Decode(char *input, int length, bool with_new_line) {
   BIO *b64 = NULL;
   BIO *bmem = NULL;
   char *buffer = (char *)malloc(length);
   memset(buffer, 0, length);
 
   b64 = BIO_new(BIO_f_base64());
-  if (!with_new_line)
-  {
+  if (!with_new_line) {
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
   }
   bmem = BIO_new_mem_buf(input, length);
@@ -245,12 +266,11 @@ char *Base64Decode(char *input, int length, bool with_new_line)
   return buffer;
 }
 
-char *base64(const unsigned char *inputBuffer, int inputLen)
-{
+char *base64(const unsigned char *inputBuffer, int inputLen) {
   EVP_ENCODE_CTX *ctx;
   ctx = EVP_ENCODE_CTX_new();
   int base64Len = (((inputLen + 2) / 3) * 4) + 1; // Base64 text length
-  int pemLen = base64Len + base64Len / 64;        // PEM adds a newline every 64 bytes
+  int pemLen = base64Len + base64Len / 64; // PEM adds a newline every 64 bytes
   char *base64 = new char[pemLen];
   int result;
   EVP_EncodeInit(ctx);
@@ -260,8 +280,7 @@ char *base64(const unsigned char *inputBuffer, int inputLen)
   return base64;
 }
 
-unsigned char *unbase64(char *input, int length, int *outLen)
-{
+unsigned char *unbase64(char *input, int length, int *outLen) {
   EVP_ENCODE_CTX *ctx;
   ctx = EVP_ENCODE_CTX_new();
   int orgLen = (((length + 2) / 4) * 3) + 1;
@@ -276,8 +295,7 @@ unsigned char *unbase64(char *input, int length, int *outLen)
   return orgBuf;
 }
 
-std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
-{
+std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
   int N = n;
   int r = 8;
   int p = 8;
@@ -292,42 +310,33 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   size_t outlen = sizeof(derivedkey);
   pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
 
-  if (EVP_PKEY_derive_init(pctx) <= 0)
-  {
+  if (EVP_PKEY_derive_init(pctx) <= 0) {
     return NULL;
   }
   if (EVP_PKEY_CTX_set1_pbe_pass(pctx, passphrase.c_str(),
-                                 passphrase.length()) <= 0)
-  {
+                                 passphrase.length()) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0)
-  {
+  if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_N(pctx, N) <= 0)
-  {
+  if (EVP_PKEY_CTX_set_scrypt_N(pctx, N) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0)
-  {
+  if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0)
-  {
+  if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0) {
     return NULL;
   }
-  if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0)
-  {
+  if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0) {
     return NULL;
   }
 
   std::string hex_derivedkey;
   hex_derivedkey = hexStr(derivedkey, outlen);
-  cout << hex_derivedkey << endl
-       << hex_derivedkey.length() << endl;
-  if (hex_derivedkey.empty())
-  {
+  cout << hex_derivedkey << endl << hex_derivedkey.length() << endl;
+  if (hex_derivedkey.empty()) {
     return NULL;
   }
 
@@ -343,12 +352,8 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   memcpy(uc_iv, &derivedkey[0], AES_BLOCK_SIZE * sizeof(unsigned char));
   memcpy(uc_key, &derivedkey[32], AES_256_KEY_SIZE * sizeof(unsigned char));
 
-  cout << "uc_iv:\n"
-       << hexStr(uc_iv, 16) << endl
-       << sizeof(uc_iv) << endl;
-  cout << "uc_key:\n"
-       << hexStr(uc_key, 32) << endl
-       << sizeof(uc_key) << endl;
+  cout << "uc_iv:\n" << hexStr(uc_iv, 16) << endl << sizeof(uc_iv) << endl;
+  cout << "uc_key:\n" << hexStr(uc_key, 32) << endl << sizeof(uc_key) << endl;
 
   AES aes;
 
@@ -359,8 +364,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
       0x1d, 0xbb, 0x5d, 0x39, 0x8d, 0xfa, 0x6c, 0x85, 0xaa, 0xad, 0x54,
       0xfc, 0x9d, 0x71, 0x20, 0x3c, 0xe8, 0x3e, 0x50, 0x5c, 0x07};
 
-  cout << "uc_private_key:\n"
-       << hexStr(uc_private_key, 32) << endl;
+  cout << "uc_private_key:\n" << hexStr(uc_private_key, 32) << endl;
   // cout << "uc_private_key:\n"
   //      << uc_private_key << endl
   //      << sizeof(uc_private_key) << endl;
@@ -369,16 +373,13 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   // std::string(reinterpret_cast<char *>(uc_private_key));
   // std::string enc_private_key;
 
-  cout << "aes.get_iv():\n"
-       << hexStr(aes.get_iv(), 16) << endl;
-  cout << "aes.get_key():\n"
-       << hexStr(aes.get_key(), 32) << endl;
+  cout << "aes.get_iv():\n" << hexStr(aes.get_iv(), 16) << endl;
+  cout << "aes.get_key():\n" << hexStr(aes.get_key(), 32) << endl;
 
   int enc_private_key_sz = 32;
   unsigned char *enc_private_key = new unsigned char(enc_private_key_sz);
   aes.auth_encry(uc_private_key, enc_private_key);
-  cout << "enc_private_key:\n"
-       << enc_private_key << endl;
+  cout << "enc_private_key:\n" << enc_private_key << endl;
   string str_enc_private_key;
   // str_enc_private_key = hexStr(enc_private_key, 48);
   // cout << "str_enc_private_key:\n" << str_enc_private_key << endl;
@@ -392,8 +393,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   int o_l;
   unsigned char *uc_tset_key = unbase64(test_key, 45, &o_l);
 
-  cout << "test_key:\n"
-       << unbase64(test_key, 45, &o_l) << endl;
+  cout << "test_key:\n" << unbase64(test_key, 45, &o_l) << endl;
 
   cout << hexStr(enc_private_key, 48) << endl;
   cout << hexStr(uc_tset_key, 48) << endl;
@@ -403,8 +403,7 @@ std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
   return "test";
 }
 
-void bn_write_read()
-{
+void bn_write_read() {
   // std::ofstream outfile;
   // outfile.open("outfile.txt");
   // if (!outfile.is_open()) {
@@ -427,20 +426,17 @@ void bn_write_read()
   cout << value << endl;
 }
 
-void test_Result_ssrst()
-{
+void test_Result_ssrst() {
   Result test_result;
   test_result.result.Action = std::string("action");
   test_result.result.Error = 123456789;
   test_result.result.Desc = std::string("desc");
   test_result.result.Version = std::string("version");
   test_result.result.Result = std::string("result");
-  cout << "test_result.toString():\n"
-       << test_result.toString() << endl;
+  cout << "test_result.toString():\n" << test_result.toString() << endl;
 }
 
-void test_Result_jsrst()
-{
+void test_Result_jsrst() {
   Result test_result;
   test_result.result.Action = std::string("action");
   test_result.result.Error = 123456789;
@@ -450,34 +446,27 @@ void test_Result_jsrst()
   rst["GasPrice"] = 1;
   rst["GasLimit"] = 2;
   test_result.result.Result = std::string(rst.dump());
-  cout << "test_result.toString():\n"
-       << test_result.toString() << endl;
+  cout << "test_result.toString():\n" << test_result.toString() << endl;
 }
 
-void test_http_get()
-{
+void test_http_get() {
   Http http;
   std::string url = "http://jsonplaceholder.typicode.com/posts/1";
   std::string response_body = "";
   CURLcode res;
   res = http.curl_get_body(url, response_body, false);
-  cout << "res:\n"
-       << res << endl;
-  cout << "response_body:\n"
-       << response_body << endl;
+  cout << "res:\n" << res << endl;
+  cout << "response_body:\n" << response_body << endl;
   cout << "-------------------------------------------" << endl;
   url = "http://polaris1.ont.io:20334/api/v1/transaction/"
         "20046da68ef6a91f6959caa798a5ac7660cc80cf4098921bc63604d93208a8ac?raw="
         "1";
   res = http.curl_get_body(url, response_body, false);
-  cout << "res:\n"
-       << res << endl;
-  cout << "response_body:\n"
-       << response_body << endl;
+  cout << "res:\n" << res << endl;
+  cout << "response_body:\n" << response_body << endl;
 }
 
-void test_http_post()
-{
+void test_http_post() {
   Http http;
   std::string url = "http://jsonplaceholder.typicode.com/posts";
 
@@ -488,22 +477,18 @@ void test_http_post()
   std::string str_postParams = json_postParams.dump();
   std::string response_body;
   response_body = http.curl_post_set_body(url, str_postParams, "", false);
-  cout << "response_body:\n"
-       << response_body << endl;
+  cout << "response_body:\n" << response_body << endl;
 }
 
-void test_helper()
-{
+void test_helper() {
   Helper helper;
   std::vector<unsigned char> value;
   std::vector<unsigned char>::const_iterator c_it;
   std::string str = "abcdef";
-  for (unsigned int i = 0; i < str.length(); i++)
-  {
+  for (unsigned int i = 0; i < str.length(); i++) {
     value.push_back(str[i]);
   }
-  for (c_it = value.cbegin(); c_it != value.cend(); c_it++)
-  {
+  for (c_it = value.cbegin(); c_it != value.cend(); c_it++) {
     cout << *c_it;
   }
   cout << endl;
@@ -511,19 +496,15 @@ void test_helper()
   cout << (char)0x61 << endl;
 }
 
-void test_base58()
-{
+void test_base58() {
   std::vector<unsigned char> vchRet;
   std::string str = "TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq";
-  Helper helper;
-  if (helper.DecodeBase58(str, vchRet))
-  {
-    cout << helper.toHexString(vchRet) << endl;
+  if (Helper::DecodeBase58(str, vchRet)) {
+    cout <<Helper::toHexString(vchRet) << endl;
   }
 }
 
-void test_sha256()
-{
+void test_sha256() {
   std::vector<unsigned char> vec{0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9};
   std::vector<unsigned char> result1;
   std::vector<unsigned char> result2;
@@ -532,8 +513,7 @@ void test_sha256()
   cout << endl;
 }
 
-void test_sha256sha256()
-{
+void test_sha256sha256() {
   std::vector<unsigned char> vec{0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9};
   std::vector<unsigned char> result1;
   std::vector<unsigned char> result11;
@@ -546,8 +526,7 @@ void test_sha256sha256()
   cout << endl;
 }
 
-void test_rpc_get()
-{
+void test_rpc_get() {
   std::string url = "http://polaris1.ont.io:20336";
   ConnectMgr connect_mgr(url, ConnectType::RPC);
   int obj;
@@ -561,15 +540,14 @@ void test_rpc_get()
   cout << ret << endl;
 }
 
-void test_MakeTxWithoutWalletDemo()
-{
+void test_MakeTxWithoutWalletDemo() {
   MakeTxWithoutWalletDemo make_tx_without_wallet_demo;
   make_tx_without_wallet_demo.init();
-  make_tx_without_wallet_demo.transer();
+  // make_tx_without_wallet_demo.transer();
+  make_tx_without_wallet_demo.queryBalanceOf();
 }
 
-void try_json_cout()
-{
+void try_json_cout() {
   nlohmann::json j;
   j["method"] = 1;
   j["opt"] = 2;
@@ -578,8 +556,7 @@ void try_json_cout()
   cout << j;
 }
 
-void json_push_back()
-{
+void json_push_back() {
   nlohmann::json j;
   j.push_back("foo");
   j.push_back(1);
@@ -587,8 +564,7 @@ void json_push_back()
   cout << j << endl;
 }
 
-void try_map2json()
-{
+void try_map2json() {
   std::string method = "mymethod";
   std::vector<std::string> params = {"a", "b", "c"};
   std::map<std::string, boost::any> request = {
@@ -601,9 +577,8 @@ void try_map2json()
   // cout << j << endl;
 }
 
-int main()
-{
-  sign_by_pri_key();
+int main() {
+  // sign_by_pri_key();
   // sign_by_set_pub_pri();
   // sign_by_gen_key();
   // aes_enc_dec();

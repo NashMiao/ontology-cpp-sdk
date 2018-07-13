@@ -314,13 +314,6 @@ protected:
     std::vector<unsigned char> res;
     res.insert(res.end(), r_vec.begin(), r_vec.end());
     res.insert(res.end(), s_vec.begin(), s_vec.end());
-
-    std::vector<unsigned char> uc_sign(cst_uc_sign_dgst,
-                                       cst_uc_sign_dgst + slen);
-    cout << "uc_sign: " << Helper::toHexString(uc_sign) << endl;
-    cout << "r_vec: " << Helper::toHexString(r_vec) << endl;
-    cout << "s_vec: " << Helper::toHexString(s_vec) << endl;
-    cout << "res: " << Helper::toHexString(res) << endl;
     return res;
   }
 

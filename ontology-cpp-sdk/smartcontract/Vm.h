@@ -56,7 +56,7 @@ public:
       payer.replace(didont_pos, strlen(Common::didont), "");
     }
     Address payer_address;
-    payer_address = payer_address.decodeBase58(payer);
+    payer_address = Address::decodeBase58(payer);
     InvokeCodeTransaction tx(params, gasprice, gaslimit, payer_address);
     return tx;
   }
@@ -67,22 +67,30 @@ public:
                             long long gasprice)
   {
     string::size_type didont_pos = 0;
-    didont_pos = payer.find(Common::didont);
-    if (didont_pos != std::string::npos)
+    if (payer.length() != 0)
     {
-      payer.replace(didont_pos, strlen(Common::didont), "");
+      didont_pos = payer.find(Common::didont);
+      if (didont_pos != std::string::npos)
+      {
+        payer.replace(didont_pos, strlen(Common::didont), "");
+      }
+      Address payer_address;
+      payer_address = Address::decodeBase58(payer);
+      InvokeCodeTransaction tx(params, gasprice, gaslimit, payer_address);
+      return tx;
     }
-    Address payer_address;
-    payer_address = payer_address.decodeBase58(payer);
-    InvokeCodeTransaction tx(params, gasprice, gaslimit, payer_address);
-    return tx;
+    else
+    {
+      InvokeCodeTransaction tx(params, gasprice, gaslimit);
+      return tx;
+    }
   }
 
   InvokeCodeTransaction buildNativeParams(Address codeAddr,
-                                 std::string initMethod,
-                                 std::vector<unsigned char> args,
-                                 std::string payer, long long gaslimit,
-                                 long long gasprice)
+                                          std::string initMethod,
+                                          std::vector<unsigned char> args,
+                                          std::string payer, long long gaslimit,
+                                          long long gasprice)
   {
     ScriptBuilder builder;
     if (args.size() > 0)

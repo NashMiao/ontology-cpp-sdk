@@ -37,7 +37,7 @@ public:
                                   CurveName curve)
   {
     std::vector<unsigned char> hash_data;
-    hash_data = Digest::hash256(getHashData());
+    hash_data = Digest::hash256(Digest::sha256(getHashData()));
     return account.generateSignature(hash_data);
   }
 

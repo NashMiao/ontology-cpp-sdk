@@ -168,8 +168,8 @@ public:
     }
     Address sender_address;
     Address receiver_address;
-    sender_address = sender_address.decodeBase58(sender_str);
-    receiver_address = receiver_address.decodeBase58(receiver_str);
+    sender_address = Address::decodeBase58(sender_str);
+    receiver_address = Address::decodeBase58(receiver_str);
     std::list<boost::any> any_list{sender_address, receiver_address, amount};
     std::vector<Struct> struct_vec{any_list};
 
@@ -183,6 +183,48 @@ public:
     Vm vm;
     tx = vm.buildNativeParams(ContractAddress, init_method, args, payer_str,
                               gaslimit, gasprice);
+    return tx;
+  }
+
+  long long queryBalanceOf(std::string base58_address)
+  {
+    if (base58_address == "")
+    {
+      throw new SDKException(ErrorCode::ParamErr("address should not be null"));
+    }
+    Address address;
+    address = Address::decodeBase58(base58_address);
+    std::list<boost::any> any_list{address};
+    std::vector<Struct> struct_vec{any_list};
+    std::list<boost::any> structs_list{struct_vec};
+    std::vector<unsigned char> args;
+    NativeBuildParams native_build_params;
+    args = native_build_params.createCodeParamsScript(structs_list);
+
+    Address ContractAddress(Helper::hexToBytes(ontContract));
+    std::string init_method = "balanceOf";
+    InvokeCodeTransaction tx;
+    Vm vm;
+    std::string payer_str = "";
+    long long gaslimit = 0;
+    long long gasprice = 0;
+    tx = vm.buildNativeParams(ContractAddress, init_method, args, payer_str,
+                              gaslimit, gasprice);
+    cout << tx.json() << endl;
+    std::string url = "http://localhost:20336";
+    nlohmann::json obj;
+    sdk.vm()
+    ConnectMgr connect_mgr(url, ConnectType::RPC);
+    std::cout << "HexTx: " << tx.toHexString() << std::endl;
+    try
+    {
+      obj = connect_mgr.sendRawTransactionPreExec(tx.toHexString());
+      std::cout << obj << std::endl;
+    }
+    catch (std::runtime_error &err)
+    {
+      std::cerr << err.what() << std::endl;
+    }
     return tx;
   }
 };
