@@ -51,10 +51,14 @@ public:
     return data3;
   }
 
-  static std::vector<unsigned char> hexStringToByte(const std::string &str) {
+  static std::vector<unsigned char> hexStringToByte(std::string str) {
     size_t str_sz = str.size();
     if (str_sz % 2 != 0) {
       throw std::runtime_error("hexStringToByte error");
+    }
+    if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+      str.assign(str, 2, str.size() - 2);
+      str_sz -= 2;
     }
     std::vector<unsigned char> byte_vec;
     for (size_t i = 0; i < str_sz; i += 2) {
@@ -66,7 +70,7 @@ public:
       } else if ('0' <= str[i] && str[i] <= '9') {
         uch = ((str[i] - '0') << 4) & 0xF0;
       } else {
-        throw "unsigned char isn't hex!";
+        throw std::runtime_error("string isn't hexString.");
       }
       unsigned char ucl;
       if ('a' <= str[i + 1] && str[i + 1] <= 'z') {
@@ -76,7 +80,7 @@ public:
       } else if ('0' <= str[i + 1] && str[i + 1] <= '9') {
         ucl = (str[i + 1] - '0') & 0x0F;
       } else {
-        throw "unsigned char isn't hex!";
+        throw std::runtime_error("string isn't hexString.");
       }
       unsigned char uc = uch | ucl;
       byte_vec.push_back(uc);

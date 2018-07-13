@@ -47,9 +47,6 @@ public:
     ScriptBuilder builder;
     builder.push(vec_pubkey);
     builder.add(ScriptOp::OP_CHECKSIG);
-    cout << "!!!!\n"
-         << Helper::toHexString(builder.toArray()) << endl;
-
     return builder.toArray();
   }
 

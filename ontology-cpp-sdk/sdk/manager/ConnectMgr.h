@@ -44,9 +44,9 @@ public:
 
   nlohmann::json sendRawTransactionPreExec(const std::string &hexData)
   {
-    nlohmann::json any_ret;
-    any_ret = connector->sendRawTransaction(true, "", hexData);
-    return any_ret;
+    nlohmann::json json_response;
+    json_response = connector->sendRawTransaction(true, "", hexData);
+    return json_response;
   }
 
   bool sendRawTransaction(const std::string &hexData)
@@ -115,7 +115,8 @@ public:
     return storage;
   }
 
-  std::string getAllowance(const std::string &asset, const std::string &from, const std::string &to)
+  std::string getAllowance(const std::string &asset, const std::string &from,
+                           const std::string &to)
   {
     std::string allowance;
     allowance = connector->getAllowance(asset, from, to);

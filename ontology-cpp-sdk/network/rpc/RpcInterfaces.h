@@ -192,14 +192,14 @@ private:
       res = curl_easy_perform(curl);
       if (res != CURLE_OK)
       {
-        std::string err_str = "curl_easy_perform() failed: ";
-        err_str.append(curl_easy_strerror(res));
-        throw err_str;
+        std::string err = "curl_easy_perform() failed: ";
+        err.append(curl_easy_strerror(res));
+        throw std::runtime_error(err);
       }
     }
     else
     {
-      throw "curl_easy_init() failed.";
+      throw std::runtime_error("curl_easy_init() failed.");
     }
     std::string response_body;
     response_body =
@@ -285,6 +285,7 @@ public:
   {
     std::string response_body;
     response_body = curl_post_set_body(url, "", request, is_https);
+
     nlohmann::json ret_json;
     try
     {

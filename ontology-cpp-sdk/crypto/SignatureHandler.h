@@ -308,50 +308,45 @@ protected:
     ECDSA_SIG_get0(ecdsa_sig, &pr, &ps);
     std::vector<unsigned char> r_vec;
     std::vector<unsigned char> s_vec;
-    char *number_str;
-    number_str = BN_bn2hex(pr);
-    r_vec = Helper::hexStringToByte(number_str);
-    size_t ri = (r_vec[0] == 0) ? 1 : 0;
-    size_t rl = r_vec.size() - ri;
-    number_str = BN_bn2hex(ps);
-    s_vec = Helper::hexStringToByte(number_str);
-    size_t si = (s_vec[0] == 0) ? 1 : 0;
-    size_t sl = s_vec.size() - si;
+    r_vec = Helper::hexStringToByte(BN_bn2hex(pr));
+    s_vec = Helper::hexStringToByte(BN_bn2hex(ps));
+    ECDSA_SIG_free(ecdsa_sig);
     std::vector<unsigned char> res;
-    size_t res_sz;
-    if (rl > sl)
-    {
-      res_sz = rl * 2;
-    }
-    else
-    {
-      res_sz = sl * 2;
-    }
-    res.insert(res.begin(), r_vec.begin() + ri, r_vec.begin() + ri + rl);
-    res.insert(res.begin() + rl, s_vec.begin() + si, s_vec.begin() + si + sl);
-    if (res.size() != res_sz)
-    {
-      throw runtime_error("DSADERtoPlain Error");
-    }
+    res.insert(res.end(), r_vec.begin(), r_vec.end());
+    res.insert(res.end(), s_vec.begin(), s_vec.end());
+
+    std::vector<unsigned char> uc_sign(cst_uc_sign_dgst,
+                                       cst_uc_sign_dgst + slen);
+    cout << "uc_sign: " << Helper::toHexString(uc_sign) << endl;
+    cout << "r_vec: " << Helper::toHexString(r_vec) << endl;
+    cout << "s_vec: " << Helper::toHexString(s_vec) << endl;
+    cout << "res: " << Helper::toHexString(res) << endl;
     return res;
   }
 
-  std::vector<unsigned char> DSAPlaintoDER(std::vector<unsigned char> sig)
+  std::vector<unsigned char>
+  DSAPlaintoDER(const std::vector<unsigned char> &sig)
   {
     BIGNUM *r = BN_new();
     BIGNUM *s = BN_new();
     std::vector<unsigned char> r_vec;
-    r_vec.insert(r_vec.begin(), sig.begin(), sig.begin() + sig.size() / 2);
+    r_vec.insert(r_vec.end(), sig.begin(), sig.begin() + sig.size() / 2);
     std::string r_str = Helper::toHexString(r_vec);
+    r_str.assign(r_str, 2, r_str.size() - 2);
     BN_hex2bn(&r, r_str.c_str());
     std::vector<unsigned char> s_vec;
-    s_vec.insert(s_vec.begin(), sig.begin() + sig.size() / 2 + 1, sig.end());
+    s_vec.insert(s_vec.end(), sig.begin() + sig.size() / 2, sig.end());
     std::string s_str = Helper::toHexString(s_vec);
+    s_str.assign(s_str, 2, s_str.size() - 2);
     BN_hex2bn(&s, s_str.c_str());
     ECDSA_SIG *ecdsa_sig = ECDSA_SIG_new();
-    ECDSA_SIG_set0(ecdsa_sig, r, s);
+    if (!ECDSA_SIG_set0(ecdsa_sig, r, s))
+    {
+      throw runtime_error("ECDSA_SIG_set0() failure");
+    }
     unsigned char *der = new unsigned char[sig.size() * 2];
     int len = i2d_ECDSA_SIG(ecdsa_sig, &der);
+    ECDSA_SIG_free(ecdsa_sig);
     std::vector<unsigned char> der_vec(der, der + len);
     return der_vec;
   }
@@ -374,19 +369,9 @@ public:
                     const std::vector<unsigned char> &msg,
                     const std::string &sm2_param)
   {
-    try
-    {
-      md_ctx_sign_init();
-    }
-    catch (const std::runtime_error &err)
-    {
-      std::cerr << err.what() << std::endl;
-    }
     BIGNUM *prv = BN_new();
     BN_hex2bn(&prv, privateKey.c_str());
-
-    EC_KEY *ec_key;
-    ec_key =
+    EC_KEY *ec_key =
         EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
     if (ec_key == NULL)
     {
@@ -394,26 +379,20 @@ public:
     }
     EC_KEY_set_private_key(ec_key, prv);
 
-    if (EVP_SignUpdate(md_ctx, msg.data(), msg.size()) != 1)
-    {
-      throw std::runtime_error("EVP_SignUpdate() failed.");
-    }
+    ECDSA_SIG *ecdsa_sig = ECDSA_SIG_new();
+    ecdsa_sig = ECDSA_do_sign(msg.data(), msg.size(), ec_key);
+    const BIGNUM *pr = BN_new();
+    const BIGNUM *ps = BN_new();
+    ECDSA_SIG_get0(ecdsa_sig, &pr, &ps);
 
-    EVP_PKEY *evp_pkey = EVP_PKEY_new();
-    EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
-
-    unsigned int slen = 0;
-    std::unique_ptr<unsigned char[]> uc_sign_dgst(
-        new unsigned char[EVP_PKEY_size(evp_pkey)]);
-    if (EVP_SignFinal(md_ctx, uc_sign_dgst.get(), &slen, evp_pkey) != 1)
-    {
-      throw std::runtime_error("EVP_SignFinal() != 1");
-    }
-    std::vector<unsigned char> vec_sign_dgst;
-    vec_sign_dgst = DSADERtoPlain(uc_sign_dgst.get(), slen);
-    cout << "Helper::toHexString(vec_sign_dgst):\n"
-         << Helper::toHexString(vec_sign_dgst) << endl;
-    return vec_sign_dgst;
+    std::vector<unsigned char> r_vec;
+    std::vector<unsigned char> s_vec;
+    r_vec = Helper::hexStringToByte(BN_bn2hex(pr));
+    s_vec = Helper::hexStringToByte(BN_bn2hex(ps));
+    std::vector<unsigned char> vec;
+    vec.insert(vec.end(), r_vec.begin(), r_vec.end());
+    vec.insert(vec.end(), s_vec.begin(), s_vec.end());
+    return vec;
   }
 
   std::vector<unsigned char>
@@ -441,9 +420,7 @@ public:
     {
       std::cerr << err.what() << std::endl;
     }
-
-    std::string str_msg(msg.begin(), msg.end());
-    if (EVP_SignUpdate(md_ctx, msg.data(), str_msg.length()) != 1)
+    if (EVP_SignUpdate(md_ctx, msg.data(), msg.size()) != 1)
     {
       throw std::runtime_error("EVP_SignUpdate() != 1");
     }
@@ -458,11 +435,8 @@ public:
     {
       throw std::runtime_error("EVP_SignFinal() != 1");
     }
-    cout << "slen: " << slen << endl;
-    cout << "EVP_PKEY_size(evp_pkey): " << EVP_PKEY_size(evp_pkey) << endl;
-
-    std::vector<unsigned char> vec_sign_dgst(uc_sign_dgst.get(),
-                                             uc_sign_dgst.get() + slen);
+    std::vector<unsigned char> vec_sign_dgst;
+    vec_sign_dgst = DSADERtoPlain(uc_sign_dgst.get(), slen);
     return vec_sign_dgst;
   }
 
@@ -470,19 +444,6 @@ public:
                        const std::vector<unsigned char> &msg,
                        const std::vector<unsigned char> &sign_dgst_vec)
   {
-    try
-    {
-      md_ctx_veri_init();
-    }
-    catch (const std::runtime_error &err)
-    {
-      std::cerr << err.what() << std::endl;
-    }
-
-    if (EVP_VerifyUpdate(md_ctx, msg.data(), msg.size()) != 1)
-    {
-      throw std::runtime_error("EVP_VerifyUpdate() != 1");
-    }
     EC_GROUP *group;
     group =
         EC_GROUP_new_by_curve_name(CurveNameMethod::get_curve_nid(curveName));
@@ -503,12 +464,26 @@ public:
     }
     EC_KEY_set_public_key(ec_key, pub);
 
-    EVP_PKEY *evp_pkey = EVP_PKEY_new();
-    EVP_PKEY_assign_EC_KEY(evp_pkey, ec_key);
+    BIGNUM *r = BN_new();
+    BIGNUM *s = BN_new();
 
-    int ret;
-    ret = EVP_VerifyFinal(md_ctx, sign_dgst_vec.data(), sign_dgst_vec.size(),
-                          evp_pkey);
+    std::vector<unsigned char> r_vec;
+    r_vec.insert(r_vec.end(), sign_dgst_vec.begin(),
+                 sign_dgst_vec.begin() + sign_dgst_vec.size() / 2);
+    std::string r_str = Helper::toHexString(r_vec);
+    r_str.assign(r_str, 2, r_str.size() - 2);
+    BN_hex2bn(&r, r_str.c_str());
+
+    std::vector<unsigned char> s_vec;
+    s_vec.insert(s_vec.end(), sign_dgst_vec.begin() + sign_dgst_vec.size() / 2,
+                 sign_dgst_vec.end());
+    std::string s_str = Helper::toHexString(s_vec);
+    s_str.assign(s_str, 2, s_str.size() - 2);
+    BN_hex2bn(&s, s_str.c_str());
+
+    ECDSA_SIG *ecdsa_sig2 = ECDSA_SIG_new();
+    ECDSA_SIG_set0(ecdsa_sig2, r, s);
+    int ret = ECDSA_do_verify(msg.data(), msg.size(), ecdsa_sig2, ec_key);
     if (ret != 1)
     {
       return false;
