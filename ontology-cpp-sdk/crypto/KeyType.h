@@ -90,7 +90,7 @@ class KeyTypeMethod
             label = 0x14;
             break;
         default:
-            throw runtime_error("getLabel Unsupport type");
+            throw std::runtime_error("getLabel Unsupport type");
             break;
         }
         return label;

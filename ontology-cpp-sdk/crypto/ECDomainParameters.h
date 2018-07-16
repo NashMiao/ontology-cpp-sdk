@@ -72,11 +72,11 @@ class ECDomainParameters
         BIGNUM *b_y = BN_new();
         if (!EC_POINT_get_affine_coordinates_GFp(group, a, a_x, a_y, NULL))
         {
-            throw new runtime_error("EC_POINT_get_affine_coordinates_GFp failed.");
+            throw new std::runtime_error("EC_POINT_get_affine_coordinates_GFp failed.");
         }
         if (!EC_POINT_get_affine_coordinates_GFp(group, b, b_x, b_y, NULL))
         {
-            throw new runtime_error("EC_POINT_get_affine_coordinates_GFp failed.");
+            throw new std::runtime_error("EC_POINT_get_affine_coordinates_GFp failed.");
         }
         EC_GROUP_free(group);
         result = BN_cmp(a_x, b_x);

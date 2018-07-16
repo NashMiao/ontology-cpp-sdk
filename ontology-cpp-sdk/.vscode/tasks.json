@@ -10,6 +10,7 @@
             "-g",
             "${workspaceRoot}/main.cpp",
             "${workspaceRoot}/crypto/AES.cpp",
+             "${workspaceRoot}/OntSdk.cpp",
             "-I/usr/local/include",
             "-L/usr/local/lib",
             "-lssl", 

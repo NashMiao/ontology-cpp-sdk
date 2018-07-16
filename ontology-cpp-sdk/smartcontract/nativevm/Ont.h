@@ -213,7 +213,7 @@ public:
     cout << tx.json() << endl;
     std::string url = "http://localhost:20336";
     nlohmann::json obj;
-    sdk.vm()
+    sdk.getVm();
     ConnectMgr connect_mgr(url, ConnectType::RPC);
     std::cout << "HexTx: " << tx.toHexString() << std::endl;
     try

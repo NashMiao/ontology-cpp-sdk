@@ -12,6 +12,34 @@ Vm *OntSdk::getVm()
 
 void OntSdk::setDefaultConnect(ConnectMgr connect) { connectDefault = connect; }
 
+void OntSdk::setConnectTestNet()
+{
+    try
+    {
+        std::string rpcUrl = "http://polaris1.ont.io";
+        setRpc(rpcUrl);
+        connDefault = getRpc();
+    }
+    catch (SDKException &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void OntSdk::setConnectMainNet()
+{
+    try
+    {
+        std::string rpcUrl = "http://dappnode1.ont.io";
+        setRpc(rpcUrl);
+        connDefault = getRpc();
+    }
+    catch (SDKException &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
 ConnectMgr OntSdk::getWebSocket()
 {
     if (&connectWebSocket == NULL)
@@ -19,6 +47,22 @@ ConnectMgr OntSdk::getWebSocket()
         throw new SDKException(ErrorCode::WebsocketNotInit);
     }
     return connectWebSocket;
+}
+ConnectMgr OntSdk::getRpc() throw SDKException
+{
+    if (&connectRpc == NULL)
+    {
+        throw new SDKException(ErrorCode::ConnRestfulNotInit);
+    }
+    return connRpc;
+}
+ConnectMgr OntSdk::getRestful() throw SDKException
+{
+    if (&connectRestful == NULL)
+    {
+        throw new SDKException(ErrorCode::ConnRestfulNotInit);
+    }
+    return connRestful;
 }
 
 ConnectMgr OntSdk::getConnect()
@@ -81,8 +125,7 @@ void OntSdk::addSign(InvokeCodeTransaction &tx, const Account &acct)
     }
     int m = 1;
     std::string pub_key = acct.serializePublicKey_str();
-    std::string sig_data =
-        tx.sign_str(acct, defaultSignScheme, defaultCurveName);
+    std::string sig_data = tx.sign_str(acct, defaultSignScheme, defaultCurveName);
     Sig sig_item(pub_key, m, sig_data);
     tx.add_sig(sig_item);
 }

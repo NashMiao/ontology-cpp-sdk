@@ -69,6 +69,19 @@ class OntDemo
     }
 
   public:
+    OntSdk getOntSdk()
+    {
+        std::string ip = "http://127.0.0.1";
+        // std::string ip = "http://139.219.129.55";
+        // std::string ip = "http://101.132.193.149";
+        std::string restUrl = ip + ":" + "20334";
+        std::string rpcUrl = ip + ":" + "20336";
+        std::string wsUrl = ip + ":" + "20335";
+        OntSdk wm;
+        wm.setRpc(rpcUrl);
+        wm.setDefaultConnect(wm.getRpc());
+        retrun wm;
+    }
 };
 
 #endif
