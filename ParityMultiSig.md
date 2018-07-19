@@ -16,10 +16,6 @@ Parity的助记词只能逐一输入，体验不佳。对比来看，ONTO的助�
 
 ![Alt text](/img/Parity_UI/parity_owner_recovery_phrase.png)
 
-### 智能合约编译器
-
-在使用时，Parity提供的智能合约编译器在Kovan测试网中一直无法加载出来。
-
 ## 多重签名
 
 Parity的多重签名基于智能合约`Wallet.sol`实现。
@@ -96,6 +92,8 @@ function today()
 
 ![Alt text](img/Parity_UI/parity_multisig_wallet.png)
 
+在实际部署时，`Parity UI`中提供的智能合约编译器在`Kovan`测试网中一直无法加载出来，故最终使用了[Remix](https://remix.ethereum.org/)进行智能合约的编译。
+
 ![Alt text](img/Parity_UI/multisig_deploy_1.png)
 
 ![Alt text](img/Parity_UI/multisig_deploy_2.png)
@@ -109,3 +107,6 @@ function today()
 ![Alt text](img/Parity_UI/multisig_deploy_6.png)
 
 ![Alt text](img/Parity_UI/multisig_deploy_7.png)
+
+### 多签钱包的使用
+
