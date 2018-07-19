@@ -82,7 +82,7 @@ function underLimit(uint _value)
 function today()
 ```
 
-- `function daylimit(uint _limit)`：
+- `function daylimit(uint _limit)`：检查今天是否还有可用花费。
 - `function setDailyLimit(uint _newLimit)`：设置每日花费限额（需要多重签名使其生效）。
 - `function resetSpentToday()`：重置今天已经产生的花费（需要多重签名使其生效）。
 - `function underLimit(uint _value)`：
@@ -108,5 +108,24 @@ function today()
 
 ![Alt text](img/Parity_UI/multisig_deploy_7.png)
 
+![Alt text](img/Parity_UI/multisig_deploy_8.png)
+
 ### 多签钱包的使用
+
+#### getOwner与isOwner的使用
+
+![Alt text](img/Parity_UI/get_owner_and_is_owner.png)
+
+#### setDailyLimit
+
+![Alt text](img/Parity_UI/set_daily_limit_1.png)
+
+![Alt text](img/Parity_UI/set_daily_limit_2.png)
+
+![Alt text](img/Parity_UI/set_daily_limit_3.png)
+
+![Alt text](img/Parity_UI/set_daily_limit_4.png)
+
+![Alt text](img/Parity_UI/set_daily_limit_5.png)
+
 
