@@ -37,3 +37,21 @@
 ![Alt text](img/Gnosis/Deposit_3.png)
 
 ![Alt text](img/Gnosis/Deposit_4.png)
+
+#### 从多签钱包中转出
+
+![Alt text](img/Gnosis/withdraw_0.png)
+
+![Alt text](img/Gnosis/withdraw_1.png)
+
+![Alt text](img/Gnosis/withdraw_2.png)
+
+![Alt text](img/Gnosis/withdraw_3.png)
+
+![Alt text](img/Gnosis/withdraw_4.png)
+
+![Alt text](img/Gnosis/withdraw_5.png)
+
+![Alt text](img/Gnosis/withdraw_6.png)
+
+![Alt text](img/Gnosis/withdraw_7.png)
