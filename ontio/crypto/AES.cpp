@@ -229,8 +229,6 @@ std::vector<unsigned char> AES::encrypt(const std::vector<unsigned char> &msg,
     EVP_CIPHER_CTX_cleanup(ctx);
     throw std::runtime_error("EVP_EncryptFinal_ex() fail");
   }
+  std::vector<unsigned char> vec;
+  return vec;
 }
-
-std::vector<unsigned char> AES::encrypt(const std::vector<unsigned char> &msg,
-                                        const std::vector<unsigned char> &key,
-                                        const std::vector<unsigned char> &iv)
