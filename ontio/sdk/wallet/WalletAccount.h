@@ -6,16 +6,18 @@
 #endif
 
 #include <string>
-#include <unordered_map>
 
-class WalletAccount {
+#include <nlohmann/json.hpp>
+
+class WalletAccount
+{
 public:
   std::string label;
   std::string address;
   bool isDefault;
   bool lock;
   std::string algorithm;
-  std::unordered_map<int, int> parameters;
+  nlohmann::json parameters;
   std::string key;
   // @JSONField(name = "enc-alg")
   std::string encAlg;
@@ -23,7 +25,8 @@ public:
   std::string signatureScheme;
   std::string passwordHash;
   // Object extra = null;
-  WalletAccount() {
+  WalletAccount()
+  {
     label = "";
     address = "";
     isDefault = false;
@@ -31,7 +34,6 @@ public:
     algorithm = "";
     //    parameters = new HashMap();
     key = "";
-    // @JSONField(name = "enc-alg")
     encAlg = "aes-256-ctr";
     hash = "sha256";
     signatureScheme = "SHA256withECDSA";
