@@ -135,186 +135,198 @@ public:
     return str;
   }
 
-  static std::vector<unsigned char> hexToBytes(std::string value) {
-    std::vector<unsigned char> ret_vec;
-    if (value.empty()) {
-      return ret_vec;
+  static std::string toHexString(unsigned char *data, int len) {
+    char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    std::string s(len * 2, ' ');
+    for (int i = 0; i < len; ++i) {
+      s[2 * i] = hexmap[(data[i] & 0xF0) >> 4];
+      s[2 * i + 1] = hexmap[data[i] & 0x0F];
     }
-    int len = value.length();
-    if (len % 2 == 1) {
-      throw "IllegalArgumentException";
-    }
-    size_t i = 0;
-    while (i < value.size()) {
-      i += 2;
-      value.insert(i, 1, ' ');
-      i += 1;
-    }
-    std::istringstream hex_chars_stream(value);
-    unsigned int c;
-    while (hex_chars_stream >> std::hex >> c) {
-      ret_vec.push_back(c);
-    }
+    return s;
+  }
+}
+
+static std::vector<unsigned char>
+hexToBytes(std::string value) {
+  std::vector<unsigned char> ret_vec;
+  if (value.empty()) {
     return ret_vec;
   }
-
-  static std::vector<unsigned char> BigInt2Bytes(BIGNUM *bn) {
-    std::vector<unsigned char> ret_vec;
-    if (BN_is_zero(bn)) {
-      return ret_vec;
-    }
+  int len = value.length();
+  if (len % 2 == 1) {
+    throw "IllegalArgumentException";
   }
+  size_t i = 0;
+  while (i < value.size()) {
+    i += 2;
+    value.insert(i, 1, ' ');
+    i += 1;
+  }
+  std::istringstream hex_chars_stream(value);
+  unsigned int c;
+  while (hex_chars_stream >> std::hex >> c) {
+    ret_vec.push_back(c);
+  }
+  return ret_vec;
+}
 
-  static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {
-    // Skip leading spaces.
-    while (*psz && isspace(*psz))
-      psz++;
-    // Skip and count leading '1's.
-    int zeroes = 0;
-    int length = 0;
-    while (*psz == '1') {
-      zeroes++;
-      psz++;
-    }
-    // Allocate enough space in big-endian base256 representation.
-    int size = strlen(psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
-    std::vector<unsigned char> b256(size);
-    // Process the characters.
-    static_assert(
-        sizeof(mapBase58) / sizeof(mapBase58[0]) == 256,
-        "mapBase58.size() should be 256"); // guarantee not out of range
-    while (*psz && !isspace(*psz)) {
-      // Decode base58 character
-      int carry = mapBase58[(uint8_t)*psz];
-      if (carry == -1) // Invalid b58 character
-        return false;
-      int i = 0;
-      for (std::vector<unsigned char>::reverse_iterator it = b256.rbegin();
-           (carry != 0 || i < length) && (it != b256.rend()); ++it, ++i) {
-        carry += 58 * (*it);
-        *it = carry % 256;
-        carry /= 256;
-      }
-      assert(carry == 0);
-      length = i;
-      psz++;
-    }
-    // Skip trailing spaces.
-    while (isspace(*psz))
-      psz++;
-    if (*psz != 0)
+static std::vector<unsigned char> BigInt2Bytes(BIGNUM *bn) {
+  std::vector<unsigned char> ret_vec;
+  if (BN_is_zero(bn)) {
+    return ret_vec;
+  }
+}
+
+static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {
+  // Skip leading spaces.
+  while (*psz && isspace(*psz))
+    psz++;
+  // Skip and count leading '1's.
+  int zeroes = 0;
+  int length = 0;
+  while (*psz == '1') {
+    zeroes++;
+    psz++;
+  }
+  // Allocate enough space in big-endian base256 representation.
+  int size = strlen(psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
+  std::vector<unsigned char> b256(size);
+  // Process the characters.
+  static_assert(sizeof(mapBase58) / sizeof(mapBase58[0]) == 256,
+                "mapBase58.size() should be 256"); // guarantee not out of range
+  while (*psz && !isspace(*psz)) {
+    // Decode base58 character
+    int carry = mapBase58[(uint8_t)*psz];
+    if (carry == -1) // Invalid b58 character
       return false;
-    // Skip leading zeroes in b256.
-    std::vector<unsigned char>::iterator it = b256.begin() + (size - length);
-    while (it != b256.end() && *it == 0)
-      it++;
-    // Copy result into output vector.
-    vch.reserve(zeroes + (b256.end() - it));
-    vch.assign(zeroes, 0x00);
-    while (it != b256.end())
-      vch.push_back(*(it++));
-    return true;
-  }
-
-  static std::string EncodeBase58(const unsigned char *pbegin,
-                                  const unsigned char *pend) {
-    // Skip & count leading zeroes.
-    int zeroes = 0;
-    int length = 0;
-    while (pbegin != pend && *pbegin == 0) {
-      pbegin++;
-      zeroes++;
+    int i = 0;
+    for (std::vector<unsigned char>::reverse_iterator it = b256.rbegin();
+         (carry != 0 || i < length) && (it != b256.rend()); ++it, ++i) {
+      carry += 58 * (*it);
+      *it = carry % 256;
+      carry /= 256;
     }
-    // Allocate enough space in big-endian base58 representation.
-    int size =
-        (pend - pbegin) * 138 / 100 + 1; // log(256) / log(58), rounded up.
-    std::vector<unsigned char> b58(size);
-    // Process the bytes.
-    while (pbegin != pend) {
-      int carry = *pbegin;
-      int i = 0;
-      // Apply "b58 = b58 * 256 + ch".
-      for (std::vector<unsigned char>::reverse_iterator it = b58.rbegin();
-           (carry != 0 || i < length) && (it != b58.rend()); it++, i++) {
-        carry += 256 * (*it);
-        *it = carry % 58;
-        carry /= 58;
-      }
+    assert(carry == 0);
+    length = i;
+    psz++;
+  }
+  // Skip trailing spaces.
+  while (isspace(*psz))
+    psz++;
+  if (*psz != 0)
+    return false;
+  // Skip leading zeroes in b256.
+  std::vector<unsigned char>::iterator it = b256.begin() + (size - length);
+  while (it != b256.end() && *it == 0)
+    it++;
+  // Copy result into output vector.
+  vch.reserve(zeroes + (b256.end() - it));
+  vch.assign(zeroes, 0x00);
+  while (it != b256.end())
+    vch.push_back(*(it++));
+  return true;
+}
 
-      assert(carry == 0);
-      length = i;
-      pbegin++;
+static std::string EncodeBase58(const unsigned char *pbegin,
+                                const unsigned char *pend) {
+  // Skip & count leading zeroes.
+  int zeroes = 0;
+  int length = 0;
+  while (pbegin != pend && *pbegin == 0) {
+    pbegin++;
+    zeroes++;
+  }
+  // Allocate enough space in big-endian base58 representation.
+  int size = (pend - pbegin) * 138 / 100 + 1; // log(256) / log(58), rounded up.
+  std::vector<unsigned char> b58(size);
+  // Process the bytes.
+  while (pbegin != pend) {
+    int carry = *pbegin;
+    int i = 0;
+    // Apply "b58 = b58 * 256 + ch".
+    for (std::vector<unsigned char>::reverse_iterator it = b58.rbegin();
+         (carry != 0 || i < length) && (it != b58.rend()); it++, i++) {
+      carry += 256 * (*it);
+      *it = carry % 58;
+      carry /= 58;
     }
-    // Skip leading zeroes in base58 result.
-    std::vector<unsigned char>::iterator it = b58.begin() + (size - length);
-    while (it != b58.end() && *it == 0)
-      it++;
-    // Translate the result into a string.
-    std::string str;
-    str.reserve(zeroes + (b58.end() - it));
-    str.assign(zeroes, '1');
-    while (it != b58.end())
-      str += pszBase58[*(it++)];
-    return str;
-  }
 
-  static std::string EncodeBase58(const std::vector<unsigned char> &vch) {
-    return EncodeBase58(vch.data(), vch.data() + vch.size());
+    assert(carry == 0);
+    length = i;
+    pbegin++;
   }
+  // Skip leading zeroes in base58 result.
+  std::vector<unsigned char>::iterator it = b58.begin() + (size - length);
+  while (it != b58.end() && *it == 0)
+    it++;
+  // Translate the result into a string.
+  std::string str;
+  str.reserve(zeroes + (b58.end() - it));
+  str.assign(zeroes, '1');
+  while (it != b58.end())
+    str += pszBase58[*(it++)];
+  return str;
+}
 
-  static bool DecodeBase58(const std::string &str,
-                           std::vector<unsigned char> &vchRet) {
-    return DecodeBase58(str.c_str(), vchRet);
+static std::string EncodeBase58(const std::vector<unsigned char> &vch) {
+  return EncodeBase58(vch.data(), vch.data() + vch.size());
+}
+
+static bool DecodeBase58(const std::string &str,
+                         std::vector<unsigned char> &vchRet) {
+  return DecodeBase58(str.c_str(), vchRet);
+}
+
+static std::string
+ToJSONString(std::unordered_map<std::string, std::string> uord_map) {
+  std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
+  nlohmann::json json_uord_map;
+  for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();
+       uord_map_it++) {
+    json_uord_map[uord_map_it->first] = uord_map_it->second;
   }
+  std::string str_uord_map = json_uord_map.dump();
+  return str_uord_map;
+}
 
-  static std::string
-  ToJSONString(std::unordered_map<std::string, std::string> uord_map) {
-    std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
-    nlohmann::json json_uord_map;
-    for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();
-         uord_map_it++) {
-      json_uord_map[uord_map_it->first] = uord_map_it->second;
+static std::string ToJSONString(std::map<std::string, std::string> str_map) {
+  std::map<std::string, std::string>::const_iterator str_map_it;
+  nlohmann::json json_str_map;
+  for (str_map_it = str_map.cbegin(); str_map_it != str_map.cend();
+       str_map_it++) {
+    json_str_map[str_map_it->first] = str_map_it->second;
+  }
+  std::string str_strmap = json_str_map.dump();
+  return str_strmap;
+}
+
+static std::string ToJSONString(std::map<std::string, boost::any> any_map) {
+  std::map<std::string, boost::any>::const_iterator any_map_it;
+  nlohmann::json json_any_map;
+  for (any_map_it = any_map.cbegin(); any_map_it != any_map.cend();
+       any_map_it++) {
+    boost::any val = any_map_it->second;
+    if (val.type() == typeid(bool)) {
+      bool value = boost::any_cast<bool>(val);
+      json_any_map[any_map_it->first] = value;
+    } else if (val.type() == typeid(int)) {
+      int value = boost::any_cast<int>(val);
+      json_any_map[any_map_it->first] = value;
+    } else if (val.type() == typeid(long long)) {
+      long long value = boost::any_cast<long long>(val);
+      json_any_map[any_map_it->first] = value;
+    } else if (val.type() == typeid(std::string)) {
+      std::string value = boost::any_cast<std::string>(val);
+      json_any_map[any_map_it->first] = value;
+    } else {
+      throw "ToJSONString Unsupport Type";
     }
-    std::string str_uord_map = json_uord_map.dump();
-    return str_uord_map;
   }
-
-  static std::string ToJSONString(std::map<std::string, std::string> str_map) {
-    std::map<std::string, std::string>::const_iterator str_map_it;
-    nlohmann::json json_str_map;
-    for (str_map_it = str_map.cbegin(); str_map_it != str_map.cend();
-         str_map_it++) {
-      json_str_map[str_map_it->first] = str_map_it->second;
-    }
-    std::string str_strmap = json_str_map.dump();
-    return str_strmap;
-  }
-
-  static std::string ToJSONString(std::map<std::string, boost::any> any_map) {
-    std::map<std::string, boost::any>::const_iterator any_map_it;
-    nlohmann::json json_any_map;
-    for (any_map_it = any_map.cbegin(); any_map_it != any_map.cend();
-         any_map_it++) {
-      boost::any val = any_map_it->second;
-      if (val.type() == typeid(bool)) {
-        bool value = boost::any_cast<bool>(val);
-        json_any_map[any_map_it->first] = value;
-      } else if (val.type() == typeid(int)) {
-        int value = boost::any_cast<int>(val);
-        json_any_map[any_map_it->first] = value;
-      } else if (val.type() == typeid(long long)) {
-        long long value = boost::any_cast<long long>(val);
-        json_any_map[any_map_it->first] = value;
-      } else if (val.type() == typeid(std::string)) {
-        std::string value = boost::any_cast<std::string>(val);
-        json_any_map[any_map_it->first] = value;
-      } else {
-        throw "ToJSONString Unsupport Type";
-      }
-    }
-    std::string str_anymap = json_any_map.dump();
-    return str_anymap;
-  }
-};
+  std::string str_anymap = json_any_map.dump();
+  return str_anymap;
+}
+}
+;
 
 #endif

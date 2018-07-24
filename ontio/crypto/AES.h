@@ -2,7 +2,7 @@
 #define AES_H
 
 #if __cplusplus < 201103L
-    #error "use --std=c++11 option for compile."
+#error "use --std=c++11 option for compile."
 #endif
 
 /* 32 byte key (256 bit key) */
@@ -10,14 +10,16 @@
 /* 16 byte block size (128 bits) */
 #define AES_BLOCK_SIZE 16
 
-#include <iostream>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
+
+#include <iostream>
 #include <string.h>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -48,5 +50,9 @@ public:
                   const AEAD_mode mode = AEAD_mode::AES_CTR);
   bool auth_encry(const unsigned char *msg, unsigned char *enc_msg);
   bool auth_decry(std::string msg, std::string &dec_msg);
+
+  std::vector<unsigned char> encrypt(const std::vector<unsigned char> &data,
+                                     const std::vector<unsigned char> &key,
+                                     const std::vector<unsigned char> &iv);
 };
 #endif

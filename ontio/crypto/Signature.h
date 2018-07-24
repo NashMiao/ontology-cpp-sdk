@@ -2,7 +2,7 @@
 #define SIGNATURE_H
 
 #if __cplusplus < 201103L
-    #error "use --std=c++11 option for compile."
+#error "use --std=c++11 option for compile."
 #endif
 
 #include <string>
@@ -11,6 +11,8 @@
 #include <openssl/ec.h>
 #include <openssl/sm2.h>
 
+#include "../common/ErrorCode.h"
+#include "../sdk/exception/SDKException.h"
 #include "SignatureScheme.h"
 
 class Signature

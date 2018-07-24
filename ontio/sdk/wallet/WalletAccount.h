@@ -9,9 +9,11 @@
 
 #include <nlohmann/json.hpp>
 
+#include "../../common/Helper.h"
+
 class WalletAccount
 {
-public:
+private:
   std::string label;
   std::string address;
   bool isDefault;
@@ -24,7 +26,9 @@ public:
   std::string hash;
   std::string signatureScheme;
   std::string passwordHash;
-  // Object extra = null;
+  nlohmann::json extra;
+
+public:
   WalletAccount()
   {
     label = "";
@@ -39,6 +43,31 @@ public:
     signatureScheme = "SHA256withECDSA";
     passwordHash = "";
   }
+
+  nlohmann::json getExtra() { return extra; }
+
+  void setExtra(nlohmann::json extra) { extra = extra; }
+
+  std::string getKey() { return key; }
+
+  void setKey(std::string key) { key = key; }
+
+  void setEncAlg(std::string encAlg) { encAlg = encAlg; }
+  std::string getEncAlg() { return encAlg; }
+
+  void setHash(std::string hash) { hash = hash; }
+  std::string getHash() { return hash; }
+
+  std::vector<unsigned char> getSalt() { return Helper:: }
+  void setSalt(const std::vector<unsigned char> &salt)
+  {
+    salt = Helper::this.salt = new String(Base64.getEncoder().encode(salt));
+  }
+
+  @Override std::string toString()
+  {
+    return JSON.toJSONString(this);
+  }
 };
 
-#endif // !ACCOUNT_H
+#endif // !WALLET_ACCOUNT_H
