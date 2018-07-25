@@ -11,7 +11,7 @@
 
 #include "../../common/Helper.h"
 
-class WalletAccount
+class AccountParame
 {
 private:
   std::string label;
@@ -29,7 +29,7 @@ private:
   nlohmann::json extra;
 
 public:
-  WalletAccount()
+  AccountParame()
   {
     label = "";
     address = "";
