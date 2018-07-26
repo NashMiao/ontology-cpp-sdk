@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include "../network/restful/Result.h"
-#include "../network/restful/http.h"
+#include "../src/network/restful/Result.h"
+#include "../src/network/restful/http.h"
 
 void test_Result_ssrst() {
   Result test_result;

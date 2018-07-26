@@ -2,9 +2,9 @@
 
 #include <gtest/gtest.h>
 
-#include "../common/Helper.h"
-#include "../network/connect/IConnector.h"
-#include "../sdk/manager/ConnectMgr.h"
+#include "../src/common/Helper.h"
+#include "../src/network/connect/IConnector.h"
+#include "../src/sdk/manager/ConnectMgr.h"
 
 TEST(RpcTest, RpcGetTest) {
   std::string url = "http://polaris1.ont.io:20336";

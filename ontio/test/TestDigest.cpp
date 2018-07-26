@@ -1,6 +1,6 @@
 
-#include "../common/Helper.h"
-#include "../crypto/Digest.h"
+#include "../src/common/Helper.h"
+#include "../src/crypto/Digest.h"
 
 #include <string>
 #include <vector>

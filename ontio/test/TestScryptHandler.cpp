@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 
-#include "../common/Helper.h"
-#include "../crypto/ScryptHandler.h"
+#include "../src/common/Helper.h"
+#include "../src/crypto/ScryptHandler.h"
 
 TEST(ScryptHandlerTest, ScryptTest)
 {
