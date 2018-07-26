@@ -2,17 +2,22 @@
 #define HELPER_H
 
 #include <assert.h>
-#include <openssl/bn.h>
-#include <string.h>
 #include <iomanip>
 #include <iostream>
 #include <map>
-#include <nlohmann/json.hpp>
 #include <sstream>
+#include <string.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "boost/any.hpp"
+
+#include <boost/any.hpp>
+#include <nlohmann/json.hpp>
+#include <openssl/bio.h>
+#include <openssl/bn.h>
+#include <openssl/buffer.h>
+#include <openssl/evp.h>
+
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
 static const char *pszBase58 =
@@ -35,10 +40,10 @@ static const int8_t mapBase58[256] = {
 };
 
 class Helper {
- public:
-  static std::vector<unsigned char> addBytes(
-      const std::vector<unsigned char> &data1,
-      const std::vector<unsigned char> &data2) {
+public:
+  static std::vector<unsigned char>
+  addBytes(const std::vector<unsigned char> &data1,
+           const std::vector<unsigned char> &data2) {
     std::vector<unsigned char> data3 = data1;
     data3.insert(data3.end(), data2.begin(), data2.end());
     return data3;
@@ -88,8 +93,8 @@ class Helper {
     return byte_vec;
   }
 
-  static std::vector<unsigned char> hexVecToByte(
-      const std::vector<unsigned char> &vec) {
+  static std::vector<unsigned char>
+  hexVecToByte(const std::vector<unsigned char> &vec) {
     size_t vec_sz = vec.size();
     if (vec_sz % 2 != 0) {
       throw "hexStringToByte error";
@@ -178,7 +183,8 @@ class Helper {
 
   static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch) {
     // Skip leading spaces.
-    while (*psz && isspace(*psz)) psz++;
+    while (*psz && isspace(*psz))
+      psz++;
     // Skip and count leading '1's.
     int zeroes = 0;
     int length = 0;
@@ -187,16 +193,16 @@ class Helper {
       psz++;
     }
     // Allocate enough space in big-endian base256 representation.
-    int size = strlen(psz) * 733 / 1000 + 1;  // log(58) / log(256), rounded up.
+    int size = strlen(psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
     std::vector<unsigned char> b256(size);
     // Process the characters.
     static_assert(
         sizeof(mapBase58) / sizeof(mapBase58[0]) == 256,
-        "mapBase58.size() should be 256");  // guarantee not out of range
+        "mapBase58.size() should be 256"); // guarantee not out of range
     while (*psz && !isspace(*psz)) {
       // Decode base58 character
       int carry = mapBase58[(uint8_t)*psz];
-      if (carry == -1)  // Invalid b58 character
+      if (carry == -1) // Invalid b58 character
         return false;
       int i = 0;
       for (std::vector<unsigned char>::reverse_iterator it = b256.rbegin();
@@ -210,15 +216,19 @@ class Helper {
       psz++;
     }
     // Skip trailing spaces.
-    while (isspace(*psz)) psz++;
-    if (*psz != 0) return false;
+    while (isspace(*psz))
+      psz++;
+    if (*psz != 0)
+      return false;
     // Skip leading zeroes in b256.
     std::vector<unsigned char>::iterator it = b256.begin() + (size - length);
-    while (it != b256.end() && *it == 0) it++;
+    while (it != b256.end() && *it == 0)
+      it++;
     // Copy result into output vector.
     vch.reserve(zeroes + (b256.end() - it));
     vch.assign(zeroes, 0x00);
-    while (it != b256.end()) vch.push_back(*(it++));
+    while (it != b256.end())
+      vch.push_back(*(it++));
     return true;
   }
 
@@ -233,7 +243,7 @@ class Helper {
     }
     // Allocate enough space in big-endian base58 representation.
     int size =
-        (pend - pbegin) * 138 / 100 + 1;  // log(256) / log(58), rounded up.
+        (pend - pbegin) * 138 / 100 + 1; // log(256) / log(58), rounded up.
     std::vector<unsigned char> b58(size);
     // Process the bytes.
     while (pbegin != pend) {
@@ -253,12 +263,14 @@ class Helper {
     }
     // Skip leading zeroes in base58 result.
     std::vector<unsigned char>::iterator it = b58.begin() + (size - length);
-    while (it != b58.end() && *it == 0) it++;
+    while (it != b58.end() && *it == 0)
+      it++;
     // Translate the result into a string.
     std::string str;
     str.reserve(zeroes + (b58.end() - it));
     str.assign(zeroes, '1');
-    while (it != b58.end()) str += pszBase58[*(it++)];
+    while (it != b58.end())
+      str += pszBase58[*(it++)];
     return str;
   }
 
@@ -314,8 +326,8 @@ class Helper {
     return std::string(buffer);
   }
 
-  static std::string ToJSONString(
-      std::unordered_map<std::string, std::string> uord_map) {
+  static std::string
+  ToJSONString(std::unordered_map<std::string, std::string> uord_map) {
     std::unordered_map<std::string, std::string>::const_iterator uord_map_it;
     nlohmann::json json_uord_map;
     for (uord_map_it = uord_map.cbegin(); uord_map_it != uord_map.cend();

@@ -13,6 +13,7 @@
 
 class ScryptHandler
 {
+  public:
     // Derive one key from a password.
 
     // This function performs key derivation according to
@@ -22,7 +23,7 @@ class ScryptHandler
     // Args:
     // password (string):
     //     The secret pass phrase to generate the keys from.
-    // salt (string):
+    // salt (std::vector<unsigned char>):
     //     A string to use for better protection from dictionary attacks.
     //     This value does not need to be kept secret,
     //     but it should be randomly chosen for each derivation.
@@ -46,8 +47,9 @@ class ScryptHandler
 
     // Return:
     //     A hexadecimal string.
-    static std::string scrypt(const std::string &password, const std::string &salt,
-                              int n = 16384, int r = 8, int p = 8, int dkLen = 64)
+    static std::vector<unsigned char>
+    scrypt(const std::string &password, const std::vector<unsigned char> &salt,
+           int n = 16384, int r = 8, int p = 8, int dkLen = 64)
     {
         EVP_PKEY_CTX *pctx;
         unsigned char derivedkey[dkLen];
@@ -55,42 +57,37 @@ class ScryptHandler
         size_t outlen = sizeof(derivedkey);
         pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
 
-        if (EVP_PKEY_derive_init(pctx) <= 0)
+        if (!EVP_PKEY_derive_init(pctx))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        if (EVP_PKEY_CTX_set1_pbe_pass(pctx, password.c_str(), password.length()) <=
-            0)
+        if (!EVP_PKEY_CTX_set1_pbe_pass(pctx, password.c_str(),
+                                        password.length()))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt.c_str(), (int)salt.length()) <=
-            0)
+        if (!EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt.data(), (int)salt.size()))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        if (EVP_PKEY_CTX_set_scrypt_N(pctx, n) <= 0)
+        if (!EVP_PKEY_CTX_set_scrypt_N(pctx, n))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0)
+        if (!EVP_PKEY_CTX_set_scrypt_r(pctx, r))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0)
+        if (!EVP_PKEY_CTX_set_scrypt_p(pctx, p))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0)
+        if (!EVP_PKEY_derive(pctx, derivedkey, &outlen))
         {
             throw new SDKException(ErrorCode::ParamError);
         }
-        std::string hex_derivedkey = Helper::toHexString(derivedkey, outlen);
-        if (hex_derivedkey.empty())
-        {
-            throw std::runtime_error("scrypt failed.");
-        }
-        return hex_derivedkey;
+        std::vector<unsigned char> vec_dk(derivedkey, derivedkey + outlen);
+        return vec_dk;
     }
 };
 #endif
