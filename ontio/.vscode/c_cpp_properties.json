@@ -8,8 +8,18 @@
         "intelliSenseMode": "clang-x64",
         "includePath": [
             "/usr/local/include/",
+            "${workspaceRoot}",
             "${workspaceFolder}",
-            "${workspaceRoot}"
+            "${workspaceFolder}/src",
+            "${workspaceFolder}/src/account",
+            "${workspaceFolder}/src/common",
+            "${workspaceFolder}/src/core",
+            "${workspaceFolder}/src/crypto",
+            "${workspaceFolder}/src/demo",
+            "${workspaceFolder}/src/io",
+            "${workspaceFolder}/src/network",
+            "${workspaceFolder}/src/sdk",
+            "${workspaceFolder}/src/smartcontract"
         ]
     }],
     "version": 4
