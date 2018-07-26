@@ -1,5 +1,5 @@
-#ifndef WALLETMGR_H
-#define WALLETMGR_H
+#ifndef SDK_MANAGER_WALLETMGR_H
+#define SDK_MANAGER_WALLETMGR_H
 
 #if __cplusplus < 201103L
 #error "use --std=c++11 option for compile."

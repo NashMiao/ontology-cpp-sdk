@@ -1,5 +1,5 @@
-#ifndef RESULT_H
-#define RESULT_H
+#ifndef NETWORK_RESTFUL_RESULT_H
+#define NETWORK_RESTFUL_RESULT_H
 
 #if __cplusplus < 201103L
 #error "use --std=c++11 option for compile."

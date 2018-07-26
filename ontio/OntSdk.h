@@ -1,5 +1,5 @@
-#ifndef ONTSDK_H
-#define ONTSDK_H
+#ifndef ONTIO_ONTSDK_H
+#define ONTIO_ONTSDK_H
 
 #if __cplusplus < 201103L
 #error "use --std=c++11 option for compile."
@@ -20,8 +20,7 @@
 
 class Vm;
 
-class OntSdk
-{
+class OntSdk {
 private:
   WalletMgr walletMgr;
   const SignatureScheme static defaultSignScheme =
@@ -46,7 +45,7 @@ private:
 public:
   OntSdk() {}
 
-  Vm* getVm();
+  Vm *getVm();
 
   static SignatureScheme getDefaultSignScheme() { return defaultSignScheme; }
 

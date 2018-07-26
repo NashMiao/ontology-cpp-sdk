@@ -1,5 +1,5 @@
-#ifndef CONNECTMGR_H
-#define CONNECTMGR_H
+#ifndef SDK_MANAGER_CONNECTMGR_H
+#define SDK_MANAGER_CONNECTMGR_H
 
 #if __cplusplus < 201103L
 #error "use --std=c++11 option for compile."

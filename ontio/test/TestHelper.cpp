@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(Base58Test, IntTest)
+TEST(Base58Test, DecodeTest)
 {
     std::vector<unsigned char> vchRet;
     std::string encode_str = "TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq";

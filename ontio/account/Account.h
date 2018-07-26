@@ -1,5 +1,5 @@
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
+#ifndef ONTIO_ACCOUNT_ACCOUNT_H
+#define ONTIO_ACCOUNT_ACCOUNT_H
 
 #if __cplusplus < 201103L
 #error "use --std=c++11 option for compile."
