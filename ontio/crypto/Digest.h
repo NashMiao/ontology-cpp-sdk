@@ -2,7 +2,7 @@
 #define DIGEST_H
 
 #if __cplusplus < 201103L
-    #error "use --std=c++11 option for compile."
+#error "use --std=c++11 option for compile."
 #endif
 
 #include <vector>
@@ -49,7 +49,8 @@ public:
     unsigned char ripemd160_uc[RIPEMD160_DIGEST_LENGTH];
     RIPEMD160_CTX ripemd160_ctx;
     RIPEMD160_Init(&ripemd160_ctx);
-    RIPEMD160_Update(&ripemd160_ctx, (unsigned char *)(&value[0]), value.size());
+    RIPEMD160_Update(&ripemd160_ctx, (unsigned char *)(&value[0]),
+                     value.size());
     RIPEMD160_Final(ripemd160_uc, &ripemd160_ctx);
     std::vector<unsigned char> uc_vec;
     uc_vec.assign(&ripemd160_uc[0], &ripemd160_uc[RIPEMD160_DIGEST_LENGTH]);
@@ -69,6 +70,14 @@ public:
   {
     std::vector<unsigned char> sha256_vec;
     sha256_vec = sha256(value);
+    return sha256(sha256_vec);
+  }
+
+  static std::vector<unsigned char>
+  hash256(const std::vector<unsigned char> &value, int offset, int length)
+  {
+    std::vector<unsigned char> sha256_vec;
+    sha256_vec = sha256(value, offset, length);
     return sha256(sha256_vec);
   }
 };

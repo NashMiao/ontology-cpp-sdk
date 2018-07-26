@@ -1,0 +1,1 @@
+g++ TestHelper.cpp -lgtest_main -lgtest -lpthread -o ../bin/test.out && ../bin/test.out

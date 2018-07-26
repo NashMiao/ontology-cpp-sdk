@@ -19,7 +19,7 @@
             "-Wall",
             "-O2",
             "-std=c++11",
-            "-o a.out"
+            "-o bin/main.out"
         ],
         "group": {
             "kind": "build",

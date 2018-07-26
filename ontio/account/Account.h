@@ -333,12 +333,43 @@ public:
     return act_uc_vec;
   }
 
+  std::vector<unsigned char> serializePrivateKey()
+  {
+    std::vector<unsigned char> act_uc_vec;
+    switch (keyType)
+    {
+    case KeyType::ECDSA:
+    case KeyType::SM2:
+      act_uc_vec = Helper::hexStringToByte(publicKey);
+      break;
+    default:
+      throw new std::runtime_error(ErrorCode::StrUnknownKeyType);
+    }
+    return act_uc_vec;
+  }
+
   std::string serializePublicKey_str() const { return publicKey; }
 
   bool verifySignature(std::vector<unsigned char> msg,
                        std::vector<Signature> signature)
   {
     return true;
+  }
+
+  std::string exportWif()
+  {
+    std::vector<unsigned char> data;
+    data[0] = (unsigned char)0x80;
+    std::vector<unsigned char> prikey = serializePrivateKey();
+    data.insert(data.end(), prikey.begin(), prikey.end());
+    data[33] = (unsigned char)0x01;
+    std::vector<unsigned char> checksum =
+        Digest::hash256(data, 0, (int)data.size() - 4);
+    data.insert(data.end(), checksum.begin(), checksum.begin() + 4);
+    Helper::
+    String wif = Base58.encode(data);
+    Arrays.fill(data, (byte)0);
+    return wif;
   }
 
   std::string exportCtrEncryptedPrikey(std::string passphrase, int n)
@@ -350,42 +381,6 @@ public:
 
     int salt_len = 4;
     unsigned char salt[] = {0xfa, 0xa4, 0x88, 0x3d};
-
-    EVP_PKEY_CTX *pctx;
-    unsigned char derivedkey[dkLen];
-
-    size_t outlen = sizeof(derivedkey);
-    pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
-
-    if (EVP_PKEY_derive_init(pctx) <= 0)
-    {
-      return NULL;
-    }
-    if (EVP_PKEY_CTX_set1_pbe_pass(pctx, passphrase.c_str(),
-                                   passphrase.length()) <= 0)
-    {
-      return NULL;
-    }
-    if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0)
-    {
-      return NULL;
-    }
-    if (EVP_PKEY_CTX_set_scrypt_N(pctx, N) <= 0)
-    {
-      return NULL;
-    }
-    if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0)
-    {
-      return NULL;
-    }
-    if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0)
-    {
-      return NULL;
-    }
-    if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0)
-    {
-      return NULL;
-    }
 
     std::string hex_derivedkey;
     hex_derivedkey = hexStr(derivedkey, outlen);
@@ -468,7 +463,9 @@ public:
     return "test";
   }
 
-  std::string exportGcmEncryptedPrikey(std::string passphrase, std::vector<unsigned char> salt, const int n) throw SDKException
+  std::string exportGcmEncryptedPrikey(std::string passphrase,
+                                       std::vector<unsigned char> salt,
+                                       const int n) throw SDKException
   {
     int r = 8;
     int p = 8;
@@ -478,7 +475,8 @@ public:
       throw new SDKException(ErrorCode.ParamError);
     }
     Security.addProvider(new BouncyCastleProvider());
-    byte[] derivedkey = SCrypt.generate(passphrase.getBytes(StandardCharsets.UTF_8), salt, N, r, p, dkLen);
+    byte[] derivedkey = SCrypt.generate(
+        passphrase.getBytes(StandardCharsets.UTF_8), salt, N, r, p, dkLen);
     byte[] derivedhalf2 = new byte[32];
     byte[] iv = new byte[12];
     System.arraycopy(derivedkey, 0, iv, 0, 12);

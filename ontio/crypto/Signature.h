@@ -5,14 +5,15 @@
 #error "use --std=c++11 option for compile."
 #endif
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 #include <openssl/ec.h>
-#include <openssl/sm2.h>
 
 #include "../common/ErrorCode.h"
 #include "../sdk/exception/SDKException.h"
+#include "Curve.h"
 #include "SignatureScheme.h"
 
 class Signature
@@ -37,7 +38,7 @@ public:
     }
     if (data.size() < 2)
     {
-      throw new runtime_error(ErrorCode::StrInvalidSignatureDataLen);
+      throw new std::runtime_error(ErrorCode::StrInvalidSignatureDataLen);
     }
     scheme = SignatureSchemeMethod::toSignatureScheme(data[0]);
     if (scheme == SignatureScheme::SM3withSM2)
@@ -50,7 +51,7 @@ public:
       }
       if (i >= data_sz)
       {
-        throw new runtime_error(ErrorCode::StrInvalidSignatureData);
+        throw new std::runtime_error(ErrorCode::StrInvalidSignatureData);
       }
       sm2_param = std::string(data.begin(), data.begin() + i);
       value.assign(data.begin() + i + 1, data.end());
@@ -93,7 +94,7 @@ public:
         EC_KEY_new_by_curve_name(CurveNameMethod::get_curve_nid(curve_name));
     if (ec_key == NULL)
     {
-      throw runtime_error("EC_KEY_new_by_curve_name() failed!");
+      throw std::runtime_error("EC_KEY_new_by_curve_name() failed!");
     }
     const EC_GROUP *group;
     group =
@@ -107,12 +108,12 @@ public:
     bn_ctx = BN_CTX_new();
     if (EC_POINT_mul(group, pub, prv, NULL, NULL, bn_ctx) != 1)
     {
-      throw runtime_error("EC_POINT_mul() failed!");
+      throw std::runtime_error("EC_POINT_mul() failed!");
     }
     if (EC_KEY_set_public_key(ec_key, pub) != 1)
     {
       EC_KEY_free(ec_key);
-      throw runtime_error("EC_KEY_set_public_key() failed!");
+      throw std::runtime_error("EC_KEY_set_public_key() failed!");
     }
     std::string publicKey;
     publicKey = EC_POINT_point2hex(group, pub, from, bn_ctx);
