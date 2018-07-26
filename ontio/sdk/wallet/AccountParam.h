@@ -23,6 +23,7 @@ private:
   std::string key;
   // @JSONField(name = "enc-alg")
   std::string encAlg;
+  std::string salt;
   std::string hash;
   std::string signatureScheme;
   std::string passwordHash;
@@ -58,15 +59,27 @@ public:
   void setHash(std::string hash) { hash = hash; }
   std::string getHash() { return hash; }
 
-  std::vector<unsigned char> getSalt() { return Helper:: }
-  void setSalt(const std::vector<unsigned char> &salt)
-  {
-    salt = Helper::this.salt = new String(Base64.getEncoder().encode(salt));
-  }
+  // std::vector<unsigned char> getSalt() { return Helper:: }
+  // void setSalt(const std::vector<unsigned char> &salt)
+  // {
+  //   salt = Helper::
+  // }
 
-  @Override std::string toString()
+  std::string toString()
   {
-    return JSON.toJSONString(this);
+    nlohmann::json j;
+    j["label"] = label;
+    j["address"] = address;
+    j["isDefault"] = isDefault;
+    j["lock"] = lock;
+    j["algorithm"] = algorithm;
+    j["parameters"] = parameters;
+    j["key"] = key;
+    j["enc-alg"] = encAlg;
+    j["salt"] = salt;
+    j["hash"] = hash;
+    j["signatureScheme"] = signatureScheme;
+    j["extra"] = extra;
   }
 };
 

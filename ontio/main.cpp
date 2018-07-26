@@ -19,6 +19,7 @@
 #include "core/transaction/Transaction.h"
 #include "crypto/AES.h"
 #include "crypto/Digest.h"
+#include "crypto/ScryptHandler.h"
 #include "crypto/Signature.h"
 #include "demo/MakeTxWithoutWalletDemo.h"
 #include "network/restful/Result.h"
@@ -143,8 +144,7 @@ void sign_by_pri_key() {
   vc_signature = handler.generateSignature(private_key, uc_msg, "");
   cout << "Account_toBytes:\n"
        << Helper::toHexString(Account_toBytes(vc_signature)) << endl;
-  cout << "vc_signature:\n"
-       << Helper::toHexString(vc_signature) << endl;
+  cout << "vc_signature:\n" << Helper::toHexString(vc_signature) << endl;
   cout << (handler.verifySignature(public_key, uc_msg, vc_signature)
                ? std::string("True")
                : std::string("False"))
@@ -500,7 +500,7 @@ void test_base58() {
   std::vector<unsigned char> vchRet;
   std::string str = "TA4WVfUB1ipHL8s3PRSYgeV1HhAU3KcKTq";
   if (Helper::DecodeBase58(str, vchRet)) {
-    cout <<Helper::toHexString(vchRet) << endl;
+    cout << Helper::toHexString(vchRet) << endl;
   }
 }
 
