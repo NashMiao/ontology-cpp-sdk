@@ -18,8 +18,9 @@
 #include "../crypto/SignatureHandler.h"
 #include "../crypto/SignatureScheme.h"
 
-class Account {
- private:
+class Account
+{
+private:
   std::string curveParams;
   std::string privateKey;
   std::string publicKey;
@@ -29,35 +30,44 @@ class Account {
   CurveName curveName;
   std::string sm2Param;
 
- private:
-  void parsePublicKey(const std::vector<unsigned char> &data) {
-    if (data.size() == 0) {
+private:
+  void parsePublicKey(const std::vector<unsigned char> &data)
+  {
+    if (data.size() == 0)
+    {
       throw runtime_error(ErrorCode::StrNullInput);
     }
-    if (data.size() < 2) {
+    if (data.size() < 2)
+    {
       throw runtime_error(ErrorCode::StrInvalidData);
     }
-    if (data.size() == 33) {
+    if (data.size() == 33)
+    {
       keyType = KeyType::ECDSA;
-    } else if (data.size() == 35) {
+    }
+    else if (data.size() == 35)
+    {
       keyType = KeyTypeMethod::fromLabel(data[0]);
     }
-    switch (keyType) {
-      case KeyType::ECDSA: {
-        curveParams = CurveNameMethod::toString(CurveName::p256);
-        break;
-      }
-      case KeyType::SM2:
-        break;
-      default:
-        break;
+    switch (keyType)
+    {
+    case KeyType::ECDSA:
+    {
+      curveParams = CurveNameMethod::toString(CurveName::p256);
+      break;
+    }
+    case KeyType::SM2:
+      break;
+    default:
+      break;
     }
   }
 
- public:
+public:
   Account() {}
 
-  Account(SignatureScheme scheme) {
+  Account(SignatureScheme scheme)
+  {
     addressU160 = Address::addressFromPubKey(serializePublicKey());
   }
 
@@ -68,77 +78,102 @@ class Account {
       : privateKey(private_key),
         signatureScheme(scheme),
         curveName(_curve_name),
-        sm2Param(sm2_param) {
+        sm2Param(sm2_param)
+  {
     signatureScheme = scheme;
-    if (signatureScheme == SignatureScheme::SM3withSM2) {
+    if (signatureScheme == SignatureScheme::SM3withSM2)
+    {
       keyType = KeyType::SM2;
-    } else if (signatureScheme == SignatureScheme::SHA256withECDSA) {
+    }
+    else if (signatureScheme == SignatureScheme::SHA256withECDSA)
+    {
       keyType = KeyType::ECDSA;
-    } else {
+    }
+    else
+    {
       throw std::runtime_error("SignatureScheme Error!");
     }
-    switch (signatureScheme) {
-      case SignatureScheme::SHA256withECDSA: {
-        privateKey = private_key;
-        publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curveName);
-        // ec_key = ec_sign.get_EC_key();
-        std::vector<unsigned char> uc_pub_key;
-        uc_pub_key = serializePublicKey();
-        addressU160 = Address::addressFromPubKey(uc_pub_key);
-        break;
-      }
-      case SignatureScheme::SM3withSM2: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA224withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA384withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA512withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_224withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_256withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_384withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_512withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::RIPEMD160withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      default: { throw "Exception(ErrorCode.UnsupportedKeyType)"; }
+    switch (signatureScheme)
+    {
+    case SignatureScheme::SHA256withECDSA:
+    {
+      privateKey = private_key;
+      publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curveName);
+      // ec_key = ec_sign.get_EC_key();
+      std::vector<unsigned char> uc_pub_key;
+      uc_pub_key = serializePublicKey();
+      addressU160 = Address::addressFromPubKey(uc_pub_key);
+      break;
+    }
+    case SignatureScheme::SM3withSM2:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA224withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA384withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA512withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_224withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_256withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_384withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_512withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::RIPEMD160withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    default:
+    {
+      throw "Exception(ErrorCode.UnsupportedKeyType)";
+    }
     }
   }
 
   // construct an account from a serialized pubic key or private key
-  Account(bool fromPrivate, std::vector<unsigned char> pubkey) {
-    if (fromPrivate) {
+  Account(bool fromPrivate, std::vector<unsigned char> pubkey)
+  {
+    if (fromPrivate)
+    {
       // parsePrivateKey(data);
-    } else {
+    }
+    else
+    {
       parsePublicKey(pubkey);
     }
   }
 
   ~Account() {}
 
-  Account operator=(Account &acct) {
+  Account operator=(Account &acct)
+  {
     this->curveParams = acct.curveParams;
     this->privateKey = acct.privateKey;
     this->publicKey = acct.publicKey;
@@ -150,7 +185,8 @@ class Account {
     return *this;
   }
 
-  Account *operator=(Account *acct) {
+  Account *operator=(Account *acct)
+  {
     this->curveParams = acct->curveParams;
     this->privateKey = acct->privateKey;
     this->publicKey = acct->publicKey;
@@ -162,67 +198,88 @@ class Account {
     return this;
   }
 
-  bool equals(const Account &acct) {
+  bool equals(const Account &acct)
+  {
     return this->addressU160.equals(acct.addressU160);
   }
 
   void setAccount(std::string private_key,
                   SignatureScheme scheme = SignatureScheme::SHA256withECDSA,
-                  CurveName curveName = CurveName::p256) {
+                  CurveName curveName = CurveName::p256)
+  {
     signatureScheme = scheme;
-    if (signatureScheme == SignatureScheme::SM3withSM2) {
+    if (signatureScheme == SignatureScheme::SM3withSM2)
+    {
       keyType = KeyType::SM2;
-    } else if (signatureScheme == SignatureScheme::SHA256withECDSA) {
+    }
+    else if (signatureScheme == SignatureScheme::SHA256withECDSA)
+    {
       keyType = KeyType::ECDSA;
-    } else {
+    }
+    else
+    {
       throw "SignatureScheme Error!";
     }
-    switch (signatureScheme) {
-      case SignatureScheme::SHA256withECDSA: {
-        privateKey = private_key;
-        publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curveName);
-        std::vector<unsigned char> uc_pub_key;
-        uc_pub_key = serializePublicKey();
-        addressU160 = Address::addressFromPubKey(uc_pub_key);
-        break;
-      }
-      case SignatureScheme::SM3withSM2: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA224withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA384withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA512withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_224withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_256withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_384withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::SHA3_512withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      case SignatureScheme::RIPEMD160withECDSA: {
-        throw std::runtime_error("SignatureScheme Unsupport");
-        break;
-      }
-      default: { throw "Exception(ErrorCode.UnsupportedKeyType)"; }
+    switch (signatureScheme)
+    {
+    case SignatureScheme::SHA256withECDSA:
+    {
+      privateKey = private_key;
+      publicKey = Signature::EC_get_pubkey_by_prikey(privateKey, curveName);
+      std::vector<unsigned char> uc_pub_key;
+      uc_pub_key = serializePublicKey();
+      addressU160 = Address::addressFromPubKey(uc_pub_key);
+      break;
+    }
+    case SignatureScheme::SM3withSM2:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA224withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA384withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA512withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_224withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_256withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_384withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::SHA3_512withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    case SignatureScheme::RIPEMD160withECDSA:
+    {
+      throw std::runtime_error("SignatureScheme Unsupport");
+      break;
+    }
+    default:
+    {
+      throw "Exception(ErrorCode.UnsupportedKeyType)";
+    }
     }
   }
 
@@ -232,15 +289,20 @@ class Account {
 
   CurveName getCurveName() { return curveName; }
 
-  std::vector<unsigned char> generateSignature(std::vector<unsigned char> msg) {
-    if (msg.empty()) {
+  std::vector<unsigned char> generateSignature(std::vector<unsigned char> msg)
+  {
+    if (msg.empty())
+    {
       throw new runtime_error(ErrorCode::StrInvalidMessage);
     }
-    if (privateKey.empty()) {
+    if (privateKey.empty())
+    {
       throw new runtime_error(ErrorCode::StrWithoutPrivate);
     }
-    if (signatureScheme == SignatureScheme::SM3withSM2) {
-      if (sm2Param.empty()) {
+    if (signatureScheme == SignatureScheme::SM3withSM2)
+    {
+      if (sm2Param.empty())
+      {
         sm2Param = "1234567812345678";
       }
     }
@@ -252,32 +314,41 @@ class Account {
     return uc_vec;
   }
 
-  std::vector<unsigned char> serializePublicKey() const {
+  std::vector<unsigned char> serializePublicKey() const
+  {
     std::vector<unsigned char> act_uc_vec;
-    switch (keyType) {
-      case KeyType::ECDSA: {
-        act_uc_vec = Helper::hexStringToByte(publicKey);
-        break;
-      }
-      case KeyType::SM2: {
-        throw std::runtime_error("Exception(KeyType::SM2)");
-        break;
-      }
-      default: { throw runtime_error(ErrorCode::StrUnknownKeyType); }
+    switch (keyType)
+    {
+    case KeyType::ECDSA:
+    {
+      act_uc_vec = Helper::hexStringToByte(publicKey);
+      break;
+    }
+    case KeyType::SM2:
+    {
+      throw std::runtime_error("Exception(KeyType::SM2)");
+      break;
+    }
+    default:
+    {
+      throw runtime_error(ErrorCode::StrUnknownKeyType);
+    }
     }
 
     return act_uc_vec;
   }
 
-  std::vector<unsigned char> serializePrivateKey() {
+  std::vector<unsigned char> serializePrivateKey()
+  {
     std::vector<unsigned char> act_uc_vec;
-    switch (keyType) {
-      case KeyType::ECDSA:
-      case KeyType::SM2:
-        act_uc_vec = Helper::hexStringToByte(publicKey);
-        break;
-      default:
-        throw new std::runtime_error(ErrorCode::StrUnknownKeyType);
+    switch (keyType)
+    {
+    case KeyType::ECDSA:
+    case KeyType::SM2:
+      act_uc_vec = Helper::hexStringToByte(publicKey);
+      break;
+    default:
+      throw new std::runtime_error(ErrorCode::StrUnknownKeyType);
     }
     return act_uc_vec;
   }
@@ -285,11 +356,13 @@ class Account {
   std::string serializePublicKey_str() const { return publicKey; }
 
   bool verifySignature(std::vector<unsigned char> msg,
-                       std::vector<Signature> signature) {
+                       std::vector<Signature> signature)
+  {
     return true;
   }
 
-  std::string exportWif() {
+  std::string exportWif()
+  {
     std::vector<unsigned char> data;
     data[0] = (unsigned char)0x80;
     std::vector<unsigned char> prikey = serializePrivateKey();
@@ -304,11 +377,13 @@ class Account {
 
   std::string exportGcmEncryptedPrikey(const std::string &password,
                                        const std::vector<unsigned char> &salt,
-                                       const int n) throw(SDKException) {
+                                       const int n) throw(SDKException)
+  {
     int r = 8;
     int p = 8;
     int dkLen = 64;
-    if (salt.size() != 16) {
+    if (salt.size() != 16)
+    {
       throw new SDKException(ErrorCode::ParamError);
     }
     std::vector<unsigned char> derivedkey;
@@ -326,43 +401,49 @@ class Account {
   static std::string getGcmDecodedPrivateKey(
       const std::string &encryptedPriKey, std::string password,
       std::string address, const std::vector<unsigned char> &salt, int n,
-      SignatureScheme scheme) throw(SDKException) {
-    if (encryptedPriKey.length() == 0) {
+      SignatureScheme scheme) throw(SDKException)
+  {
+    if (encryptedPriKey.length() == 0)
+    {
       throw new SDKException(ErrorCode::EncryptedPriKeyError);
     }
-    if (salt.size() != 16) {
+    if (salt.size() != 16)
+    {
       throw new SDKException(ErrorCode::ParamError);
     }
-
-    std::vector<unsigned char> encryptedkey = Helper::Base64Decode(encryptedPriKey);
-
-    int N = n;
+    // AES/GCM/NoPadding
+    std::string encryptedkey = Helper::base64Decode(encryptedPriKey, false);
     int r = 8;
     int p = 8;
     int dkLen = 64;
-
+    std::vector<unsigned char> derivedkey;
     derivedkey = ScryptHandler::scrypt(password, salt, n, r, p, dkLen);
     std::vector<unsigned char> aes_iv(derivedkey.begin(),
                                       derivedkey.begin() + 12);
     std::vector<unsigned char> aes_key(derivedkey.begin() + 32,
                                        derivedkey.begin() + 64);
+                                  
 
     std::vector<unsigned char> rawkey = new byte[0];
-    try {
+    try
+    {
       SecretKeySpec skeySpec = new SecretKeySpec(derivedhalf2, "AES");
       Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
       cipher.init(Cipher.DECRYPT_MODE, skeySpec, new GCMParameterSpec(128, iv));
       cipher.updateAAD(address.getBytes());
       rawkey = cipher.doFinal(encryptedkey);
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       e.printStackTrace();
       throw new SDKException(ErrorCode.encryptedPriKeyAddressPasswordErr);
     }
     Account account = new Account(rawkey, scheme);
-    if (!address.equals(account.getAddressU160().toBase58())) {
-      throw new SDKException(ErrorCode.encryptedPriKeyAddressPasswordErr);
+    if (!address.equals(account.getAddressU160().toBase58()))
+    {
+      throw new SDKException(ErrorCode::encryptedPriKeyAddressPasswordErr);
     }
-    return Helper.toHexString(rawkey);
+    return Helper::toHexString(rawkey);
   }
 };
 
