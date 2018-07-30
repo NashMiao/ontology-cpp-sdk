@@ -35,10 +35,9 @@ class AES
     }
 
   public:
-    static std::vector<unsigned char> generateKey(std::string password)
+    static std::vector<unsigned char> generateKey(const std::string &password)
     {
-        std::vector<unsigned char> passwordBytes;
-        passwordBytes = Helper::hexStringToByte(password);
+        std::vector<unsigned char> passwordBytes(password.begin(), password.end());
         std::vector<unsigned char> passwordHash = Digest::hash256(passwordBytes);
         return passwordHash;
     }
