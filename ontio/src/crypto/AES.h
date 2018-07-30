@@ -1,5 +1,5 @@
-#ifndef AES_H
-#define AES_H
+#ifndef CRYPTO_AES_H
+#define CRYPTO_AES_H
 
 #if __cplusplus < 201103L
 #error "use --std=c++11 option for compile."
@@ -10,49 +10,82 @@
 /* 16 byte block size (128 bits) */
 #define AES_BLOCK_SIZE 16
 
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-
-#include <iostream>
-#include <string.h>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
-using namespace std;
+#include <openssl/evp.h>
 
-enum class AEAD_mode { AES_CTR, AES_GCM };
+#include "../common/Helper.h"
+#include "Digest.h"
 
-typedef struct {
-  /* Key to use for encrpytion and decryption */
-  unsigned char key[AES_256_KEY_SIZE];
-  /* Initialization Vector */
-  unsigned char iv[AES_BLOCK_SIZE];
-  const EVP_CIPHER *cipher_type;
-} cipher_params_t;
+class AES
+{
+  public:
+    static std::vector<unsigned char> generateKey(std::string password)
+    {
+        std::vector<unsigned char> passwordBytes;
+        passwordBytes = Helper::hexStringToByte(password);
+        std::vector<unsigned char> passwordHash = Digest::hash256(passwordBytes);
+        return passwordHash;
+    }
+    static std::vector<unsigned char>
+    gcmEncrypt(const std::vector<unsigned char> &plaintext,
+               const std::vector<unsigned char> &key,
+               const std::vector<unsigned char> &iv, bool padding)
+    {
+        EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+        EVP_CIPHER_CTX_init(ctx);
+        if (ctx == NULL)
+        {
+            throw std::runtime_error("EVP_CIPHER_CTX_new() failed.");
+        }
+        if (padding)
+        {
+            EVP_CIPHER_CTX_set_padding(ctx, 1);
+        }
+        else
+        {
+            EVP_CIPHER_CTX_set_padding(ctx, 0);
+        }
+        /* check lengths */
+        if (EVP_CIPHER_CTX_key_length(ctx) != AES_256_KEY_SIZE)
+        {
+            throw std::runtime_error(
+                "EVP_CIPHER_CTX_key_length(ctx) != AES_256_KEY_SIZE");
+        }
+        if (EVP_CIPHER_CTX_iv_length(ctx) != AES_BLOCK_SIZE)
+        {
+            throw std::runtime_error(
+                "EVP_CIPHER_CTX_iv_length(ctx) != AES_BLOCK_SIZE");
+        }
 
-class AES {
-private:
-  cipher_params_t *params;
-  bool set_key(const unsigned char *k);
-  bool set_iv(const unsigned char *v);
-  bool set_mode(AEAD_mode mode);
+        /* set key and IV */
+        if (!EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, key.data(),
+                                iv.data()))
+        {
+            throw std::runtime_error("EVP_EncryptInit_ex() fail.");
+        }
+        /* Allow enough space in output buffer for additional block */
+        int cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
+        int buf_size = 32;
+        unsigned char out_buf[buf_size + cipher_block_size];
 
-public:
-  AES() { params = (cipher_params_t *)malloc(sizeof(cipher_params_t)); }
-  ~AES() { free(params); }
-  bool params_init(AEAD_mode mode = AEAD_mode::AES_CTR);
-  unsigned char *get_key() { return params->key; }
-  unsigned char *get_iv() { return params->iv; }
-  bool set_params(const unsigned char *k, const unsigned char *v,
-                  const AEAD_mode mode = AEAD_mode::AES_CTR);
-  bool auth_encry(const unsigned char *msg, unsigned char *enc_msg);
-  bool auth_decry(std::string msg, std::string &dec_msg);
+        int out_len;
+        if (EVP_EncryptUpdate(ctx, out_buf, &out_len, plaintext.data(), buf_size) !=
+            1)
+        {
+            EVP_CIPHER_CTX_cleanup(ctx);
+            throw std::runtime_error("EVP_EncryptUpdate() fail.");
+        }
 
-  std::vector<unsigned char> encrypt(const std::vector<unsigned char> &data,
-                                     const std::vector<unsigned char> &key,
-                                     const std::vector<unsigned char> &iv);
+        if (EVP_EncryptFinal_ex(ctx, out_buf, &out_len) != 1)
+        {
+            EVP_CIPHER_CTX_cleanup(ctx);
+            throw std::runtime_error("EVP_EncryptFinal_ex() fail");
+        }
+        std::vector<unsigned char> vec(out_buf, out_buf + out_len);
+        return vec;
+    }
 };
 #endif

@@ -1,6 +1,10 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#if __cplusplus < 201103L
+#error "use --std=c++11 option for compile."
+#endif
+
 #include <assert.h>
 #include <iomanip>
 #include <iostream>
@@ -11,6 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
+
 #include <boost/any.hpp>
 #include <nlohmann/json.hpp>
 #include <openssl/bio.h>
@@ -18,6 +23,11 @@
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
 
+
+#if defined(WIN32) || defined(_WIN64)
+#pragma comment(lib, "libeay32.lib")
+#pragma comment(lib, "ssleay32.lib")
+#endif
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
 static const char *pszBase58 =
@@ -283,47 +293,81 @@ public:
     return DecodeBase58(str.c_str(), vchRet);
   }
 
-  std::string Base64Encode(const char *input, int length, bool with_new_line) {
-    BIO *bmem = NULL;
-    BIO *b64 = NULL;
-    BUF_MEM *bptr = NULL;
+  // if with_new_line == true: NO_WRAP mode
+  // else NO_PADDING
+  static std::string base64Encode(std::string data, bool with_new_line) {
+    if (data.length() == 0) {
+      return "";
+    }
+    BIO *b64 = BIO_new(BIO_f_base64());
 
-    b64 = BIO_new(BIO_f_base64());
     if (!with_new_line) {
+      data.append("\n");
       BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
     }
-    bmem = BIO_new(BIO_s_mem());
-    b64 = BIO_push(b64, bmem);
-    BIO_write(b64, input, length);
-    // BIO_flush(b64);
-    BIO_get_mem_ptr(b64, &bptr);
 
-    char *buff = (char *)malloc(bptr->length + 1);
-    memcpy(buff, bptr->data, bptr->length);
-    buff[bptr->length] = 0;
+    BIO *mem = BIO_new(BIO_s_mem());
+    b64 = BIO_push(b64, mem);
 
+    BIO_write(b64, data.c_str(), data.length());
+    BIO_flush(b64);
+
+    BUF_MEM *pBuf = nullptr;
+    BIO_get_mem_ptr(mem, &pBuf);
+    std::string ret(pBuf->data);
+    free(pBuf);
+
+    BIO_set_close(b64, BIO_NOCLOSE);
     BIO_free_all(b64);
-
-    return std::string(buff);
+    if (with_new_line) {
+      return ret.substr(0, ret.length() - 1);
+    }
+    return ret;
   }
 
-  std::string Base64Decode(char *input, int length, bool with_new_line) {
-    BIO *b64 = NULL;
-    BIO *bmem = NULL;
-    char *buffer = (char *)malloc(length);
-    memset(buffer, 0, length);
+  static std::string base64Encode(std::vector<unsigned char> data,
+                                  bool with_new_line) {
+    std::string str_data(data.begin(), data.end());
+    return base64Encode(str_data, with_new_line);
+  }
 
-    b64 = BIO_new(BIO_f_base64());
+  static std::string base64Decode(std::string data, bool with_new_line) {
+    size_t length = data.length();
+    if (length == 0) {
+      return "";
+    }
+
+    BIO *b64 = BIO_new(BIO_f_base64());
     if (!with_new_line) {
       BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+    } else {
+      data.append("\n");
     }
-    bmem = BIO_new_mem_buf(input, length);
-    bmem = BIO_push(b64, bmem);
-    BIO_read(bmem, buffer, length);
 
-    BIO_free_all(bmem);
+    BIO *mem = nullptr;
+    mem = BIO_new_mem_buf(const_cast<char *>(data.c_str()), -1);
+    mem = BIO_push(b64, mem);
 
-    return std::string(buffer);
+    char *buffer = (char *)malloc(length);
+    memset(buffer, 0, length);
+    BIO_read(mem, buffer, length);
+    if (!with_new_line) {
+      std::string ret(buffer, buffer + strlen(buffer) - 1);
+      free(buffer);
+      BIO_free_all(mem);
+      return ret;
+    } else {
+      std::string ret(buffer, buffer + strlen(buffer));
+      free(buffer);
+      BIO_free_all(mem);
+      return ret;
+    }
+  }
+
+  static std::string base64Decode(std::vector<unsigned char> data,
+                                  bool with_new_line) {
+    std::string str_data(data.begin(), data.end());
+    return base64Decode(str_data, with_new_line);
   }
 
   static std::string

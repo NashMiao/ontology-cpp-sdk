@@ -10,6 +10,11 @@
 #include <openssl/ripemd.h>
 #include <openssl/sha.h>
 
+#if defined(WIN32) || defined(_WIN64)
+#pragma comment(lib, "libeay32.lib")
+#pragma comment(lib, "ssleay32.lib")
+#endif
+
 class Digest
 {
 public:

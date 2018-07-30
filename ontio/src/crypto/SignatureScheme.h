@@ -2,13 +2,12 @@
 #define SIGNATURESCHEME_H
 
 #if __cplusplus < 201103L
-    #error "use --std=c++11 option for compile."
+#error "use --std=c++11 option for compile."
 #endif
 
 #include <string>
 
-enum class SignatureScheme : int
-{
+enum class SignatureScheme : int {
   SHA224withECDSA,
   SHA256withECDSA,
   SHA384withECDSA,
@@ -21,14 +20,11 @@ enum class SignatureScheme : int
   SM3withSM2
 };
 
-class SignatureSchemeMethod
-{
+class SignatureSchemeMethod {
 public:
-  static int ordinal(SignatureScheme scheme)
-  {
+  static int ordinal(SignatureScheme scheme) {
     int ret;
-    switch (scheme)
-    {
+    switch (scheme) {
     case SignatureScheme::SHA224withECDSA:
       ret = 0;
       break;
@@ -66,11 +62,9 @@ public:
     return ret;
   }
 
-  std::string toString(SignatureScheme scheme)
-  {
+  std::string toString(SignatureScheme scheme) {
     std::string name;
-    switch (scheme)
-    {
+    switch (scheme) {
     case SignatureScheme::SHA224withECDSA:
       name = "SHA224withECDSA";
       break;
@@ -108,61 +102,37 @@ public:
     return name;
   }
 
-  static SignatureScheme fromScheme(std::string name)
-  {
+  static SignatureScheme fromScheme(std::string name) {
     SignatureScheme scheme;
-    if (name == "SHA224withECDSA")
-    {
+    if (name == "SHA224withECDSA") {
       scheme = SignatureScheme::SHA224withECDSA;
-    }
-    else if (name == "SHA256withECDSA")
-    {
+    } else if (name == "SHA256withECDSA") {
       scheme = SignatureScheme::SHA256withECDSA;
-    }
-    else if (name == "SHA384withECDSA")
-    {
+    } else if (name == "SHA384withECDSA") {
       scheme = SignatureScheme::SHA384withECDSA;
-    }
-    else if (name == "SHA5112withECDSA")
-    {
+    } else if (name == "SHA5112withECDSA") {
       scheme = SignatureScheme::SHA512withECDSA;
-    }
-    else if (name == "SHA3_224withECDSA")
-    {
+    } else if (name == "SHA3_224withECDSA") {
       scheme = SignatureScheme::SHA3_224withECDSA;
-    }
-    else if (name == "SHA3_256withECDS")
-    {
+    } else if (name == "SHA3_256withECDS") {
       scheme = SignatureScheme::SHA3_256withECDSA;
-    }
-    else if (name == "SHA3_384withECDSA")
-    {
+    } else if (name == "SHA3_384withECDSA") {
       scheme = SignatureScheme::SHA3_384withECDSA;
-    }
-    else if (name == "SHA3_512withECDS")
-    {
+    } else if (name == "SHA3_512withECDS") {
       scheme = SignatureScheme::SHA3_512withECDSA;
-    }
-    else if (name == "RIPEMD160withECDSA")
-    {
+    } else if (name == "RIPEMD160withECDSA") {
       scheme = SignatureScheme::RIPEMD160withECDSA;
-    }
-    else if (name == "SM3withSM2")
-    {
+    } else if (name == "SM3withSM2") {
       scheme = SignatureScheme::SM3withSM2;
-    }
-    else
-    {
+    } else {
       throw "SignatureScheme Error!";
     }
     return scheme;
   }
 
-  static SignatureScheme toSignatureScheme(unsigned char value)
-  {
+  static SignatureScheme toSignatureScheme(unsigned char value) {
     SignatureScheme scheme;
-    switch (value)
-    {
+    switch (value) {
     case 0x00:
       scheme = SignatureScheme::SHA224withECDSA;
       break;
@@ -194,7 +164,8 @@ public:
       scheme = SignatureScheme::SM3withSM2;
       break;
     default:
-      throw runtime_error("toSignatureScheme() Error: Unsupport SignatureScheme");
+      throw runtime_error(
+          "toSignatureScheme() Error: Unsupport SignatureScheme");
       break;
     }
     return scheme;
