@@ -61,7 +61,8 @@
         "complex": "cpp",
         "deque": "cpp",
         "numeric": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "variant": "cpp"
     },
     "C_Cpp.default.includePath": [
         "/usr/local/include/",
