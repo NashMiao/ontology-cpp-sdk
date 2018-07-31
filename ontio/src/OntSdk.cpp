@@ -1,10 +1,8 @@
 #include "OntSdk.h"
 #include "smartcontract/Vm.h"
 
-Vm *OntSdk::getVm()
-{
-    if (vm == NULL)
-    {
+Vm *OntSdk::getVm() {
+    if (vm == NULL) {
         vm = new Vm();
     }
     return vm;
@@ -12,98 +10,78 @@ Vm *OntSdk::getVm()
 
 void OntSdk::setDefaultConnect(ConnectMgr connect) { connectDefault = connect; }
 
-void OntSdk::setConnectTestNet()
-{
-    try
-    {
+void OntSdk::setRpc(const std::string &url) {
+    connectRpc = ConnectMgr(url, ConnectType::RPC);
+}
+
+void OntSdk::setConnectTestNet() {
+    try {
         std::string rpcUrl = "http://polaris1.ont.io";
         setRpc(rpcUrl);
-        connDefault = getRpc();
+        connectDefault = getRpc();
     }
-    catch (SDKException &e)
-    {
+    catch (SDKException &e) {
         std::cerr << e.what() << std::endl;
     }
 }
 
-void OntSdk::setConnectMainNet()
-{
-    try
-    {
+void OntSdk::setConnectMainNet() {
+    try {
         std::string rpcUrl = "http://dappnode1.ont.io";
         setRpc(rpcUrl);
-        connDefault = getRpc();
+        connectDefault = getRpc();
     }
-    catch (SDKException &e)
-    {
+    catch (SDKException &e) {
         std::cerr << e.what() << std::endl;
     }
 }
 
-ConnectMgr OntSdk::getWebSocket()
-{
-    if (&connectWebSocket == NULL)
-    {
+ConnectMgr OntSdk::getWebSocket() {
+    if (&connectWebSocket == NULL) {
         throw new SDKException(ErrorCode::WebsocketNotInit);
     }
     return connectWebSocket;
 }
-ConnectMgr OntSdk::getRpc() throw SDKException
-{
-    if (&connectRpc == NULL)
-    {
+
+ConnectMgr OntSdk::getRpc(){
+    if (&connectRpc == NULL) {
         throw new SDKException(ErrorCode::ConnRestfulNotInit);
     }
-    return connRpc;
-}
-ConnectMgr OntSdk::getRestful() throw SDKException
-{
-    if (&connectRestful == NULL)
-    {
-        throw new SDKException(ErrorCode::ConnRestfulNotInit);
-    }
-    return connRestful;
+    return connectRpc;
 }
 
-ConnectMgr OntSdk::getConnect()
-{
-    if (&connectDefault != NULL)
-    {
+ConnectMgr OntSdk::getRestful(){
+    if (&connectRestful == NULL) {
+        throw new SDKException(ErrorCode::ConnRestfulNotInit);
+    }
+    return connectRestful;
+}
+
+ConnectMgr OntSdk::getConnect() {
+    if (&connectDefault != NULL) {
         return connectDefault;
-    }
-    else if (&connectRpc != NULL)
-    {
+    } else if (&connectRpc != NULL) {
         return connectRpc;
-    }
-    else if (&connectRestful != NULL)
-    {
+    } else if (&connectRestful != NULL) {
         return connectRestful;
-    }
-    else if (&connectWebSocket != NULL)
-    {
+    } else if (&connectWebSocket != NULL) {
         return connectWebSocket;
-    }
-    else
-    {
+    } else {
         throw new SDKException(ErrorCode::OtherError("signServer null"));
     }
 }
 
 void OntSdk::signTx(InvokeCodeTransaction &tx,
-                    const std::vector<Account> &accounts)
-{
-    if (accounts.size() > Common::TX_MAX_SIG_SIZE)
-    {
+                    const std::vector<Account> &accounts) {
+    if (accounts.size() > Common::TX_MAX_SIG_SIZE) {
         throw SDKException(ErrorCode::StrParamErr(
-            "the number of transaction signatures should not be over 16"));
+                "the number of transaction signatures should not be over 16"));
     }
     std::vector<Sig> sigs;
     sigs.reserve(accounts.size());
-    for (size_t i = 0; i < accounts.size(); i++)
-    {
+    for (size_t i = 0; i < accounts.size(); i++) {
         Sig sig_item;
-        for (size_t j = 0; j < accounts.size(); j++)
-        {
+        for (size_t j = 0; j < accounts.size(); j++) {
             std::vector<unsigned char> pub_key;
             std::vector<unsigned char> signature;
             pub_key = accounts[j].serializePublicKey();
@@ -116,12 +94,11 @@ void OntSdk::signTx(InvokeCodeTransaction &tx,
     }
     tx.add_sigs(sigs);
 }
-void OntSdk::addSign(InvokeCodeTransaction &tx, const Account &acct)
-{
-    if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE)
-    {
+
+void OntSdk::addSign(InvokeCodeTransaction &tx, const Account &acct) {
+    if (tx.sigs_length() > Common::TX_MAX_SIG_SIZE) {
         throw new SDKException(ErrorCode::ParamErr(
-            "the number of transaction signatures should not be over 16"));
+                "the number of transaction signatures should not be over 16"));
     }
     int m = 1;
     std::string pub_key = acct.serializePublicKey_str();
@@ -129,27 +106,24 @@ void OntSdk::addSign(InvokeCodeTransaction &tx, const Account &acct)
     Sig sig_item(pub_key, m, sig_data);
     tx.add_sig(sig_item);
 }
+
 void OntSdk::addMultiSign(InvokeCodeTransaction &tx, int M,
-                          const std::vector<Account> &acct)
-{
+                          const std::vector<Account> &acct) {
     if (tx.sigs_length() >= MULTI_SIG_MAX_PUBKEY_SIZE ||
-        tx.sigs_length() + acct.size() > MULTI_SIG_MAX_PUBKEY_SIZE)
-    {
+        tx.sigs_length() + acct.size() > MULTI_SIG_MAX_PUBKEY_SIZE) {
         throw "the number of transaction signatures should not be over 16";
     }
 
     std::vector<Sig> _sigs;
-    for (int i = 0; i < tx.sigs_length(); i++)
-    {
+    for (int i = 0; i < tx.sigs_length(); i++) {
         _sigs.push_back(tx.get_sig(i));
     }
     std::vector<std::string> _pubKeys;
     std::vector<std::string> _sigData;
-    for (size_t i = 0; i < acct.size(); i++)
-    {
+    for (size_t i = 0; i < acct.size(); i++) {
         _pubKeys.push_back((acct[i].serializePublicKey_str()));
         _sigData.push_back(
-            (tx.sign_str(acct[i], defaultSignScheme, defaultCurveName)));
+                (tx.sign_str(acct[i], defaultSignScheme, defaultCurveName)));
         Sig sig_item(_pubKeys, M, _sigData);
         _sigs.push_back(sig_item);
     }

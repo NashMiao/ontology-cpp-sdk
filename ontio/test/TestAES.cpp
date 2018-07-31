@@ -13,12 +13,33 @@ TEST(AES, generateKey)
 {
     std::string password = "password";
     std::vector<unsigned char> passwordBytes(password.begin(), password.end());
-    std::cout << Helper::toHexString(Digest::sha256(passwordBytes)) << std::endl;
-    std::string key = Helper::toHexString(AES::generateKey(password));
+    std::string key_1 = Helper::toHexString(AES::generateKey(password));
     std::string expect_key =
-        "73641c99f7719f57d8f4beb11a303afcd190243a51ced8782ca6d3dbe014d14603036c12"
-        "be3726eb283d078dff481175e96224f0b0c632c7a37e10eb40fe6be889";
-    EXPECT_EQ(expect_key, key);
+        "0x73641c99f7719f57d8f4beb11a303afcd190243a51ced8782ca6d3dbe014d146";
+    EXPECT_EQ(expect_key, key_1);
+
+    std::vector<unsigned char> key_2 = AES::generateKey();
+    EXPECT_EQ(key_2.size(), 32);
+}
+
+TEST(AES, generateIv)
+{
+    std::vector<unsigned char> iv_1 = AES::generateIv();
+    EXPECT_EQ(iv_1.size(), 16);
+}
+
+TEST(AES, gcmEncrypt)
+{
+    std::string plaintext_1 = "Hello world!";
+    std::string key_1 = "SixteenbyteskeyplSixteenbyteskey";
+    std::string iv_1 = "Firsttestbytesiv";
+    std::string target_cipher_1 = "0x12c533d803a6bb9024ff8deb6849af1e465fc1414f0f60d86fd08c94";
+    std::vector<unsigned char> byte_plaintext_1(plaintext_1.begin(), plaintext_1.end());
+    std::vector<unsigned char> byte_key_1(key_1.begin(), key_1.end());
+    std::vector<unsigned char> byte_iv_1(iv_1.begin(), iv_1.end());
+    std::vector<unsigned char> encryptext_1;
+    encryptext_1 = AES::gcmEncrypt(byte_plaintext_1, byte_key_1, byte_iv_1, false);
+    EXPECT_EQ(Helper::toHexString(encryptext_1), target_cipher_1);
 }
 
 int main(int argc, char **argv)

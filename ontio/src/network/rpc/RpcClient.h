@@ -55,14 +55,14 @@ public:
       try {
         result = rpc.call("sendrawtransaction", json_array);
       } catch (const char *e) {
-        cerr << std::string("sendRawTransaction exepection: ") + std::string(e)
-             << endl;
+        std::cerr << std::string("sendRawTransaction exepection: ") + std::string(e)
+             << std::endl;
       }
     } else {
       try {
         result = rpc.call("sendrawtransaction", json_array);
       } catch (const char *e) {
-        cerr << e << endl;
+        std::cerr << e << std::endl;
       }
     }
     return result;
@@ -155,7 +155,7 @@ public:
     json_array.push_back(codehash);
     json_array.push_back(key);
     result = rpc.call("getstorage", json_array);
-    string storage;
+    std::string storage;
     if (result.is_string()) {
       storage = result;
     } else {

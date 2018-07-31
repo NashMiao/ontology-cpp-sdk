@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <openssl/evp.h>
+#include <openssl/rand.h>
 
 #include "../common/Helper.h"
 #include "Digest.h"
@@ -22,7 +23,7 @@
 class AES
 {
   private:
-    static inline void set_padding(EVP_CIPHER_CTX *ctx, bool padding)
+    static inline void setPadding(EVP_CIPHER_CTX *ctx, bool padding)
     {
         if (padding)
         {
@@ -34,6 +35,17 @@ class AES
         }
     }
 
+    static inline void checkArgument(const std::vector<unsigned char> &key,
+                                     const std::vector<unsigned char> &iv,
+                                     const EVP_CIPHER *cipher)
+    {
+        if (key.size() != EVP_CIPHER_key_length(cipher) ||
+            iv.size() != EVP_CIPHER_iv_length(cipher))
+        {
+            throw std::runtime_error("IllegalArgumentException");
+        }
+    }
+
   public:
     static std::vector<unsigned char> generateKey(const std::string &password)
     {
@@ -42,55 +54,92 @@ class AES
         return passwordHash;
     }
 
+    static std::vector<unsigned char> generateKey()
+    {
+        unsigned char key[AES_256_KEY_SIZE];
+        if (RAND_bytes(key, AES_256_KEY_SIZE) != 1)
+        {
+            throw std::runtime_error("BAND_bytes() fail.");
+        }
+        return std::vector<unsigned char>(key, key + AES_256_KEY_SIZE);
+        ;
+    }
+
+    static std::vector<unsigned char> generateIv()
+    {
+        unsigned char iv[AES_BLOCK_SIZE];
+        if (RAND_bytes(iv, AES_BLOCK_SIZE) != 1)
+        {
+            throw std::runtime_error("BAND_bytes() fail.");
+        }
+        return std::vector<unsigned char>(iv, iv + AES_BLOCK_SIZE);
+        ;
+    }
+
     static std::vector<unsigned char>
     gcmEncrypt(const std::vector<unsigned char> &plaintext,
                const std::vector<unsigned char> &key,
                const std::vector<unsigned char> &iv, bool padding)
     {
+        // checkArgument(key, iv, EVP_aes_256_gcm());
         EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
         EVP_CIPHER_CTX_init(ctx);
         if (ctx == NULL)
         {
             throw std::runtime_error("EVP_CIPHER_CTX_new() failed.");
         }
-        set_padding(ctx, padding);
+
+        /* Initialise the encryption operation. */
+        if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL))
+        {
+            throw std::runtime_error("EVP_EncryptInit_ex() fail.");
+        }
+        /* Set IV length if default 12 bytes (96 bits) is not appropriate */
+        if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 16, NULL))
+        {
+            throw std::runtime_error("EVP_CIPHER_CTX_ctrl() fail.");
+        }
+        std::cout << EVP_CIPHER_CTX_iv_length(ctx) << std::endl;
+
+        setPadding(ctx, padding);
+        /* set key and IV */
+        if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key.data(), iv.data()))
+        {
+            throw std::runtime_error("EVP_EncryptInit_ex() fail.");
+        }
         /* check lengths */
-        if (EVP_CIPHER_CTX_key_length(ctx) != AES_256_KEY_SIZE)
+        if (EVP_CIPHER_CTX_key_length(ctx) !=
+            EVP_CIPHER_key_length(EVP_aes_256_gcm()))
         {
             throw std::runtime_error(
                 "EVP_CIPHER_CTX_key_length(ctx) != AES_256_KEY_SIZE");
         }
-        if (EVP_CIPHER_CTX_iv_length(ctx) != AES_BLOCK_SIZE)
+        if (EVP_CIPHER_CTX_iv_length(ctx) !=
+            EVP_CIPHER_iv_length(EVP_aes_256_gcm()))
         {
             throw std::runtime_error(
                 "EVP_CIPHER_CTX_iv_length(ctx) != AES_BLOCK_SIZE");
         }
-
-        /* set key and IV */
-        if (!EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, key.data(),
-                                iv.data()))
-        {
-            throw std::runtime_error("EVP_EncryptInit_ex() fail.");
-        }
         /* Allow enough space in output buffer for additional block */
         int cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
-        int buf_size = 32;
-        unsigned char out_buf[buf_size + cipher_block_size];
+        unsigned char out_buf[(int)plaintext.size() + cipher_block_size];
 
         int out_len;
-        if (EVP_EncryptUpdate(ctx, out_buf, &out_len, plaintext.data(), buf_size) !=
-            1)
+        if (EVP_EncryptUpdate(ctx, out_buf, &out_len, plaintext.data(),
+                              plaintext.size()) != 1)
         {
             EVP_CIPHER_CTX_cleanup(ctx);
             throw std::runtime_error("EVP_EncryptUpdate() fail.");
         }
 
-        if (!EVP_EncryptFinal_ex(ctx, out_buf, &out_len))
+        if (1 != EVP_EncryptFinal_ex(ctx, out_buf, &out_len))
         {
             EVP_CIPHER_CTX_cleanup(ctx);
             throw std::runtime_error("EVP_EncryptFinal_ex() fail");
         }
-        std::vector<unsigned char> vec(out_buf, out_buf + out_len);
+        std::cout << out_buf << std::endl;
+        std::vector<unsigned char> vec(out_buf, out_buf + (int)plaintext.size() +
+                                                    cipher_block_size);
         return vec;
     }
 
@@ -99,8 +148,7 @@ class AES
                const std::vector<unsigned char> &key,
                const std::vector<unsigned char> &iv, bool padding)
     {
-        /* Allow enough space in output buffer for additional block */
-        int cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
+        checkArgument(key, iv, EVP_aes_256_gcm());
 
         EVP_CIPHER_CTX *ctx;
         ctx = EVP_CIPHER_CTX_new();
@@ -109,7 +157,7 @@ class AES
         {
             throw std::runtime_error("EVP_CIPHER_CTX_init() failed.");
         }
-        set_padding(ctx, padding);
+        setPadding(ctx, padding);
 
         /* set key and IV */
         if (EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, key.data(),
@@ -118,7 +166,9 @@ class AES
             throw std::runtime_error("EVP_DecryptInit_ex()");
         }
 
+        /* Allow enough space in output buffer for additional block */
         int buf_size = (int)ciphertext.size();
+        int cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
         unsigned char out_buf[buf_size + cipher_block_size];
 
         int out_len;

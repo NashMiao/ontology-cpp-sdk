@@ -7,6 +7,7 @@
 
 #include <map>
 #include <string>
+#include <iostream>
 #include <typeinfo>
 #include <vector>
 
@@ -318,7 +319,7 @@ public:
     }
     if (*it != 0)
     {
-      cout << "error: " << *it << endl;
+      std::cout << "error: " << *it << std::endl;
       throw "RpcException(0, JSON.toJSONString(response))";
     }
     it = json_response.find("result");
@@ -344,7 +345,7 @@ public:
     request = makeRequest(method);
     nlohmann::json json_response;
     json_response = send(request);
-    cout << "json_response:" << json_response << endl;
+    std::cout << "json_response:" << json_response << std::endl;
     if (json_response.size() == 0)
     {
       throw "RpcException(0,ErrorCode.ConnectUrlErr(  " + url +

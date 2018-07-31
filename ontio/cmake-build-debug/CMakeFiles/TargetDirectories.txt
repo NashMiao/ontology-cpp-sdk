@@ -1,0 +1,3 @@
+/home/nash/Desktop/ontology-cpp-sdk/ontio/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/nash/Desktop/ontology-cpp-sdk/ontio/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/nash/Desktop/ontology-cpp-sdk/ontio/cmake-build-debug/CMakeFiles/ontio.dir

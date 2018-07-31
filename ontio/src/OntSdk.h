@@ -54,6 +54,7 @@ public:
   void setDefaultConnect(ConnectMgr connect);
   void setConnectTestNet();
   void setConnectMainNet();
+  void setRpc(const std::string &url);
   ConnectMgr getWebSocket();
   ConnectMgr getRpc();
   ConnectMgr getRestful();

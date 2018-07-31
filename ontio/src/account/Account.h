@@ -377,7 +377,7 @@ public:
 
   std::string exportGcmEncryptedPrikey(const std::string &password,
                                        const std::vector<unsigned char> &salt,
-                                       const int n) throw(SDKException)
+                                       const int n)
   {
     int r = 8;
     int p = 8;
@@ -401,7 +401,7 @@ public:
   static std::string getGcmDecodedPrivateKey(
       const std::string &encryptedPriKey, std::string password,
       std::string address, const std::vector<unsigned char> &salt, int n,
-      SignatureScheme scheme) throw(SDKException)
+      SignatureScheme scheme)
   {
     if (encryptedPriKey.length() == 0)
     {
@@ -424,25 +424,25 @@ public:
                                        derivedkey.begin() + 64);
                                   
 
-    std::vector<unsigned char> rawkey = new byte[0];
-    try
-    {
-      SecretKeySpec skeySpec = new SecretKeySpec(derivedhalf2, "AES");
-      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-      cipher.init(Cipher.DECRYPT_MODE, skeySpec, new GCMParameterSpec(128, iv));
-      cipher.updateAAD(address.getBytes());
-      rawkey = cipher.doFinal(encryptedkey);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      throw new SDKException(ErrorCode.encryptedPriKeyAddressPasswordErr);
-    }
-    Account account = new Account(rawkey, scheme);
-    if (!address.equals(account.getAddressU160().toBase58()))
-    {
-      throw new SDKException(ErrorCode::encryptedPriKeyAddressPasswordErr);
-    }
+    std::vector<unsigned char> rawkey;
+//    try
+//    {
+//      SecretKeySpec skeySpec = new SecretKeySpec(derivedhalf2, "AES");
+//      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+//      cipher.init(Cipher.DECRYPT_MODE, skeySpec, new GCMParameterSpec(128, iv));
+//      cipher.updateAAD(address.getBytes());
+//      rawkey = cipher.doFinal(encryptedkey);
+//    }
+//    catch (Exception e)
+//    {
+//      e.printStackTrace();
+//      throw new SDKException(ErrorCode.encryptedPriKeyAddressPasswordErr);
+//    }
+//    Account account = new Account(rawkey, scheme);
+//    if (!address.equals(account.getAddressU160().toBase58()))
+//    {
+//      throw new SDKException(ErrorCode::encryptedPriKeyAddressPasswordErr);
+//    }
     return Helper::toHexString(rawkey);
   }
 };

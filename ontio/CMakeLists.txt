@@ -1,0 +1,117 @@
+cmake_minimum_required(VERSION 3.12)
+project(ontio)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(
+        "/usr/local/include/"
+)
+
+include_directories(src)
+include_directories(src/account)
+include_directories(src/common)
+include_directories(src/core)
+include_directories(src/core/asset)
+include_directories(src/core/block)
+include_directories(src/core/payload)
+include_directories(src/core/program)
+include_directories(src/core/scripts)
+include_directories(src/core/transaction)
+include_directories(src/crypto)
+include_directories(src/demo)
+include_directories(src/io)
+include_directories(src/network)
+include_directories(src/network/connect)
+include_directories(src/network/restful)
+include_directories(src/network/rpc)
+include_directories(src/sdk)
+include_directories(src/sdk/exception)
+include_directories(src/sdk/manager)
+include_directories(src/sdk/wallet)
+include_directories(src/smartcontract)
+include_directories(src/smartcontract/nativevm)
+include_directories(src/smartcontract/nativevm/abi)
+
+add_executable(ontio
+        src/account/Account.cpp
+        src/account/Account.h
+        src/common/Address.cpp
+        src/common/Address.h
+        src/common/Common.h
+        src/common/ErrorCode.h
+        src/common/Helper.h
+        src/common/UIntBase.h
+        src/core/asset/Contract.h
+        src/core/asset/Fee.h
+        src/core/asset/Sig.h
+        src/core/asset/State.h
+        src/core/asset/Transfers.h
+        src/core/block/Block.cpp
+        src/core/block/Block.h
+        src/core/payload/DeployCodeTransaction.h
+        src/core/payload/InvokeCodeTransaction.h
+        src/core/program/Program.h
+        src/core/scripts/ScriptBuilder.h
+        src/core/scripts/ScriptOp.h
+        src/core/transaction/Attribute.h
+        src/core/transaction/AttributeUsage.h
+        src/core/transaction/Transaction.h
+        src/core/transaction/TransactionType.h
+        src/core/Inventory.h
+        src/core/Signable.h
+        src/core/VmType.h
+        src/crypto/AES.h
+        src/crypto/Curve.h
+        src/crypto/Digest.h
+        src/crypto/ECC.h
+        src/crypto/ECDomainParameters.h
+        src/crypto/KeyType.h
+        src/crypto/ScryptHandler.h
+        src/crypto/Signature.h
+        src/crypto/SignatureHandler.h
+        src/crypto/SignatureScheme.h
+        src/demo/DeployCodeDemo.h
+        src/demo/MakeTxWithoutWalletDemo.h
+        src/demo/OntDemo.h
+        src/io/BinaryReader.cpp
+        src/io/BinaryReader.h
+        src/io/BinaryWriter.cpp
+        src/io/BinaryWriter.h
+        src/io/Serializable.h
+        src/network/connect/IConnector.h
+        src/network/restful/http.h
+        src/network/restful/RestfulInterfaces.h
+        src/network/restful/Result.h
+        src/network/restful/UrlConsts.h
+        src/network/rpc/RpcClient.h
+        src/network/rpc/RpcInterfaces.h
+        src/sdk/exception/SDKException.h
+        src/sdk/manager/ConnectMgr.h
+        src/sdk/manager/ConnectType.h
+        src/sdk/manager/OntAssetTx.h
+        src/sdk/manager/WalletMgr.h
+        src/sdk/wallet/AccountParam.h
+        src/sdk/wallet/Control.h
+        src/sdk/wallet/Identity.h
+        src/sdk/wallet/ScryptParam.h
+        src/sdk/wallet/Wallet.h
+        src/smartcontract/nativevm/abi/NativeBuildParams.h
+        src/smartcontract/nativevm/abi/Struct.h
+        src/smartcontract/nativevm/Ont.h
+        src/smartcontract/Vm.h
+        src/main.cpp
+        src/OntSdk.cpp
+        src/OntSdk.h
+        src/run.sh
+        test/TestAES.cpp
+        test/TestAES.sh
+        test/TestDigest.cpp
+        test/TestDigest.sh
+        test/TestHelper.cpp
+        test/TestHelper.sh
+        test/TestRestful.cpp
+        test/TestRestful.sh
+        test/TestRpc.cpp
+        test/TestRpc.sh
+        test/TestScryptHandler.cpp
+        test/TestScryptHandler.sh)
