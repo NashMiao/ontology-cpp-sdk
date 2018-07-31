@@ -44,7 +44,7 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/local/include"/>
+					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/."/>
 					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/src"/>
 					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/account"/>
 					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/common"/>
@@ -73,6 +73,7 @@
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
@@ -91,7 +92,7 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/local/include"/>
+					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/."/>
 					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/src"/>
 					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/account"/>
 					<Add directory="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/common"/>
@@ -120,6 +121,7 @@
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
@@ -297,9 +299,6 @@
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/network/rpc/RpcInterfaces.h">
 			<Option target="ontio"/>
 		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/run.sh">
-			<Option target="ontio"/>
-		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/src/sdk/exception/SDKException.h">
 			<Option target="ontio"/>
 		</Unit>
@@ -345,37 +344,19 @@
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestAES.cpp">
 			<Option target="ontio"/>
 		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestAES.sh">
-			<Option target="ontio"/>
-		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestDigest.cpp">
-			<Option target="ontio"/>
-		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestDigest.sh">
 			<Option target="ontio"/>
 		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestHelper.cpp">
 			<Option target="ontio"/>
 		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestHelper.sh">
-			<Option target="ontio"/>
-		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestRestful.cpp">
-			<Option target="ontio"/>
-		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestRestful.sh">
 			<Option target="ontio"/>
 		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestRpc.cpp">
 			<Option target="ontio"/>
 		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestRpc.sh">
-			<Option target="ontio"/>
-		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestScryptHandler.cpp">
-			<Option target="ontio"/>
-		</Unit>
-		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/test/TestScryptHandler.sh">
 			<Option target="ontio"/>
 		</Unit>
 		<Unit filename="/home/nash/Desktop/ontology-cpp-sdk/ontio/CMakeLists.txt">

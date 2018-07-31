@@ -55,7 +55,7 @@ class ScryptHandler
         unsigned char derivedkey[dkLen];
 
         size_t outlen = sizeof(derivedkey);
-        pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
+        pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, nullptr);
 
         if (!EVP_PKEY_derive_init(pctx))
         {

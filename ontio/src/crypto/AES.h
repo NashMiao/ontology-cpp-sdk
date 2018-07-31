@@ -84,18 +84,18 @@ class AES
         // checkArgument(key, iv, EVP_aes_256_gcm());
         EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
         EVP_CIPHER_CTX_init(ctx);
-        if (ctx == NULL)
+        if (ctx == nullptr)
         {
             throw std::runtime_error("EVP_CIPHER_CTX_new() failed.");
         }
 
         /* Initialise the encryption operation. */
-        if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL))
+        if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr))
         {
             throw std::runtime_error("EVP_EncryptInit_ex() fail.");
         }
         /* Set IV length if default 12 bytes (96 bits) is not appropriate */
-        if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 16, NULL))
+        if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 16, nullptr))
         {
             throw std::runtime_error("EVP_CIPHER_CTX_ctrl() fail.");
         }
@@ -103,7 +103,7 @@ class AES
 
         setPadding(ctx, padding);
         /* set key and IV */
-        if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key.data(), iv.data()))
+        if (1 != EVP_EncryptInit_ex(ctx, nullptr, nullptr, key.data(), iv.data()))
         {
             throw std::runtime_error("EVP_EncryptInit_ex() fail.");
         }
@@ -153,14 +153,14 @@ class AES
         EVP_CIPHER_CTX *ctx;
         ctx = EVP_CIPHER_CTX_new();
         EVP_CIPHER_CTX_init(ctx);
-        if (ctx == NULL)
+        if (ctx == nullptr)
         {
             throw std::runtime_error("EVP_CIPHER_CTX_init() failed.");
         }
         setPadding(ctx, padding);
 
         /* set key and IV */
-        if (EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, key.data(),
+        if (EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, key.data(),
                                iv.data()) != 1)
         {
             throw std::runtime_error("EVP_DecryptInit_ex()");

@@ -3,10 +3,7 @@ project(ontio)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(
-        "/usr/local/include/"
-)
-
+include_directories(.)
 include_directories(src)
 include_directories(src/account)
 include_directories(src/common)
@@ -102,16 +99,9 @@ add_executable(ontio
         src/main.cpp
         src/OntSdk.cpp
         src/OntSdk.h
-        src/run.sh
         test/TestAES.cpp
-        test/TestAES.sh
         test/TestDigest.cpp
-        test/TestDigest.sh
         test/TestHelper.cpp
-        test/TestHelper.sh
         test/TestRestful.cpp
-        test/TestRestful.sh
         test/TestRpc.cpp
-        test/TestRpc.sh
-        test/TestScryptHandler.cpp
-        test/TestScryptHandler.sh)
+        test/TestScryptHandler.cpp)
