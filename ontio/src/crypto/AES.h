@@ -39,8 +39,8 @@ class AES
                                      const std::vector<unsigned char> &iv,
                                      const EVP_CIPHER *cipher)
     {
-        if (key.size() != EVP_CIPHER_key_length(cipher) ||
-            iv.size() != EVP_CIPHER_iv_length(cipher))
+        if ((int)key.size() != EVP_CIPHER_key_length(cipher) ||
+            (int)iv.size() != EVP_CIPHER_iv_length(cipher))
         {
             throw std::runtime_error("IllegalArgumentException");
         }
@@ -77,11 +77,11 @@ class AES
     }
 
     static int encrypt(const std::vector<unsigned char> &plaintext,
-                const std::vector<unsigned char> &aad,
-                const std::vector<unsigned char> &key,
-                const std::vector<unsigned char> &iv,
-                std::vector<unsigned char> &ciphertext,
-                std::vector<unsigned char> &tag)
+                       const std::vector<unsigned char> &aad,
+                       const std::vector<unsigned char> &key,
+                       const std::vector<unsigned char> &iv,
+                       std::vector<unsigned char> &ciphertext,
+                       std::vector<unsigned char> &tag)
     {
 
         EVP_CIPHER_CTX *ctx;

@@ -9,7 +9,7 @@
 #include <list>
 
 #include "Identity.h"
-#include "Account.h"
+#include "AccountParam.h"
 
 class Wallet {
     private:
@@ -21,7 +21,7 @@ class Wallet {
     // Scrypt scrypt;
     // Object extra;
     std::list<Identity> identities;
-    std::list<Account> accounts;
+    std::list<AccountParame> accounts;
     public:
     Wallet(){
         name = "com.github.ontio";

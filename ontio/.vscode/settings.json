@@ -71,6 +71,6 @@
     ],
     "code-runner.executorMap": {
         "c": "cd $dir && clang $fileName -o $fileNameWithoutExt -Wall -g -O2 -static-libgcc -fcolor-diagnostics --target=x86_64-w64-mingw -std=c11 && $dir$fileNameWithoutExt",
-        "cpp": "cd $workspaceRoot && g++ main.cpp crypto/AES.cpp OntSdk.cpp `pkg-config --cflags --libs openssl libcurl` -Wall -g -O0 -std=c++11 -o bin/main && bin/main && rm bin/main"
+        "cpp": "cd $workspaceRoot && g++ src/main.cpp src/OntSdk.cpp src/common/ErrorCode.cpp src/core/scripts/ScriptOp.cpp `pkg-config --cflags --libs openssl libcurl` -Wall -g -O0 -std=c++11 -o bin/main && bin/main && rm bin/main"
     }
 }

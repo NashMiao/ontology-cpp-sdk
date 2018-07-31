@@ -83,7 +83,7 @@ public:
   {
     ScriptBuilder builder;
     builder.push(publicKey);
-    builder.add(getByte(ScriptOp::OP_CHECKSIG));
+    builder.add(ScriptOpMethod::getByte(ScriptOp::OP_CHECKSIG));
     Digest digest;
     std::vector<unsigned char> hash160;
     hash160 = digest.hash160(builder.toArray());
@@ -134,7 +134,7 @@ public:
   // {
   //   ScriptBuilder script_builder;
   //   script_builder.push(publicKey);
-  //   script_builder.push(getByte(ScriptOp::OP_CHECKSIG));
+  //   script_builder.push(ScriptOpMethod::getByte(ScriptOp::OP_CHECKSIG));
   //   std::vector<unsigned char> hash160_vec;
   //   hash160_vec = Digest::hash160(script_builder.toArray());
   //   Address address(hash160_vec);

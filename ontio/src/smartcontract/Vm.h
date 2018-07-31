@@ -104,7 +104,7 @@ public:
     BN_set_word(bn, 0);
     builder.push(bn);
     BN_free(bn);
-    builder.add(getByte(ScriptOp::OP_SYSCALL));
+    builder.add(ScriptOpMethod::getByte(ScriptOp::OP_SYSCALL));
     builder.push(NATIVE_INVOKE_NAME);
     std::vector<unsigned char> builder_vec = builder.toArray();
     InvokeCodeTransaction tx;

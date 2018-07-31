@@ -80,6 +80,7 @@ public:
     j["hash"] = hash;
     j["signatureScheme"] = signatureScheme;
     j["extra"] = extra;
+    return j.dump();
   }
 };
 
