@@ -76,6 +76,85 @@ class AES
         ;
     }
 
+    static int encrypt(const std::vector<unsigned char> &plaintext,
+                const std::vector<unsigned char> &aad,
+                const std::vector<unsigned char> &key,
+                const std::vector<unsigned char> &iv,
+                std::vector<unsigned char> &ciphertext,
+                std::vector<unsigned char> &tag)
+    {
+
+        EVP_CIPHER_CTX *ctx;
+
+        int len;
+
+        int ciphertext_len;
+
+        /* Create and initialise the context */
+        if (!(ctx = EVP_CIPHER_CTX_new()))
+        {
+            throw std::runtime_error("Error");
+        }
+
+        /* Initialise the encryption operation. */
+        if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL))
+        {
+            throw std::runtime_error("Error");
+        }
+
+        /* Set IV length if default 12 bytes (96 bits) is not appropriate */
+        if (1 !=
+            EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv.size(), NULL))
+        {
+            throw std::runtime_error("Error");
+        }
+        std::cout << EVP_CIPHER_CTX_iv_length(ctx) << std::endl;
+
+        /* Initialise key and IV */
+        if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key.data(), iv.data()))
+        {
+            throw std::runtime_error("Error");
+        }
+
+        /* Provide any AAD data. This can be called zero or more times as
+     * required
+     */
+        if (1 != EVP_EncryptUpdate(ctx, NULL, &len, aad.data(), aad.size()))
+        {
+            throw std::runtime_error("Error");
+        }
+
+        /* Provide the message to be encrypted, and obtain the encrypted output.
+     * EVP_EncryptUpdate can be called multiple times if necessary
+     */
+        if (1 != EVP_EncryptUpdate(ctx, ciphertext.data(), &len, plaintext.data(),
+                                   plaintext.size()))
+        {
+            throw std::runtime_error("Error");
+        }
+        ciphertext_len = len;
+
+        /* Finalise the encryption. Normally ciphertext bytes may be written at
+     * this stage, but this does not occur in GCM mode
+     */
+        if (1 != EVP_EncryptFinal_ex(ctx, ciphertext.data() + len, &len))
+        {
+            throw std::runtime_error("Error");
+        }
+        ciphertext_len += len;
+
+        /* Get the tag */
+        if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, tag.data()))
+        {
+            throw std::runtime_error("Error");
+        }
+
+        /* Clean up */
+        EVP_CIPHER_CTX_free(ctx);
+
+        return ciphertext_len;
+    }
+
     static std::vector<unsigned char>
     gcmEncrypt(const std::vector<unsigned char> &plaintext,
                const std::vector<unsigned char> &key,
@@ -90,7 +169,8 @@ class AES
         }
 
         /* Initialise the encryption operation. */
-        if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr))
+        if (1 !=
+            EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr))
         {
             throw std::runtime_error("EVP_EncryptInit_ex() fail.");
         }
