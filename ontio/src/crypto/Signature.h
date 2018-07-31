@@ -38,7 +38,7 @@ public:
     }
     if (data.size() < 2)
     {
-      throw new std::runtime_error(ErrorCode::StrInvalidSignatureDataLen);
+      throw std::runtime_error(ErrorCode::StrInvalidSignatureDataLen);
     }
     scheme = SignatureSchemeMethod::toSignatureScheme(data[0]);
     if (scheme == SignatureScheme::SM3withSM2)
@@ -51,7 +51,7 @@ public:
       }
       if (i >= data_sz)
       {
-        throw new std::runtime_error(ErrorCode::StrInvalidSignatureData);
+        throw std::runtime_error(ErrorCode::StrInvalidSignatureData);
       }
       sm2_param = std::string(data.begin(), data.begin() + i);
       value.assign(data.begin() + i + 1, data.end());

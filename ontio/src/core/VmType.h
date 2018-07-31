@@ -5,6 +5,8 @@
     #error "use --std=c++11 option for compile."
 #endif
 
+#include <stdexcept>
+
 enum class VmType { Native = 0xff, NEOVM = 0x80, WASMVM = 0x90 };
 
 VmType valueOf(unsigned char v) {
@@ -20,7 +22,7 @@ VmType valueOf(unsigned char v) {
     ret = VmType::WASMVM;
     break;
   default:
-    throw "IllegalArgumentException";
+    throw std::runtime_error("IllegalArgumentException");
   }
   return ret;
 }

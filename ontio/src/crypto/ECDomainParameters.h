@@ -44,13 +44,13 @@ public:
   }
 
   void set_EC_Point(const std::string &pubkey) {
-    ec_point = EC_POINT_hex2point(group, pubkey.c_str(), NULL, NULL);
+    ec_point = EC_POINT_hex2point(group, pubkey.c_str(), nullptr, nullptr);
   }
 
   EC_POINT *convert_EC_Point(const std::string &pubkey) {
     EC_POINT *point;
     point = EC_POINT_new(group);
-    point = EC_POINT_hex2point(group, pubkey.c_str(), NULL, NULL);
+    point = EC_POINT_hex2point(group, pubkey.c_str(), nullptr, nullptr);
     return point;
   }
 
@@ -59,7 +59,7 @@ public:
   int compare(EC_POINT *a, EC_POINT *b) {
     int result;
     // return 1 on success and 0 if an error occurred
-    result = EC_POINT_cmp(group, a, b, NULL);
+    result = EC_POINT_cmp(group, a, b, nullptr);
     if (result == 0) {
       return result;
     }
@@ -67,12 +67,12 @@ public:
     BIGNUM *a_y = BN_new();
     BIGNUM *b_x = BN_new();
     BIGNUM *b_y = BN_new();
-    if (!EC_POINT_get_affine_coordinates_GFp(group, a, a_x, a_y, NULL)) {
-      throw new std::runtime_error(
+    if (!EC_POINT_get_affine_coordinates_GFp(group, a, a_x, a_y, nullptr)) {
+      throw std::runtime_error(
           "EC_POINT_get_affine_coordinates_GFp failed.");
     }
-    if (!EC_POINT_get_affine_coordinates_GFp(group, b, b_x, b_y, NULL)) {
-      throw new std::runtime_error(
+    if (!EC_POINT_get_affine_coordinates_GFp(group, b, b_x, b_y, nullptr)) {
+      throw std::runtime_error(
           "EC_POINT_get_affine_coordinates_GFp failed.");
     }
     EC_GROUP_free(group);
@@ -90,7 +90,7 @@ public:
   toString(EC_POINT *p,
            point_conversion_form_t from = POINT_CONVERSION_UNCOMPRESSED) {
     std::string str_p;
-    str_p = EC_POINT_point2hex(group, p, from, NULL);
+    str_p = EC_POINT_point2hex(group, p, from, nullptr);
     return str_p;
   }
 };

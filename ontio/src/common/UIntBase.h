@@ -1,11 +1,13 @@
 #ifndef UINTBASE_H
 #define UINTBASE_H
 
-#include "../io/Serializable.h"
-#include "Helper.h"
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+#include "../io/Serializable.h"
+#include "Helper.h"
 
 class UIntBase : public Serializable
 {
@@ -26,7 +28,7 @@ protected:
     }
     else if (int(value.size()) != bytes)
     {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     else
     {
@@ -46,7 +48,7 @@ public:
     }
     else if (int(value.size()) != bytes)
     {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     else
     {

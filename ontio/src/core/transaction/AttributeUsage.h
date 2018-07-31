@@ -5,6 +5,9 @@
 #error "use --std=c++11 option for compile."
 #endif
 
+#include <stdexcept>
+#include <string>
+
 enum class AttributeUsage
 {
   Nonce = 0x00,
@@ -34,9 +37,9 @@ public:
       ret = AttributeUsage::Description;
       break;
     default:
-      throw "IllegalArgumentException";
-    }
+      throw std::runtime_error("IllegalArgumentException");
     return ret;
+     }
   }
 
   static unsigned char getByte(AttributeUsage usage)
@@ -57,7 +60,7 @@ public:
       ret = 0x90;
       break;
     default:
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     return ret;
   }

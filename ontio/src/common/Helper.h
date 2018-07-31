@@ -11,10 +11,10 @@
 #include <map>
 #include <sstream>
 #include <string.h>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
 
 #include <boost/any.hpp>
 #include <nlohmann/json.hpp>
@@ -22,7 +22,6 @@
 #include <openssl/bn.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
-
 
 #if defined(WIN32) || defined(_WIN64)
 #pragma comment(lib, "libeay32.lib")
@@ -168,7 +167,7 @@ public:
     }
     int len = value.length();
     if (len % 2 == 1) {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     size_t i = 0;
     while (i < value.size()) {

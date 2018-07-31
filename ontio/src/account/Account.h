@@ -11,6 +11,7 @@
 
 #include "../common/Address.h"
 #include "../common/Helper.h"
+#include "../common/ErrorCode.h"
 #include "../crypto/AES.h"
 #include "../crypto/KeyType.h"
 #include "../crypto/ScryptHandler.h"
@@ -348,7 +349,7 @@ public:
       act_uc_vec = Helper::hexStringToByte(publicKey);
       break;
     default:
-      throw new std::runtime_error(ErrorCode::StrUnknownKeyType);
+      throw std::runtime_error(ErrorCode::StrUnknownKeyType);
     }
     return act_uc_vec;
   }
@@ -422,29 +423,139 @@ public:
                                       derivedkey.begin() + 12);
     std::vector<unsigned char> aes_key(derivedkey.begin() + 32,
                                        derivedkey.begin() + 64);
-                                  
 
     std::vector<unsigned char> rawkey;
-//    try
-//    {
-//      SecretKeySpec skeySpec = new SecretKeySpec(derivedhalf2, "AES");
-//      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-//      cipher.init(Cipher.DECRYPT_MODE, skeySpec, new GCMParameterSpec(128, iv));
-//      cipher.updateAAD(address.getBytes());
-//      rawkey = cipher.doFinal(encryptedkey);
-//    }
-//    catch (Exception e)
-//    {
-//      e.printStackTrace();
-//      throw new SDKException(ErrorCode.encryptedPriKeyAddressPasswordErr);
-//    }
-//    Account account = new Account(rawkey, scheme);
-//    if (!address.equals(account.getAddressU160().toBase58()))
-//    {
-//      throw new SDKException(ErrorCode::encryptedPriKeyAddressPasswordErr);
-//    }
+    //    try
+    //    {
+    //      SecretKeySpec skeySpec = new SecretKeySpec(derivedhalf2, "AES");
+    //      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+    //      cipher.init(Cipher.DECRYPT_MODE, skeySpec, new GCMParameterSpec(128, iv));
+    //      cipher.updateAAD(address.getBytes());
+    //      rawkey = cipher.doFinal(encryptedkey);
+    //    }
+    //    catch (Exception e)
+    //    {
+    //      e.printStackTrace();
+    //      throw new SDKException(ErrorCode.encryptedPriKeyAddressPasswordErr);
+    //    }
+    //    Account account = new Account(rawkey, scheme);
+    //    if (!address.equals(account.getAddressU160().toBase58()))
+    //    {
+    //      throw new SDKException(ErrorCode::encryptedPriKeyAddressPasswordErr);
+    //    }
     return Helper::toHexString(rawkey);
   }
+
+  //std::string exportCtrEncryptedPrikey(std::string passphrase, int n) {
+  //  int N = n;
+  //  int r = 8;
+  //  int p = 8;
+  //  int dkLen = 64;
+  //
+  //  int salt_len = 4;
+  //  unsigned char salt[] = {0xfa, 0xa4, 0x88, 0x3d};
+  //
+  //  EVP_PKEY_CTX *pctx;
+  //  unsigned char derivedkey[dkLen];
+  //
+  //  size_t outlen = sizeof(derivedkey);
+  //  pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
+  //
+  //  if (EVP_PKEY_derive_init(pctx) <= 0) {
+  //    return NULL;
+  //  }
+  //  if (EVP_PKEY_CTX_set1_pbe_pass(pctx, passphrase.c_str(),
+  //                                 passphrase.length()) <= 0) {
+  //    return NULL;
+  //  }
+  //  if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, salt, salt_len) <= 0) {
+  //    return NULL;
+  //  }
+  //  if (EVP_PKEY_CTX_set_scrypt_N(pctx, N) <= 0) {
+  //    return NULL;
+  //  }
+  //  if (EVP_PKEY_CTX_set_scrypt_r(pctx, r) <= 0) {
+  //    return NULL;
+  //  }
+  //  if (EVP_PKEY_CTX_set_scrypt_p(pctx, p) <= 0) {
+  //    return NULL;
+  //  }
+  //  if (EVP_PKEY_derive(pctx, derivedkey, &outlen) <= 0) {
+  //    return NULL;
+  //  }
+  //
+  //  std::string hex_derivedkey;
+  //  hex_derivedkey = hexStr(derivedkey, outlen);
+  //  cout << hex_derivedkey << endl << hex_derivedkey.length() << endl;
+  //  if (hex_derivedkey.empty()) {
+  //    return NULL;
+  //  }
+
+  // std::string str_derivedkey =
+  //     std::string(reinterpret_cast<char *>(derivedkey));
+  // cout << "str_derivedkey:\n"
+  //      << str_derivedkey << endl
+  //      << "outlen:" << outlen << endl
+  //      << str_derivedkey.length() << endl;
+
+  //  unsigned char uc_iv[AES_BLOCK_SIZE];
+  //  unsigned char uc_key[AES_256_KEY_SIZE];
+  //  memcpy(uc_iv, &derivedkey[0], AES_BLOCK_SIZE * sizeof(unsigned char));
+  //  memcpy(uc_key, &derivedkey[32], AES_256_KEY_SIZE * sizeof(unsigned char));
+  //
+  //  cout << "uc_iv:\n" << hexStr(uc_iv, 16) << endl << sizeof(uc_iv) << endl;
+  //  cout << "uc_key:\n" << hexStr(uc_key, 32) << endl << sizeof(uc_key) << endl;
+  //
+  //  AES aes;
+  //
+  //  aes.set_params(uc_key, uc_iv, AEAD_mode::AES_CTR);
+  //
+  //  unsigned char uc_private_key[] = {
+  //      0xc1, 0x9f, 0x16, 0x78, 0x5b, 0x8f, 0x35, 0x43, 0xbb, 0xaf, 0x5e,
+  //      0x1d, 0xbb, 0x5d, 0x39, 0x8d, 0xfa, 0x6c, 0x85, 0xaa, 0xad, 0x54,
+  //      0xfc, 0x9d, 0x71, 0x20, 0x3c, 0xe8, 0x3e, 0x50, 0x5c, 0x07};
+  //
+  //  cout << "uc_private_key:\n" << hexStr(uc_private_key, 32) << endl;
+
+  // cout << "uc_private_key:\n"
+  //      << uc_private_key << endl
+  //      << sizeof(uc_private_key) << endl;
+
+  // std::string private_key =
+  // std::string(reinterpret_cast<char *>(uc_private_key));
+  // std::string enc_private_key;
+
+  //  cout << "aes.get_iv():\n" << hexStr(aes.get_iv(), 16) << endl;
+  //  cout << "aes.get_key():\n" << hexStr(aes.get_key(), 32) << endl;
+  //
+  //  int enc_private_key_sz = 32;
+  //  unsigned char *enc_private_key = new unsigned char(enc_private_key_sz);
+  //  aes.auth_encry(uc_private_key, enc_private_key);
+  //  cout << "enc_private_key:\n" << enc_private_key << endl;
+  //  string str_enc_private_key;
+
+  // str_enc_private_key = hexStr(enc_private_key, 48);
+  // cout << "str_enc_private_key:\n" << str_enc_private_key << endl;
+  // cout << Base64Encode(str_enc_private_key.c_str(),
+  //                      str_enc_private_key.length(), false)
+  //      << endl;
+
+  //  cout << "base64(enc_private_key, 48):\n"
+  //       << base64(enc_private_key, enc_private_key_sz) << endl;
+  //
+  //  char test_key[] = "3JZLD/X45qSFjmRRvRVhcEjKgCJQDPWOsjx2dcTEj58=";
+  //  int o_l;
+  //  unsigned char *uc_tset_key = unbase64(test_key, 45, &o_l);
+  //
+  //  cout << "test_key:\n" << unbase64(test_key, 45, &o_l) << endl;
+  //
+  //  cout << hexStr(enc_private_key, 48) << endl;
+  //  cout << hexStr(uc_tset_key, 48) << endl;
+  //
+  //  EVP_PKEY_CTX_free(pctx);
+  //
+  //  return "test";
+  //}
 };
 
 #endif

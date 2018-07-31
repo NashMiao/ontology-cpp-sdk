@@ -6,6 +6,7 @@
 #endif
 
 #include <algorithm>
+#include <stdexcept>
 #include <limits>
 #include <vector>
 
@@ -67,7 +68,7 @@ public:
           ((unsigned long)ScriptOpMethod::getByte(ScriptOp::OP_1) - 1 + num));
     }
     if (num < 0 || num > std::numeric_limits<long long>::max()) {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     std::vector<unsigned char> bytes;
     bytes = num2bytes(num, sizeof(int));
@@ -86,7 +87,7 @@ public:
           ((unsigned long)ScriptOpMethod::getByte(ScriptOp::OP_1) - 1 + num));
     }
     if (num < 0 || num > std::numeric_limits<long long>::max()) {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     std::vector<unsigned char> bytes;
     bytes = num2bytes(num, sizeof(long long));
@@ -128,7 +129,7 @@ public:
       push((long long)data.size(), 4);
       add(data);
     } else {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     return *this;
   }
@@ -159,7 +160,7 @@ public:
     }
     if (BN_get_word(bn) < 0 ||
         BN_get_word(bn) > std::numeric_limits<long long>::max()) {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     return *this;
   }

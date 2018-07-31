@@ -49,7 +49,7 @@ public:
     }
     if (value.length() != 40)
     {
-      throw "IllegalArgumentException";
+      throw std::runtime_error("IllegalArgumentException");
     }
     std::vector<unsigned char> v;
     v = Helper::hexToBytes(value);
