@@ -10,8 +10,8 @@
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <string.h>
 #include <stdexcept>
+#include <string.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -324,7 +324,7 @@ public:
     return ret;
   }
 
-  static std::string base64Encode(std::vector<unsigned char> data,
+  static std::string base64Encode(const std::vector<unsigned char> &data,
                                   bool with_new_line) {
     std::string str_data(data.begin(), data.end());
     return base64Encode(str_data, with_new_line);
@@ -363,7 +363,7 @@ public:
     }
   }
 
-  static std::string base64Decode(std::vector<unsigned char> data,
+  static std::string base64Decode(const std::vector<unsigned char> &data,
                                   bool with_new_line) {
     std::string str_data(data.begin(), data.end());
     return base64Decode(str_data, with_new_line);

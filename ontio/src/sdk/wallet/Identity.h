@@ -8,17 +8,21 @@
 #include <string>
 #include <list>
 
+#include <nlohmann/json.hpp>
+
 #include "Control.h"
 
 class Identity
 {
-  public:
+  private:
     std::string label;
     std::string ontid;
     bool isDefault;
     bool lock;
     std::list<Control> controls;
-    // Object extra;
+    nlohmann::json extra;
+
+  public:
     Identity()
     {
         label = "";

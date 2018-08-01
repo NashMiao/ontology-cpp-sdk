@@ -62,7 +62,6 @@ class AES
             throw std::runtime_error("BAND_bytes() fail.");
         }
         return std::vector<unsigned char>(key, key + AES_256_KEY_SIZE);
-        ;
     }
 
     static std::vector<unsigned char> generateIv()
@@ -73,7 +72,6 @@ class AES
             throw std::runtime_error("BAND_bytes() fail.");
         }
         return std::vector<unsigned char>(iv, iv + AES_BLOCK_SIZE);
-        ;
     }
 
     static int encrypt(const std::vector<unsigned char> &plaintext,
