@@ -104,7 +104,7 @@ class AES
 
         /* Set IV length if default 12 bytes (96 bits) is not appropriate */
         if (1 !=
-            EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv.size(), NULL))
+            EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 16, NULL))
         {
             throw std::runtime_error("Error");
         }
