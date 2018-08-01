@@ -14,21 +14,31 @@
 
 class Identity
 {
-  private:
-    std::string label;
-    std::string ontid;
-    bool isDefault;
-    bool lock;
-    std::list<Control> controls;
-    nlohmann::json extra;
+private:
+  std::string label;
+  std::string ontid;
+  bool isDefault;
+  bool lock;
+  std::list<Control> controls;
+  nlohmann::json extra;
 
-  public:
-    Identity()
-    {
-        label = "";
-        ontid = "";
-        isDefault = false;
-        lock = false;
-    }
+public:
+  Identity()
+  {
+    label = "";
+    ontid = "";
+    isDefault = false;
+    lock = false;
+  }
+
+  void setExtra(nlohmann::json &ex)
+  {
+    extra = ex;
+  }
+
+  nlohmann::json getExtra()
+  {
+    return extra;
+  }
 };
 #endif // !IDENTIFY_H

@@ -59,11 +59,12 @@ public:
   void setHash(std::string hash) { hash = hash; }
   std::string getHash() { return hash; }
 
-  // std::vector<unsigned char> getSalt() { return Helper:: }
-  // void setSalt(const std::vector<unsigned char> &salt)
-  // {
-  //   salt = Helper::
-  // }
+  std::vector<unsigned char> getSalt()
+  {
+    std::string str_salt = Helper::base64Decode(salt, false);
+    return std::vector<unsigned char>(str_salt.begin(), str_salt.end());
+  }
+  void setSalt(const std::vector<unsigned char> &vec_salt) { salt = Helper::base64Encode(vec_salt, false); }
 
   std::string toString()
   {
