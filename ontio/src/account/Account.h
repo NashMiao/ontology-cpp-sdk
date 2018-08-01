@@ -11,9 +11,9 @@
 
 #include "../common/Address.h"
 #include "../common/Helper.h"
-#include "../common/ErrorCode.h"
+#include "../common/ErrorCode.hpp"
 #include "../crypto/AES.h"
-#include "../crypto/KeyType.h"
+#include "../crypto/KeyType.hpp"
 #include "../crypto/ScryptHandler.h"
 #include "../crypto/Signature.h"
 #include "../crypto/SignatureHandler.h"

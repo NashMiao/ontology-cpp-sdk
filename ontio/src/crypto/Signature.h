@@ -11,7 +11,7 @@
 
 #include <openssl/ec.h>
 
-#include "../common/ErrorCode.h"
+#include "../common/ErrorCode.hpp"
 #include "../sdk/exception/SDKException.h"
 #include "Curve.h"
 #include "SignatureScheme.h"

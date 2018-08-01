@@ -13,7 +13,7 @@
 #include <boost/algorithm/hex.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 
-#include "../common/ErrorCode.h"
+#include "../common/ErrorCode.hpp"
 
 using namespace std;
 

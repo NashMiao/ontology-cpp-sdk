@@ -10,7 +10,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../../common/ErrorCode.h"
+#include "../../common/ErrorCode.hpp"
 
 class SDKException : virtual public std::exception
 {

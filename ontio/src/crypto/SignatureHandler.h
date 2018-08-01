@@ -18,8 +18,8 @@
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 
-#include "../common/ErrorCode.h"
-#include "KeyType.h"
+#include "../common/ErrorCode.hpp"
+#include "KeyType.hpp"
 #include "SignatureScheme.h"
 
 #if defined(WIN32) || defined(_WIN64)

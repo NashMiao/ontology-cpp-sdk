@@ -18,7 +18,7 @@
 #include "../../crypto/Curve.h"
 #include "../../crypto/ECC.h"
 #include "../../crypto/ECDomainParameters.h"
-#include "../../crypto/KeyType.h"
+#include "../../crypto/KeyType.hpp"
 #include "../../sdk/exception/SDKException.h"
 
 class Program

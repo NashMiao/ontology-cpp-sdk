@@ -7,7 +7,7 @@
 #include <openssl/evp.h>
 #include <openssl/kdf.h>
 
-#include "../common/ErrorCode.h"
+#include "../common/ErrorCode.hpp"
 #include "../common/Helper.h"
 #include "../sdk/exception/SDKException.h"
 

@@ -1,14 +1,14 @@
-#ifndef KEYTYPE_H
-#define KEYTYPE_H
+#ifndef KEYTYPE_HPP
+#define KEYTYPE_HPP
 
 #if __cplusplus < 201103L
     #error "use --std=c++11 option for compile."
 #endif
 
-#include "../common/ErrorCode.h"
+#include "../common/ErrorCode.hpp"
 
+#include <iostream>
 #include <exception>
-#include <ostream>
 #include <vector>
 
 enum class KeyType : int

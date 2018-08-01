@@ -9,7 +9,7 @@
 
 #include "account/Account.h"
 #include "common/Common.h"
-#include "common/ErrorCode.h"
+#include "common/ErrorCode.hpp"
 #include "core/asset/Sig.h"
 #include "core/payload/InvokeCodeTransaction.h"
 #include "core/transaction/Transaction.h"
